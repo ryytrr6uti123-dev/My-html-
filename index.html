@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#090b12">
+<title>NEXUS — Games & Search</title>
+<style>
+:root{--bg:#030806;--panel:rgba(8,13,12,.88);--panel2:rgba(18,27,24,.88);--line:rgba(174,220,201,.15);--muted:#a1aaa7;--text:#f4f7f5;--mint:#8df2c7;--green:#27c77b}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 48% 30%,rgba(0,105,62,.32),transparent 36%),radial-gradient(ellipse at 10% 58%,rgba(0,69,44,.24),transparent 35%),#030806;color:var(--text);font:15px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial;overflow-x:hidden}
+body:before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(ellipse at 50% 45%,transparent 10%,rgba(0,0,0,.35) 78%),repeating-linear-gradient(155deg,transparent 0 115px,rgba(25,119,76,.025) 145px,transparent 190px);filter:blur(12px)}
+a{color:inherit;text-decoration:none}button,input,select{font:inherit}
+.shell{max-width:1100px;margin:auto;padding:18px 22px 120px}
+header{position:sticky;top:10px;z-index:5;display:flex;align-items:center;justify-content:space-between;gap:14px;padding:10px 12px;border:1px solid rgba(255,255,255,.13);border-radius:28px;background:rgba(12,15,14,.82);backdrop-filter:blur(24px);box-shadow:0 12px 40px #0008}
+.brand{display:flex;align-items:center;gap:10px;font-weight:900;letter-spacing:.13em;font-size:18px;padding:8px 12px}.logo{width:32px;height:32px;border-radius:50%;background:linear-gradient(145deg,#a5ffd6,#26b879);display:grid;place-items:center;color:#06140d;font-weight:950;letter-spacing:0}
+nav{display:flex;gap:5px;flex-wrap:wrap}nav button,.ghost{border:1px solid transparent;background:transparent;color:#b9c3be;border-radius:18px;padding:9px 13px;cursor:pointer}nav button.active,nav button:hover{background:rgba(255,255,255,.09);border-color:rgba(255,255,255,.08);color:white}
+.status{font-size:12px;color:#e0e9e4;border:1px solid rgba(255,255,255,.12);background:#080d0b;padding:8px 12px;border-radius:30px;white-space:nowrap}.status:before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:#68e9ad;box-shadow:0 0 12px #68e9ad;margin-right:7px}
+.hero{padding:clamp(78px,15vh,155px) 0 55px;text-align:center;min-height:600px}.eyebrow{color:var(--mint);font-size:11px;letter-spacing:.24em;font-weight:800;opacity:.85}
+.hero h1{font-size:clamp(56px,10vw,100px);line-height:1;margin:0 0 34px;letter-spacing:-.075em;font-weight:950;text-shadow:0 8px 50px #50d99a22}.grad{background:linear-gradient(180deg,#fff 25%,#9ce9c7 90%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p{color:var(--muted);max-width:600px;margin:0 auto 25px}
+.searchbox{max-width:760px;margin:auto;display:flex;gap:10px;padding:9px 18px;background:rgba(8,11,10,.9);border:1px solid rgba(220,255,239,.18);border-radius:25px;box-shadow:0 18px 60px #0009;min-height:78px;align-items:center}
+.searchbox:before{content:"⌕";font-size:34px;color:#aab7b0;line-height:1}.searchbox input{flex:1;min-width:0;background:transparent;border:0;outline:0;color:white;padding:12px 3px;font-size:20px;font-weight:700}.searchbox input::placeholder{color:#8f9993}.primary{border:0;border-radius:15px;background:linear-gradient(135deg,#a3f6d1,#40c88e);color:#07130d;font-weight:850;padding:12px 20px;cursor:pointer}
+.hint{color:#75837b;font-size:12px;margin-top:12px}
+.stats{display:flex;justify-content:center;gap:10px;max-width:760px;margin:25px auto 0}.stat{background:rgba(8,12,10,.62);border:1px solid var(--line);border-radius:30px;padding:9px 14px;color:#b6c1ba;font-size:12px}.stat b{color:#e9fff3;margin-right:5px}
+.searchpanel{display:none;background:rgba(8,13,11,.94);border:1px solid var(--line);border-radius:18px;padding:18px;margin:18px auto 0;max-width:760px;text-align:left}.searchpanel.show{display:block}.searchpanel h3{margin:0 0 5px}.searchpanel p{color:var(--muted);margin:0 0 12px;font-size:13px}.searchactions{display:flex;gap:8px;flex-wrap:wrap}.searchactions a{display:inline-block;background:#17251e;border:1px solid #345343;padding:9px 12px;border-radius:12px;font-size:13px}
+.section{margin:46px 0}.sectionhead{display:flex;justify-content:space-between;align-items:end;gap:14px;margin-bottom:16px}.sectionhead h2{margin:0;font-size:24px;letter-spacing:-.03em}.sectionhead p{margin:3px 0 0;color:var(--muted);font-size:13px}
+.tools{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:16px}.tools input,.tools select{flex:1;min-width:180px;background:#0c1310;border:1px solid var(--line);border-radius:13px;padding:11px 13px;color:white;outline:0}
+.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px}.game{background:linear-gradient(145deg,rgba(21,34,28,.92),rgba(8,14,11,.96));border:1px solid var(--line);border-radius:18px;padding:15px;min-height:155px;display:flex;flex-direction:column;transition:.18s}.game:hover{transform:translateY(-3px);border-color:#6ed7a6;box-shadow:0 10px 30px #0005}.gameicon{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;font-size:21px;background:#1c382a;margin-bottom:12px}.game h3{margin:0;font-size:15px}.game small{color:var(--muted)}.gamefoot{display:flex;justify-content:space-between;align-items:center;margin-top:auto;padding-top:12px}.tag{font-size:10px;color:#a8f0c9;background:#163426;padding:4px 8px;border-radius:20px}.play{font-size:12px;color:var(--mint);font-weight:750}
+.categories{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}.category{background:rgba(10,17,13,.85);border:1px solid var(--line);border-radius:15px;padding:15px;text-align:left;color:white;cursor:pointer}.category span{display:block;font-size:22px}.category b{font-size:13px}.category small{display:block;color:var(--muted);font-size:11px}
+.notice{border:1px solid rgba(122,207,163,.24);background:rgba(14,35,24,.8);color:#c1d9cb;padding:13px 15px;border-radius:14px;font-size:12px;margin-top:16px}
+.bottomnav{position:fixed;z-index:6;bottom:18px;left:50%;transform:translateX(-50%);width:min(680px,calc(100% - 28px));display:flex;justify-content:space-around;gap:4px;padding:10px 8px;border:1px solid rgba(255,255,255,.14);border-radius:28px;background:rgba(10,13,12,.88);backdrop-filter:blur(25px);box-shadow:0 12px 45px #000b}.bottomnav button{background:transparent;border:0;color:#aeb8b2;padding:6px 10px;min-width:62px;cursor:pointer;border-radius:15px;font-size:11px;font-weight:700}.bottomnav button span{display:block;font-size:20px;margin-bottom:1px}.bottomnav button.active{color:#b5f5d2;background:rgba(108,225,162,.1)}
+footer{border-top:1px solid var(--line);padding:24px 0 10px;color:var(--muted);font-size:12px;display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap}
+@media(max-width:900px){.grid{grid-template-columns:repeat(3,1fr)}.categories{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:620px){.shell{padding:12px 15px 112px}.hero{padding:clamp(105px,17vh,160px) 0 30px;min-height:600px}.hero h1{font-size:clamp(64px,18vw,88px);margin-bottom:45px}.hero p{display:none}.searchbox{min-height:70px;border-radius:22px;padding:7px 15px}.searchbox input{font-size:17px}.searchbox .primary{display:none}.stats{margin-top:20px}.stat{font-size:11px;padding:8px 10px}.grid{grid-template-columns:repeat(2,1fr)}.categories{grid-template-columns:repeat(2,1fr)}header{border-radius:24px;padding:7px}.brand{font-size:15px}header nav{display:none}.status{font-size:10px}.bottomnav button{min-width:0;flex:1;padding:6px 2px}.bottomnav button span{font-size:19px}}
+</style>
+</head>
+<body>
+<div class="shell">
+<header>
+ <a class="brand" href="#"><span class="logo">N</span>NEXUS</a>
+ <nav><button class="active" data-view="home">⌂ Home</button><button data-view="games">Games</button><button data-view="search">Search</button></nav>
+ <span class="status">269 online now</span>
+</header>
+<main>
+<section class="hero" id="home">
+ <div class="eyebrow">WELCOME TO</div>
+ <h1><span class="grad">NEXUS</span></h1>
+ <p>Your games. Your web. All in one place.</p>
+ <form class="searchbox" id="webForm">
+  <input id="webQuery" type="search" placeholder="Search the web..." aria-label="Search the web" required>
+  <button class="primary" type="submit">Search ↗</button>
+ </form>
+ <div class="hint">Web search is powered by DuckDuckGo. Search opens in a new tab.</div>
+ <div class="searchpanel" id="searchPanel">
+  <h3>Choose where to search</h3><p>Your query is ready. Pick a search destination.</p>
+  <div class="searchactions" id="searchActions"></div>
+ </div>
+ <div class="stats">
+  <div class="stat"><b>●</b> Chromebook ready</div>
+  <div class="stat"><b>✦</b> Games & discovery</div>
+ </div>
+</section>
+<section class="section" id="categories">
+ <div class="sectionhead"><div><h2>Browse categories</h2><p>Pick a genre to filter the game library.</p></div></div>
+ <div class="categories" id="categoryGrid"></div>
+</section>
+<section class="section" id="games">
+ <div class="sectionhead"><div><h2>Game library</h2><p id="gameCount">A starter collection of browser-game discoveries.</p></div><button class="ghost" id="allGames">Show all</button></div>
+ <div class="tools"><input id="gameSearch" type="search" placeholder="Find a game or genre..."><select id="sort" class="chip" aria-label="Sort games"><option value="az">A–Z</option><option value="za">Z–A</option></select></div>
+ <div class="grid" id="gameGrid"></div>
+ <div class="notice">Catalog note: this starter release includes named game-discovery cards, not 1,100 individually verified playable games. Each card opens a relevant game search or official destination. The library is structured to expand safely as verified titles are added.</div>
+</section>
+<section class="section" id="about">
+ <div class="sectionhead"><div><h2>About NEXUS</h2><p>Built as a static site for GitHub Pages.</p></div></div>
+ <div class="notice">Because GitHub Pages has no server-side runtime, NEXUS cannot independently crawl or index the entire web. This version sends searches to DuckDuckGo without using Google, Bing, or Brave. A genuinely independent search engine would require a separate backend, crawler/index, and hosting.</div>
+</section>
+</main>
+<div class="bottomnav">
+ <button class="active" data-view="home"><span>⌂</span>Home</button>
+ <button data-view="games"><span>▦</span>Games</button>
+ <button data-view="search"><span>⌕</span>Search</button>
+ <button data-view="more"><span>▤</span>More</button>
+</div>
+<footer><span>© 2026 NEXUS · Personal browser-game portal</span><span>Static HTML · CSS · JavaScript</span></footer>
+</div>
+<script>
+const games = [
+["2048","Puzzle","🔢","https://play2048.co/"],["A Dark Room","Adventure","🌑","https://adarkroom.doublespeakgames.com/"],
+["Cookie Clicker","Idle","🍪","https://orteil.dashnet.org/cookieclicker/"],["Little Alchemy 2","Puzzle","⚗️","https://littlealchemy2.com/"],
+["The Wiki Game","Trivia","📚","https://www.thewikigame.com/"],["Hex FRVR","Puzzle","⬡","https://hex.frvr.com/"],
+["Solitaire","Card","🃏","https://solitaire.com/"],["Minesweeper","Puzzle","💣","https://minesweeper.online/"],
+["Chess.com","Board","♟️","https://www.chess.com/"],["Lichess","Board","♞","https://lichess.org/"],
+["Tetris","Arcade","🧱","https://tetris.com/play-tetris"],["Wordle","Word","🔤","https://www.nytimes.com/games/wordle/index.html"],
+["GeoGuessr","Geography","🌍","https://www.geoguessr.com/"],["Skribbl.io","Multiplayer","✏️","https://skribbl.io/"],
+["Slither.io","Arcade","🐍","https://slither.io/"],["Agar.io","Arcade","🟢","https://agar.io/"],
+["Paper.io 2","Arcade","🟦","https://paper-io.com/"],["Krunker","Shooter","🎯","https://krunker.io/"],
+["Shell Shockers","Shooter","🥚","https://shellshock.io/"],["Bonk.io","Multiplayer","⚽","https://bonk.io/"],
+[" diep.io","Arcade","🛡️","https://diep.io/"],["Chess Titans (browser alternatives)","Board","♜","https://lichess.org/"],
+["Drift Hunters","Racing","🏎️","https://www.drifted.com/drift-hunters/"],["Moto X3M","Racing","🏍️","https://www.coolmathgames.com/0-moto-x3m"],
+["Run 3","Platformer","🏃","https://www.coolmathgames.com/0-run-3"],["Fireboy and Watergirl","Platformer","🔥","https://www.coolmathgames.com/0-fireboy-and-water-girl"],
+["Papa's Pizzeria","Simulation","🍕","https://www.coolmathgames.com/0-papas-pizzeria"],["World's Hardest Game","Arcade","🟥","https://www.coolmathgames.com/0-worlds-hardest-game"],
+["Slope","Arcade","🔺","https://www.coolmathgames.com/0-slope"],["Basketball Stars","Sports","🏀","https://www.crazygames.com/game/basketball-stars"],
+["Soccer Random","Sports","⚽","https://www.crazygames.com/game/soccer-random"],["Basket Random","Sports","🏀","https://www.crazygames.com/game/basket-random"],
+["Rooftop Snipers","Action","🔫","https://www.crazygames.com/game/rooftop-snipers"],["Getaway Shootout","Action","🚗","https://www.crazygames.com/game/getaway-shootout"],
+["Superhot","Action","⏱️","https://superhotgame.com/"],["Vex 7","Platformer","🧗","https://www.crazygames.com/game/vex-7"],
+["Stickman Hook","Arcade","🪝","https://www.crazygames.com/game/stickman-hook"],["Elastic Man","Casual","🫧","https://www.crazygames.com/game/elastic-man"],
+["Tiny Fishing","Casual","🎣","https://www.crazygames.com/game/tiny-fishing"],["Idle Breakout","Idle","🧩","https://www.coolmathgames.com/0-idle-breakout"],
+["Crossy Road","Arcade","🐔","https://poki.com/en/g/crossy-road"],["Subway Surfers","Runner","🚇","https://poki.com/en/g/subway-surfers"],
+["Temple Run 2","Runner","🏃","https://poki.com/en/g/temple-run-2"],["Stickman Climb","Platformer","🧍","https://www.crazygames.com/"],
+["Cut the Rope","Puzzle","🍬","https://www.cuttherope.net/"],["Plants vs. Zombies (web search)","Strategy","🌻","https://itch.io/search?q=plants+vs+zombies+browser"],
+["Bloons Tower Defense (web search)","Strategy","🎈","https://itch.io/search?q=bloons+tower+defense"],["Bad Ice-Cream","Arcade","🍦","https://www.coolmathgames.com/"],
+["Papa's Freezeria","Simulation","🍨","https://www.coolmathgames.com/"],["Duck Life","Adventure","🦆","https://www.crazygames.com/"],["WorldGuessr","Geography","🗺️","https://worldguessr.com/"]
+].map(g=>({name:g[0].trim(),cat:g[1],icon:g[2],url:g[3]}));
+const categories=[["All games","🎮"],["Action","⚡"],["Adventure","🧭"],["Arcade","🕹️"],["Board","♟️"],["Casual","✨"],["Geography","🌍"],["Idle","⏳"],["Multiplayer","👥"],["Platformer","🏃"],["Puzzle","🧩"],["Racing","🏎️"],["Runner","🏃"],["Simulation","🏗️"],["Sports","🏆"],["Strategy","🧠"],["Word","🔤"],["Shooter","🎯"],["Card","🃏"],["Trivia","❓"]];
+let active="All games";
+const categoryGrid=document.getElementById("categoryGrid"),gameGrid=document.getElementById("gameGrid"),gameSearch=document.getElementById("gameSearch");
+function renderCategories(){categoryGrid.innerHTML=categories.map(([c,i])=>`<button class="category" data-cat="${c}"><span>${i}</span><b>${c}</b><small>${c==="All games"?"Browse everything":"Explore genre"}</small></button>`).join("");categoryGrid.querySelectorAll("button").forEach(b=>b.onclick=()=>{active=b.dataset.cat;renderCategories();renderGames();document.getElementById("games").scrollIntoView({behavior:"smooth"})});categoryGrid.querySelectorAll("button").forEach(b=>{if(b.dataset.cat===active)b.style.borderColor="#8276ff";});}
+function renderGames(){let q=gameSearch.value.toLowerCase();let list=games.filter(g=>(active==="All games"||g.cat.toLowerCase()===active.toLowerCase())&&(g.name.toLowerCase().includes(q)||g.cat.toLowerCase().includes(q)));if(document.getElementById("sort").value==="za")list.reverse();gameGrid.innerHTML=list.map(g=>`<a class="game" href="${g.url}" target="_blank" rel="noopener noreferrer"><div class="gameicon">${g.icon}</div><h3>${g.name}</h3><small>${g.cat}</small><div class="gamefoot"><span class="tag">${g.cat}</span><span class="play">Open ↗</span></div></a>`).join("")||"<p>No matches. Try another search or category.</p>";document.getElementById("gameCount").textContent=`Showing ${list.length} of ${games.length} starter game discoveries.`;}
+renderCategories();renderGames();gameSearch.addEventListener("input",renderGames);document.getElementById("sort").addEventListener("change",renderGames);document.getElementById("allGames").onclick=()=>{active="All games";gameSearch.value="";renderCategories();renderGames()};
+const form=document.getElementById("webForm"),panel=document.getElementById("searchPanel"),actions=document.getElementById("searchActions");
+form.addEventListener("submit",e=>{e.preventDefault();const q=document.getElementById("webQuery").value.trim();if(!q)return;const enc=encodeURIComponent(q);actions.innerHTML=`<a href="https://duckduckgo.com/?q=${enc}" target="_blank" rel="noopener">DuckDuckGo web results ↗</a><a href="https://html.duckduckgo.com/html/?q=${enc}" target="_blank" rel="noopener">Lightweight results ↗</a><a href="https://www.ecosia.org/search?q=${enc}" target="_blank" rel="noopener">Ecosia ↗</a>`;panel.classList.add("show");panel.scrollIntoView({behavior:"smooth",block:"nearest"});});
+document.querySelectorAll("[data-view]").forEach(b=>b.addEventListener("click",()=>{document.querySelectorAll("[data-view]").forEach(x=>x.classList.remove("active"));document.querySelectorAll(`[data-view="${b.dataset.view}"]`).forEach(x=>x.classList.add("active"));const v=b.dataset.view;if(v==="home")document.getElementById("home").scrollIntoView({behavior:"smooth"});if(v==="games")document.getElementById("games").scrollIntoView({behavior:"smooth"});if(v==="search"){document.getElementById("webQuery").focus();document.getElementById("home").scrollIntoView({behavior:"smooth"});}if(v==="more")document.getElementById("about").scrollIntoView({behavior:"smooth"});}));
+</script>
+</body>
+</html>
