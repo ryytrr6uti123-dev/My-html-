@@ -71,8 +71,8 @@ h1{font-size:clamp(58px,11vw,100px);line-height:1;margin:8px 0 18px;letter-spaci
 .viewer-head strong{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .viewer-head span{font-size:12px;color:var(--muted)}
 .webframe{display:block;width:100%;height:min(73vh,850px);min-height:420px;border:0;background:white}
-.viewer-help{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 14px;color:var(--muted);font-size:12px}
-.viewer-help a{color:var(--mint);text-decoration:underline}
+.viewer-help{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:11px 14px;border-bottom:1px solid var(--line);background:#16191d;color:var(--muted);font-size:12px}
+.viewer-help a{flex:none;border:1px solid color-mix(in srgb,var(--mint),transparent 45%);border-radius:10px;background:#17241d;color:var(--mint);padding:8px 11px;font-weight:750}
 .games{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px}
 .game{min-height:110px;display:flex;flex-direction:column;justify-content:space-between;border:1px solid var(--line);border-radius:15px;background:#111316;padding:15px}
 .game small{color:var(--muted)}
@@ -177,8 +177,8 @@ body.dock-visible .dock{transform:translate(-50%,0);opacity:1;pointer-events:aut
    </form>
    <section class="viewer" id="viewer" aria-label="NEXUS website viewer">
     <div class="viewer-head"><strong id="viewerTitle">Web page</strong><span id="viewerStatus" role="status">Ready</span></div>
+    <div class="viewer-help"><span id="viewerHelp">If this page is blank, Chrome may block embedding. Open it in this tab instead.</span><a id="openCurrent" href="#" data-current-link>Open in this tab</a></div>
     <iframe class="webframe" id="webFrame" title="NEXUS web page" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
-    <div class="viewer-help"><span id="viewerHelp">If this page is blank, the website may block embedding. Use the same-tab link to continue.</span><a id="openCurrent" href="#" data-current-link>Open this address in this tab</a></div>
    </section>
   </section>
   <section class="view" id="youtubeView">
@@ -274,6 +274,11 @@ function openPage(destination,title,record=true){
   if(!["http:","https:"].includes(url.protocol)){viewerStatus.textContent="Only website addresses can be opened.";return}
   const videoId=parsedVideoId(url.href);
   if(videoId)url=new URL(`https://www.youtube-nocookie.com/embed/${encodeURIComponent(videoId)}`);
+  const topLevelDomains=["now.gg","github.com","gemini.google.com"];
+  if(topLevelDomains.some(domain=>url.hostname===domain||url.hostname.endsWith(`.${domain}`))){
+    window.location.assign(url.href);
+    return;
+  }
   if(record&&lastUrl&&lastUrl!==url.href)historyStack.push(lastUrl);
   lastUrl=url.href;
   addressInput.value=videoId?`https://www.youtube.com/watch?v=${videoId}`:url.href;
