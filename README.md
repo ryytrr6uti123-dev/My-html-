@@ -1,5 +1,14 @@
-# NEXUS
+# Fern / NEXUS
 
-Open `index.html` directly or use GitHub Pages. Search results render inside the page; no local server or Worker setup is required.
+## Try it
 
-Search uses the DuckDuckGo Instant Answer API and Wikipedia's public search API. It displays quick answers, related topics, and Wikipedia matches—not a complete list of general web results. Search providers block their full results pages from being embedded in a standalone HTML file. Selecting a result opens that destination in a new tab so the NEXUS page stays available.
+- [Open the website](https://ryytrr6uti123-dev.github.io/My-html-/)
+- [Download the ZIP](https://github.com/ryytrr6uti123-dev/My-html-/archive/refs/heads/main.zip)
+
+Open `index.html` directly in a browser, or run it locally:
+
+```bash
+python3 -m http.server 4173
+```
+
+Then visit `http://localhost:4173`.
