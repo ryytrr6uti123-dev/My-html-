@@ -44,12 +44,12 @@ footer{border-top:1px solid var(--line);padding:24px 0 10px;color:var(--muted);f
 <section class="hero" id="home">
  <div class="eyebrow">WELCOME TO</div>
  <h1><span class="grad">NEXUS</span></h1>
- <p>Your games. Your web. All in one place.</p>
- <form class="searchbox" action="https://duckduckgo.com/" method="get" target="_blank">
-  <input id="webQuery" name="q" type="search" placeholder="Search the web..." aria-label="Search the web" required>
-  <button class="primary" type="submit">Search ↗</button>
+ <p>Your games. Search this page.</p>
+ <form class="searchbox" id="webForm">
+  <input id="webQuery" type="search" placeholder="Search games on this page..." aria-label="Search games on this page" required>
+  <button class="primary" type="submit">Search</button>
  </form>
- <div class="hint">Search DuckDuckGo directly in a new tab.</div>
+ <div class="hint">Search game names and genres in this page; no new tab opens.</div>
  <div class="stats">
   <div class="stat"><b>●</b> Chromebook ready</div>
   <div class="stat"><b>✦</b> Games & discovery</div>
@@ -67,7 +67,7 @@ footer{border-top:1px solid var(--line);padding:24px 0 10px;color:var(--muted);f
 </section>
 <section class="section" id="about">
  <div class="sectionhead"><div><h2>About NEXUS</h2><p>Built as a static site for GitHub Pages.</p></div></div>
- <div class="notice">Because GitHub Pages has no server-side runtime, NEXUS cannot independently crawl or index the entire web. This version sends searches to DuckDuckGo without using Google, Bing, or Brave. A genuinely independent search engine would require a separate backend, crawler/index, and hosting.</div>
+ <div class="notice">Search only filters the game names and genres included in this HTML file. It does not search the web.</div>
 </section>
 </main>
 <div class="bottomnav">
@@ -109,6 +109,7 @@ const games = [
 const categories=[["All games","🎮"],["Action","⚡"],["Adventure","🧭"],["Arcade","🕹️"],["Board","♟️"],["Casual","✨"],["Geography","🌍"],["Idle","⏳"],["Multiplayer","👥"],["Platformer","🏃"],["Puzzle","🧩"],["Racing","🏎️"],["Runner","🏃"],["Simulation","🏗️"],["Sports","🏆"],["Strategy","🧠"],["Word","🔤"],["Shooter","🎯"],["Card","🃏"],["Trivia","❓"]];
 let active="All games";
 const categoryGrid=document.getElementById("categoryGrid"),gameGrid=document.getElementById("gameGrid"),gameSearch=document.getElementById("gameSearch");
+document.getElementById("webForm").addEventListener("submit",event=>{event.preventDefault();active="All games";renderCategories();gameSearch.value=document.getElementById("webQuery").value.trim();renderGames();document.getElementById("games").scrollIntoView({behavior:"smooth"});});
 function renderCategories(){categoryGrid.innerHTML=categories.map(([c,i])=>`<button class="category" data-cat="${c}"><span>${i}</span><b>${c}</b><small>${c==="All games"?"Browse everything":"Explore genre"}</small></button>`).join("");categoryGrid.querySelectorAll("button").forEach(b=>b.onclick=()=>{active=b.dataset.cat;renderCategories();renderGames();document.getElementById("games").scrollIntoView({behavior:"smooth"})});categoryGrid.querySelectorAll("button").forEach(b=>{if(b.dataset.cat===active)b.style.borderColor="#8276ff";});}
 function renderGames(){let q=gameSearch.value.toLowerCase();let list=games.filter(g=>(active==="All games"||g.cat.toLowerCase()===active.toLowerCase())&&(g.name.toLowerCase().includes(q)||g.cat.toLowerCase().includes(q)));if(document.getElementById("sort").value==="za")list.reverse();gameGrid.innerHTML=list.map(g=>`<a class="game" href="${g.url}" target="_blank" rel="noopener noreferrer"><div class="gameicon">${g.icon}</div><h3>${g.name}</h3><small>${g.cat}</small><div class="gamefoot"><span class="tag">${g.cat}</span><span class="play">Open ↗</span></div></a>`).join("")||"<p>No matches. Try another search or category.</p>";document.getElementById("gameCount").textContent=`Showing ${list.length} of ${games.length} starter game discoveries.`;}
 renderCategories();renderGames();gameSearch.addEventListener("input",renderGames);document.getElementById("sort").addEventListener("change",renderGames);document.getElementById("allGames").onclick=()=>{active="All games";gameSearch.value="";renderCategories();renderGames()};
