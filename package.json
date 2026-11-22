@@ -1,7 +1,0 @@
-{
-  "name": "nexus-browser",
-  "private": true,
-  "scripts": {
-    "start": "node proxy-server.cjs"
-  }
-}
