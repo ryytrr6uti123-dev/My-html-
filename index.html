@@ -23,7 +23,7 @@ nav{display:flex;gap:5px;flex-wrap:wrap}nav button,.ghost{border:1px solid trans
 .hint{color:#75837b;font-size:12px;margin-top:12px}
 .stats{display:flex;justify-content:center;gap:10px;max-width:760px;margin:25px auto 0}.stat{background:rgba(8,12,10,.62);border:1px solid var(--line);border-radius:30px;padding:9px 14px;color:#b6c1ba;font-size:12px}.stat b{color:#e9fff3;margin-right:5px}
 .searchresults{display:none;max-width:760px;margin:18px auto 0;padding:18px;background:rgba(8,13,11,.96);border:1px solid var(--line);border-radius:18px;text-align:left}.searchresults.show{display:block}.searchresults h2{margin:0 0 12px;font-size:20px}.searchresult{padding:13px 0;border-top:1px solid var(--line)}.searchresult h3{margin:0 0 4px;font-size:16px}.searchresult h3 a{color:var(--mint)}.searchresult p{margin:0;color:#c1cbc5;font-size:13px}.searchresult small{display:block;color:#82928a;margin-top:5px}.searchmessage{color:var(--muted);margin:0}
-.searchpanel{display:none;background:rgba(8,13,11,.94);border:1px solid var(--line);border-radius:18px;padding:18px;margin:18px auto 0;max-width:760px;text-align:left}.searchpanel.show{display:block}.searchpanel h3{margin:0 0 5px}.searchpanel p{color:var(--muted);margin:0 0 12px;font-size:13px}.searchactions{display:flex;gap:8px;flex-wrap:wrap}.searchactions a{display:inline-block;background:#17251e;border:1px solid #345343;padding:9px 12px;border-radius:12px;font-size:13px}
+.searchpanel{display:none;background:rgba(8,13,11,.94);border:1px solid var(--line);border-radius:18px;padding:18px;margin:18px auto 0;max-width:760px;text-align:left}.searchpanel.show{display:block}.searchpanel h3{margin:0 0 5px}.searchpanel p{color:var(--muted);margin:0 0 12px;font-size:13px}.searchactions{display:flex;gap:8px;flex-wrap:wrap}.searchactions a{display:inline-block;background:#17251e;border:1px solid #345343;padding:9px 12px;border-radius:12px;font-size:13px}.siteframe{display:block;width:100%;height:min(70vh,720px);min-height:360px;border:1px solid var(--line);border-radius:14px;background:#fff}.searchpanel .viewer-fallback{margin:12px 0 0}
 .section{margin:46px 0}.sectionhead{display:flex;justify-content:space-between;align-items:end;gap:14px;margin-bottom:16px}.sectionhead h2{margin:0;font-size:24px;letter-spacing:-.03em}.sectionhead p{margin:3px 0 0;color:var(--muted);font-size:13px}
 .tools{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:16px}.tools input,.tools select{flex:1;min-width:180px;background:#0c1310;border:1px solid var(--line);border-radius:13px;padding:11px 13px;color:white;outline:0}
 .grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px}.game{width:100%;text-align:left;color:var(--text);font-family:inherit;cursor:pointer;background:linear-gradient(145deg,rgba(21,34,28,.92),rgba(8,14,11,.96));border:1px solid var(--line);border-radius:18px;padding:15px;min-height:155px;display:flex;flex-direction:column;transition:.18s}.game:hover{transform:translateY(-3px);border-color:#6ed7a6;box-shadow:0 10px 30px #0005}.gameicon{display:none}.game h3{margin:0;font-size:15px}.game small{color:var(--muted)}.gamefoot{display:flex;justify-content:space-between;align-items:center;margin-top:auto;padding-top:12px}.tag{font-size:10px;color:#a8f0c9;background:#163426;padding:4px 8px;border-radius:20px}.play{font-size:12px;color:var(--mint);font-weight:750}
@@ -51,10 +51,17 @@ footer{border-top:1px solid var(--line);padding:24px 0 10px;color:var(--muted);f
   <input id="webQuery" type="search" placeholder="Search the web..." aria-label="Search the web" required>
   <button class="primary" type="submit">Search</button>
  </form>
- <div class="hint">Quick answers and Wikipedia matches appear here. No server or new tab needed.</div>
+ <div class="hint">Search the web, then open results here when the site allows embedding.</div>
  <section class="searchresults" id="searchResults" aria-live="polite" aria-busy="false">
   <h2 id="searchTitle">Search results</h2>
   <div id="searchResultList"></div>
+  <div class="searchactions" id="searchActions"></div>
+ </section>
+ <section class="searchpanel" id="siteViewer" aria-label="Website viewer">
+  <h3 id="viewerTitle">Website viewer</h3>
+  <p id="viewerMessage">The selected page will open here when its website permits embedding.</p>
+  <iframe class="siteframe" id="siteFrame" title="Selected website" sandbox="allow-forms allow-scripts allow-same-origin allow-presentation" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="no-referrer"></iframe>
+  <p class="viewer-fallback">If the site blocks embedding, <a id="openSameTab" href="#" data-open-same-tab>open it in this tab</a>.</p>
  </section>
  <div class="stats">
   <div class="stat"><b>●</b> Chromebook ready</div>
@@ -73,7 +80,7 @@ footer{border-top:1px solid var(--line);padding:24px 0 10px;color:var(--muted);f
 </section>
 <section class="section" id="about">
  <div class="sectionhead"><div><h2>About NEXUS</h2><p>Built as a static site for GitHub Pages.</p></div></div>
- <div class="notice">Search results appear on this page using DuckDuckGo instant answers and Wikipedia. Search providers block full web-result pages from standalone HTML, so this is not a complete list of every website. Selecting a result opens it separately.</div>
+ <div class="notice">Quick answers and Wikipedia matches are shown here, with Google and YouTube search links for broader results. Links open in the on-page viewer when possible. Some websites block embedding; use the provided same-tab link for those pages.</div>
 </section>
 </main>
 <div class="bottomnav">
@@ -116,13 +123,43 @@ const categories=[["All games","🎮"],["Action","⚡"],["Adventure","🧭"],["A
 let active="All games";
 const categoryGrid=document.getElementById("categoryGrid"),gameGrid=document.getElementById("gameGrid"),gameSearch=document.getElementById("gameSearch");
 function renderCategories(){categoryGrid.innerHTML=categories.map(([c,i])=>`<button class="category" data-cat="${c}"><span>${i}</span><b>${c}</b><small>${c==="All games"?"Browse everything":"Explore genre"}</small></button>`).join("");categoryGrid.querySelectorAll("button").forEach(b=>b.onclick=()=>{active=b.dataset.cat;renderCategories();renderGames();document.getElementById("games").scrollIntoView({behavior:"smooth"})});categoryGrid.querySelectorAll("button").forEach(b=>{if(b.dataset.cat===active)b.style.borderColor="#8276ff";});}
-function renderGames(){let q=gameSearch.value.toLowerCase();let list=games.filter(g=>(active==="All games"||g.cat.toLowerCase()===active.toLowerCase())&&(g.name.toLowerCase().includes(q)||g.cat.toLowerCase().includes(q)));if(document.getElementById("sort").value==="za")list.reverse();gameGrid.innerHTML=list.map(g=>`<a class="game" href="${g.url}" target="_blank" rel="noopener noreferrer"><h3>${g.name}</h3><small>${g.cat}</small><div class="gamefoot"><span class="tag">${g.cat}</span><span class="play">Open ↗</span></div></a>`).join("")||"<p>No matches. Try another search or category.</p>";document.getElementById("gameCount").textContent=`Showing ${list.length} of ${games.length} starter game discoveries.`;}
+function renderGames(){let q=gameSearch.value.toLowerCase();let list=games.filter(g=>(active==="All games"||g.cat.toLowerCase()===active.toLowerCase())&&(g.name.toLowerCase().includes(q)||g.cat.toLowerCase().includes(q)));if(document.getElementById("sort").value==="za")list.reverse();gameGrid.innerHTML=list.map(g=>`<a class="game" href="${g.url}"><h3>${g.name}</h3><small>${g.cat}</small><div class="gamefoot"><span class="tag">${g.cat}</span><span class="play">Open ↗</span></div></a>`).join("")||"<p>No matches. Try another search or category.</p>";document.getElementById("gameCount").textContent=`Showing ${list.length} of ${games.length} starter game discoveries.`;}
 renderCategories();renderGames();gameSearch.addEventListener("input",renderGames);document.getElementById("sort").addEventListener("change",renderGames);document.getElementById("allGames").onclick=()=>{active="All games";gameSearch.value="";renderCategories();renderGames()};
-const searchResults=document.getElementById("searchResults"),searchTitle=document.getElementById("searchTitle"),searchResultList=document.getElementById("searchResultList");
+const searchResults=document.getElementById("searchResults"),searchTitle=document.getElementById("searchTitle"),searchResultList=document.getElementById("searchResultList"),searchActions=document.getElementById("searchActions");
 let searchRequest=0;
 function escapeHtml(value){return String(value).replace(/[&<>"']/g,char=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[char]));}
 function showSearchMessage(message){searchResultList.innerHTML=`<p class="searchmessage">${escapeHtml(message)}</p>`;}
 function cleanSnippet(value){return String(value||"").replace(/<[^>]*>/g," ").replace(/&nbsp;|&#160;/gi," ").replace(/\s+/g," ").trim();}
+function openInViewer(href,label){
+  const url=new URL(href);
+  if(!["http:","https:"].includes(url.protocol))return;
+  const frame=document.getElementById("siteFrame");
+  const viewer=document.getElementById("siteViewer");
+  const title=document.getElementById("viewerTitle");
+  const message=document.getElementById("viewerMessage");
+  const fallback=document.getElementById("openSameTab");
+  const youtubeVideo=url.hostname==="youtu.be"?url.pathname.slice(1):url.hostname.endsWith("youtube.com")?url.searchParams.get("v")||url.pathname.match(/^\/(?:embed|shorts)\/([^/]+)/)?.[1]:null;
+  if(youtubeVideo&&/^(www\.)?(youtube\.com|youtu\.be)$/.test(url.hostname)){
+    url.href=`https://www.youtube-nocookie.com/embed/${encodeURIComponent(youtubeVideo)}`;
+    frame.allowFullscreen=true;
+  }
+  title.textContent=label||url.hostname;
+  message.textContent=`Opening ${url.hostname} in the page viewer. If it does not load, the website may block embedding.`;
+  fallback.href=href;
+  viewer.classList.add("show");
+  frame.src=url.href;
+  viewer.scrollIntoView({behavior:"smooth",block:"nearest"});
+}
+document.addEventListener("click",event=>{
+  if(!(event.target instanceof Element))return;
+  const link=event.target.closest("a[href]");
+  if(!link||link.hasAttribute("data-open-same-tab"))return;
+  let url;
+  try{url=new URL(link.href)}catch{return}
+  if(!["http:","https:"].includes(url.protocol))return;
+  event.preventDefault();
+  openInViewer(url.href,link.textContent.trim());
+});
 function collectTopics(topics,results){
   for(const topic of topics||[]){
     if(topic.Topics)collectTopics(topic.Topics,results);
@@ -134,6 +171,7 @@ document.getElementById("webForm").addEventListener("submit",async e=>{
   const query=document.getElementById("webQuery").value.trim();
   if(!query)return;
   const requestId=++searchRequest;
+  searchActions.innerHTML=`<a href="https://www.google.com/search?${new URLSearchParams({q:query})}">Search Google for “${escapeHtml(query)}”</a><a href="https://www.youtube.com/results?${new URLSearchParams({search_query:query})}">Search YouTube for “${escapeHtml(query)}”</a>`;
   searchResults.classList.add("show");
   searchResults.setAttribute("aria-busy","true");
   searchTitle.textContent=`Searching for “${query}”`;
@@ -168,7 +206,7 @@ document.getElementById("webForm").addEventListener("submit",async e=>{
       let url;
       try{url=new URL(item.url)}catch{return""}
       if(!["http:","https:"].includes(url.protocol))return"";
-      return `<article class="searchresult"><h3><a href="${escapeHtml(url.href)}" target="_blank" rel="noopener noreferrer">${escapeHtml(item.title||url.hostname)}</a></h3><p>${escapeHtml(item.description||"")}</p><small>${escapeHtml(item.source)} · ${escapeHtml(url.hostname)}</small></article>`;
+      return `<article class="searchresult"><h3><a href="${escapeHtml(url.href)}">${escapeHtml(item.title||url.hostname)}</a></h3><p>${escapeHtml(item.description||"")}</p><small>${escapeHtml(item.source)} · ${escapeHtml(url.hostname)}</small></article>`;
     }).join("")||'<p class="searchmessage">No quick answers or Wikipedia matches found. Try a different search.</p>';
     if(errors.length)searchResultList.insertAdjacentHTML("beforeend",`<p class="searchmessage">Some search sources could not be reached: ${escapeHtml(errors.join("; "))}</p>`);
   }catch(error){
