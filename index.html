@@ -51,7 +51,7 @@ footer{border-top:1px solid var(--line);padding:24px 0 10px;color:var(--muted);f
   <input id="webQuery" type="search" placeholder="Search the web..." aria-label="Search the web" required>
   <button class="primary" type="submit">Search</button>
  </form>
- <div class="hint">Search results appear here, so you can stay on this page.</div>
+ <div class="hint">Quick answers and Wikipedia matches appear here. No server or new tab needed.</div>
  <section class="searchresults" id="searchResults" aria-live="polite" aria-busy="false">
   <h2 id="searchTitle">Search results</h2>
   <div id="searchResultList"></div>
@@ -73,7 +73,7 @@ footer{border-top:1px solid var(--line);padding:24px 0 10px;color:var(--muted);f
 </section>
 <section class="section" id="about">
  <div class="sectionhead"><div><h2>About NEXUS</h2><p>Built as a static site for GitHub Pages.</p></div></div>
- <div class="notice">Web results appear on this page. Search uses the hosted endpoint configured in SEARCH_API_URL; see README.md to deploy it. Search result links open separately so this page stays available.</div>
+ <div class="notice">Search results appear on this page using DuckDuckGo instant answers and Wikipedia. Search providers block full web-result pages from standalone HTML, so this is not a complete list of every website. Selecting a result opens it separately.</div>
 </section>
 </main>
 <div class="bottomnav">
@@ -118,11 +118,17 @@ const categoryGrid=document.getElementById("categoryGrid"),gameGrid=document.get
 function renderCategories(){categoryGrid.innerHTML=categories.map(([c,i])=>`<button class="category" data-cat="${c}"><span>${i}</span><b>${c}</b><small>${c==="All games"?"Browse everything":"Explore genre"}</small></button>`).join("");categoryGrid.querySelectorAll("button").forEach(b=>b.onclick=()=>{active=b.dataset.cat;renderCategories();renderGames();document.getElementById("games").scrollIntoView({behavior:"smooth"})});categoryGrid.querySelectorAll("button").forEach(b=>{if(b.dataset.cat===active)b.style.borderColor="#8276ff";});}
 function renderGames(){let q=gameSearch.value.toLowerCase();let list=games.filter(g=>(active==="All games"||g.cat.toLowerCase()===active.toLowerCase())&&(g.name.toLowerCase().includes(q)||g.cat.toLowerCase().includes(q)));if(document.getElementById("sort").value==="za")list.reverse();gameGrid.innerHTML=list.map(g=>`<a class="game" href="${g.url}" target="_blank" rel="noopener noreferrer"><h3>${g.name}</h3><small>${g.cat}</small><div class="gamefoot"><span class="tag">${g.cat}</span><span class="play">Open ↗</span></div></a>`).join("")||"<p>No matches. Try another search or category.</p>";document.getElementById("gameCount").textContent=`Showing ${list.length} of ${games.length} starter game discoveries.`;}
 renderCategories();renderGames();gameSearch.addEventListener("input",renderGames);document.getElementById("sort").addEventListener("change",renderGames);document.getElementById("allGames").onclick=()=>{active="All games";gameSearch.value="";renderCategories();renderGames()};
-const SEARCH_API_URL="https://nexus-search.YOUR-CLOUDFLARE-SUBDOMAIN.workers.dev/search";
 const searchResults=document.getElementById("searchResults"),searchTitle=document.getElementById("searchTitle"),searchResultList=document.getElementById("searchResultList");
 let searchRequest=0;
 function escapeHtml(value){return String(value).replace(/[&<>"']/g,char=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[char]));}
 function showSearchMessage(message){searchResultList.innerHTML=`<p class="searchmessage">${escapeHtml(message)}</p>`;}
+function cleanSnippet(value){return String(value||"").replace(/<[^>]*>/g," ").replace(/&nbsp;|&#160;/gi," ").replace(/\s+/g," ").trim();}
+function collectTopics(topics,results){
+  for(const topic of topics||[]){
+    if(topic.Topics)collectTopics(topic.Topics,results);
+    else if(topic.FirstURL&&topic.Text)results.push({title:topic.Text,url:topic.FirstURL,description:"Related topic",source:"DuckDuckGo"});
+  }
+}
 document.getElementById("webForm").addEventListener("submit",async e=>{
   e.preventDefault();
   const query=document.getElementById("webQuery").value.trim();
@@ -133,24 +139,38 @@ document.getElementById("webForm").addEventListener("submit",async e=>{
   searchTitle.textContent=`Searching for “${query}”`;
   showSearchMessage("Loading results…");
   searchResults.scrollIntoView({behavior:"smooth",block:"nearest"});
-  if(SEARCH_API_URL.includes("YOUR-CLOUDFLARE-SUBDOMAIN")){
-    showSearchMessage("The hosted search service still needs to be deployed and its URL added to SEARCH_API_URL in index.html. Follow the setup steps in README.md.");
-    searchResults.setAttribute("aria-busy","false");
-    return;
-  }
   try{
-    const response=await fetch(`${SEARCH_API_URL}?q=${encodeURIComponent(query)}`);
-    const data=await response.json();
-    if(!response.ok)throw new Error(data.error||`Search failed (${response.status}).`);
+    const ddgUrl=new URL("https://api.duckduckgo.com/");
+    ddgUrl.search=new URLSearchParams({q:query,format:"json",no_html:"1",skip_disambig:"1"});
+    const wikiUrl=new URL("https://en.wikipedia.org/w/api.php");
+    wikiUrl.search=new URLSearchParams({action:"query",list:"search",srsearch:query,format:"json",origin:"*",utf8:"1",srlimit:"6"});
+    const [ddgResult,wikiResult]=await Promise.allSettled([
+      fetch(ddgUrl).then(response=>{if(!response.ok)throw new Error(`DuckDuckGo returned ${response.status}`);return response.json()}),
+      fetch(wikiUrl).then(response=>{if(!response.ok)throw new Error(`Wikipedia returned ${response.status}`);return response.json()})
+    ]);
     if(requestId!==searchRequest)return;
     searchTitle.textContent=`Results for “${query}”`;
-    const items=data.results||[];
-    searchResultList.innerHTML=items.map(item=>{
+    const items=[];
+    const errors=[];
+    if(ddgResult.status==="fulfilled"){
+      const data=ddgResult.value;
+      if(data.AbstractText&&data.AbstractURL)items.push({title:data.Heading||query,url:data.AbstractURL,description:data.AbstractText,source:"DuckDuckGo instant answer"});
+      collectTopics(data.RelatedTopics,items);
+    }else errors.push(ddgResult.reason.message);
+    if(wikiResult.status==="fulfilled"){
+      for(const item of wikiResult.value.query?.search||[]){
+        items.push({title:item.title,url:`https://en.wikipedia.org/?curid=${item.pageid}`,description:cleanSnippet(item.snippet),source:"Wikipedia"});
+      }
+    }else errors.push(wikiResult.reason.message);
+    if(!items.length&&errors.length===2)throw new Error(errors.join("; "));
+    const uniqueItems=[...new Map(items.map(item=>[item.url,item])).values()];
+    searchResultList.innerHTML=uniqueItems.map(item=>{
       let url;
       try{url=new URL(item.url)}catch{return""}
       if(!["http:","https:"].includes(url.protocol))return"";
-      return `<article class="searchresult"><h3><a href="${escapeHtml(url.href)}" target="_blank" rel="noopener noreferrer">${escapeHtml(item.title||url.hostname)}</a></h3><p>${escapeHtml(item.description||"")}</p><small>${escapeHtml(url.hostname)}</small></article>`;
-    }).join("")||'<p class="searchmessage">No results found. Try a different search.</p>';
+      return `<article class="searchresult"><h3><a href="${escapeHtml(url.href)}" target="_blank" rel="noopener noreferrer">${escapeHtml(item.title||url.hostname)}</a></h3><p>${escapeHtml(item.description||"")}</p><small>${escapeHtml(item.source)} · ${escapeHtml(url.hostname)}</small></article>`;
+    }).join("")||'<p class="searchmessage">No quick answers or Wikipedia matches found. Try a different search.</p>';
+    if(errors.length)searchResultList.insertAdjacentHTML("beforeend",`<p class="searchmessage">Some search sources could not be reached: ${escapeHtml(errors.join("; "))}</p>`);
   }catch(error){
     if(requestId!==searchRequest)return;
     searchTitle.textContent=`Results for “${query}”`;
