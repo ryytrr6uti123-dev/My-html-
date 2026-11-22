@@ -273,8 +273,15 @@ function openPage(destination,title,record=true){
   try{url=new URL(destination)}catch{viewerStatus.textContent="That address is not valid.";return}
   if(!["http:","https:"].includes(url.protocol)){viewerStatus.textContent="Only website addresses can be opened.";return}
   const videoId=parsedVideoId(url.href);
+  const youtubeHost=url.hostname==="youtu.be"||url.hostname==="youtube.com"||url.hostname.endsWith(".youtube.com");
+  if(youtubeHost&&!videoId){
+    const query=url.searchParams.get("search_query");
+    if(query)document.getElementById("youtubeQuery").value=query;
+    showPage("youtube");
+    return;
+  }
   if(videoId)url=new URL(`https://www.youtube-nocookie.com/embed/${encodeURIComponent(videoId)}`);
-  const topLevelDomains=["now.gg","github.com","gemini.google.com","youtube.com"];
+  const topLevelDomains=["now.gg","github.com","gemini.google.com"];
   if(topLevelDomains.some(domain=>url.hostname===domain||url.hostname.endsWith(`.${domain}`))){
     window.location.assign(url.href);
     return;
