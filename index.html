@@ -274,7 +274,7 @@ function openPage(destination,title,record=true){
   if(!["http:","https:"].includes(url.protocol)){viewerStatus.textContent="Only website addresses can be opened.";return}
   const videoId=parsedVideoId(url.href);
   if(videoId)url=new URL(`https://www.youtube-nocookie.com/embed/${encodeURIComponent(videoId)}`);
-  const topLevelDomains=["now.gg","github.com","gemini.google.com"];
+  const topLevelDomains=["now.gg","github.com","gemini.google.com","youtube.com"];
   if(topLevelDomains.some(domain=>url.hostname===domain||url.hostname.endsWith(`.${domain}`))){
     window.location.assign(url.href);
     return;
