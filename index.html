@@ -50,7 +50,7 @@ footer{border-top:1px solid var(--line);padding:24px 0 10px;color:var(--muted);f
   <input id="webQuery" type="search" placeholder="Search the web..." aria-label="Search the web" required>
   <button class="primary" type="submit">Search ↗</button>
  </form>
- <div class="hint">Search results open in a new tab.</div>
+ <div class="hint">Web search is powered by DuckDuckGo. Search opens in a new tab.</div>
  <div class="searchpanel" id="searchPanel">
   <h3>Choose where to search</h3><p>Your query is ready. Pick a search destination.</p>
   <div class="searchactions" id="searchActions"></div>
@@ -72,7 +72,7 @@ footer{border-top:1px solid var(--line);padding:24px 0 10px;color:var(--muted);f
 </section>
 <section class="section" id="about">
  <div class="sectionhead"><div><h2>About NEXUS</h2><p>Built as a static site for GitHub Pages.</p></div></div>
- <div class="notice">This standalone page opens search results and games in new tabs. External sites may require an internet connection and may be restricted by your network.</div>
+ <div class="notice">Because GitHub Pages has no server-side runtime, NEXUS cannot independently crawl or index the entire web. This version sends searches to DuckDuckGo without using Google, Bing, or Brave. A genuinely independent search engine would require a separate backend, crawler/index, and hosting.</div>
 </section>
 </main>
 <div class="bottomnav">
@@ -118,7 +118,7 @@ function renderCategories(){categoryGrid.innerHTML=categories.map(([c,i])=>`<but
 function renderGames(){let q=gameSearch.value.toLowerCase();let list=games.filter(g=>(active==="All games"||g.cat.toLowerCase()===active.toLowerCase())&&(g.name.toLowerCase().includes(q)||g.cat.toLowerCase().includes(q)));if(document.getElementById("sort").value==="za")list.reverse();gameGrid.innerHTML=list.map(g=>`<a class="game" href="${g.url}" target="_blank" rel="noopener noreferrer"><div class="gameicon">${g.icon}</div><h3>${g.name}</h3><small>${g.cat}</small><div class="gamefoot"><span class="tag">${g.cat}</span><span class="play">Open ↗</span></div></a>`).join("")||"<p>No matches. Try another search or category.</p>";document.getElementById("gameCount").textContent=`Showing ${list.length} of ${games.length} starter game discoveries.`;}
 renderCategories();renderGames();gameSearch.addEventListener("input",renderGames);document.getElementById("sort").addEventListener("change",renderGames);document.getElementById("allGames").onclick=()=>{active="All games";gameSearch.value="";renderCategories();renderGames()};
 const form=document.getElementById("webForm"),panel=document.getElementById("searchPanel"),actions=document.getElementById("searchActions");
-form.addEventListener("submit",e=>{e.preventDefault();const q=document.getElementById("webQuery").value.trim();if(!q)return;const enc=encodeURIComponent(q);const destinations=[["DuckDuckGo web results",`https://duckduckgo.com/?q=${enc}`],["Lightweight results",`https://html.duckduckgo.com/html/?q=${enc}`],["Ecosia",`https://www.ecosia.org/search?q=${enc}`]];actions.replaceChildren(...destinations.map(([label,url])=>{const link=document.createElement("a");link.href=url;link.target="_blank";link.rel="noopener noreferrer";link.textContent=`${label} ↗`;return link}));panel.classList.add("show");panel.scrollIntoView({behavior:"smooth",block:"nearest"});});
+form.addEventListener("submit",e=>{e.preventDefault();const q=document.getElementById("webQuery").value.trim();if(!q)return;const enc=encodeURIComponent(q);actions.innerHTML=`<a href="https://duckduckgo.com/?q=${enc}" target="_blank" rel="noopener">DuckDuckGo web results ↗</a><a href="https://html.duckduckgo.com/html/?q=${enc}" target="_blank" rel="noopener">Lightweight results ↗</a><a href="https://www.ecosia.org/search?q=${enc}" target="_blank" rel="noopener">Ecosia ↗</a>`;panel.classList.add("show");panel.scrollIntoView({behavior:"smooth",block:"nearest"});});
 document.querySelectorAll("[data-view]").forEach(b=>b.addEventListener("click",()=>{document.querySelectorAll("[data-view]").forEach(x=>x.classList.remove("active"));document.querySelectorAll(`[data-view="${b.dataset.view}"]`).forEach(x=>x.classList.add("active"));const v=b.dataset.view;if(v==="home")document.getElementById("home").scrollIntoView({behavior:"smooth"});if(v==="games")document.getElementById("games").scrollIntoView({behavior:"smooth"});if(v==="search"){document.getElementById("webQuery").focus();document.getElementById("home").scrollIntoView({behavior:"smooth"});}if(v==="more")document.getElementById("about").scrollIntoView({behavior:"smooth"});}));
 </script>
 </body>
