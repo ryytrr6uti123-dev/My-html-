@@ -22,6 +22,7 @@ nav{display:flex;gap:5px;flex-wrap:wrap}nav button,.ghost{border:1px solid trans
 .searchbox:before{content:"⌕";font-size:34px;color:#aab7b0;line-height:1}.searchbox input{flex:1;min-width:0;background:transparent;border:0;outline:0;color:white;padding:12px 3px;font-size:20px;font-weight:700}.searchbox input::placeholder{color:#8f9993}.primary{border:0;border-radius:15px;background:linear-gradient(135deg,#a3f6d1,#40c88e);color:#07130d;font-weight:850;padding:12px 20px;cursor:pointer}
 .hint{color:#75837b;font-size:12px;margin-top:12px}
 .stats{display:flex;justify-content:center;gap:10px;max-width:760px;margin:25px auto 0}.stat{background:rgba(8,12,10,.62);border:1px solid var(--line);border-radius:30px;padding:9px 14px;color:#b6c1ba;font-size:12px}.stat b{color:#e9fff3;margin-right:5px}
+.searchresults{display:none;max-width:760px;margin:18px auto 0;padding:18px;background:rgba(8,13,11,.96);border:1px solid var(--line);border-radius:18px;text-align:left}.searchresults.show{display:block}.searchresults h2{margin:0 0 12px;font-size:20px}.searchresult{padding:13px 0;border-top:1px solid var(--line)}.searchresult h3{margin:0 0 4px;font-size:16px}.searchresult h3 a{color:var(--mint)}.searchresult p{margin:0;color:#c1cbc5;font-size:13px}.searchresult small{display:block;color:#82928a;margin-top:5px}.searchmessage{color:var(--muted);margin:0}
 .searchpanel{display:none;background:rgba(8,13,11,.94);border:1px solid var(--line);border-radius:18px;padding:18px;margin:18px auto 0;max-width:760px;text-align:left}.searchpanel.show{display:block}.searchpanel h3{margin:0 0 5px}.searchpanel p{color:var(--muted);margin:0 0 12px;font-size:13px}.searchactions{display:flex;gap:8px;flex-wrap:wrap}.searchactions a{display:inline-block;background:#17251e;border:1px solid #345343;padding:9px 12px;border-radius:12px;font-size:13px}
 .section{margin:46px 0}.sectionhead{display:flex;justify-content:space-between;align-items:end;gap:14px;margin-bottom:16px}.sectionhead h2{margin:0;font-size:24px;letter-spacing:-.03em}.sectionhead p{margin:3px 0 0;color:var(--muted);font-size:13px}
 .tools{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:16px}.tools input,.tools select{flex:1;min-width:180px;background:#0c1310;border:1px solid var(--line);border-radius:13px;padding:11px 13px;color:white;outline:0}
@@ -48,9 +49,13 @@ footer{border-top:1px solid var(--line);padding:24px 0 10px;color:var(--muted);f
  <p>Your games. Your web. All in one place.</p>
  <form class="searchbox" id="webForm">
   <input id="webQuery" type="search" placeholder="Search the web..." aria-label="Search the web" required>
-  <button class="primary" type="submit">Search ↗</button>
+  <button class="primary" type="submit">Search</button>
  </form>
- <div class="hint">Search opens in a new tab. This works when you open this HTML file directly.</div>
+ <div class="hint">Search results appear here, so you can stay on this page.</div>
+ <section class="searchresults" id="searchResults" aria-live="polite" aria-busy="false">
+  <h2 id="searchTitle">Search results</h2>
+  <div id="searchResultList"></div>
+ </section>
  <div class="stats">
   <div class="stat"><b>●</b> Chromebook ready</div>
   <div class="stat"><b>✦</b> Games & discovery</div>
@@ -68,7 +73,7 @@ footer{border-top:1px solid var(--line);padding:24px 0 10px;color:var(--muted);f
 </section>
 <section class="section" id="about">
  <div class="sectionhead"><div><h2>About NEXUS</h2><p>Built as a static site for GitHub Pages.</p></div></div>
- <div class="notice">Searches and game links open in new tabs. No website server is required; an internet connection is needed to visit external sites.</div>
+ <div class="notice">Web results appear on this page. Search uses the hosted endpoint configured in SEARCH_API_URL; see README.md to deploy it. Search result links open separately so this page stays available.</div>
 </section>
 </main>
 <div class="bottomnav">
@@ -113,10 +118,46 @@ const categoryGrid=document.getElementById("categoryGrid"),gameGrid=document.get
 function renderCategories(){categoryGrid.innerHTML=categories.map(([c,i])=>`<button class="category" data-cat="${c}"><span>${i}</span><b>${c}</b><small>${c==="All games"?"Browse everything":"Explore genre"}</small></button>`).join("");categoryGrid.querySelectorAll("button").forEach(b=>b.onclick=()=>{active=b.dataset.cat;renderCategories();renderGames();document.getElementById("games").scrollIntoView({behavior:"smooth"})});categoryGrid.querySelectorAll("button").forEach(b=>{if(b.dataset.cat===active)b.style.borderColor="#8276ff";});}
 function renderGames(){let q=gameSearch.value.toLowerCase();let list=games.filter(g=>(active==="All games"||g.cat.toLowerCase()===active.toLowerCase())&&(g.name.toLowerCase().includes(q)||g.cat.toLowerCase().includes(q)));if(document.getElementById("sort").value==="za")list.reverse();gameGrid.innerHTML=list.map(g=>`<a class="game" href="${g.url}" target="_blank" rel="noopener noreferrer"><h3>${g.name}</h3><small>${g.cat}</small><div class="gamefoot"><span class="tag">${g.cat}</span><span class="play">Open ↗</span></div></a>`).join("")||"<p>No matches. Try another search or category.</p>";document.getElementById("gameCount").textContent=`Showing ${list.length} of ${games.length} starter game discoveries.`;}
 renderCategories();renderGames();gameSearch.addEventListener("input",renderGames);document.getElementById("sort").addEventListener("change",renderGames);document.getElementById("allGames").onclick=()=>{active="All games";gameSearch.value="";renderCategories();renderGames()};
-document.getElementById("webForm").addEventListener("submit",e=>{
+const SEARCH_API_URL="https://nexus-search.YOUR-CLOUDFLARE-SUBDOMAIN.workers.dev/search";
+const searchResults=document.getElementById("searchResults"),searchTitle=document.getElementById("searchTitle"),searchResultList=document.getElementById("searchResultList");
+let searchRequest=0;
+function escapeHtml(value){return String(value).replace(/[&<>"']/g,char=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[char]));}
+function showSearchMessage(message){searchResultList.innerHTML=`<p class="searchmessage">${escapeHtml(message)}</p>`;}
+document.getElementById("webForm").addEventListener("submit",async e=>{
   e.preventDefault();
   const query=document.getElementById("webQuery").value.trim();
-  if(query)window.open(`https://duckduckgo.com/?q=${encodeURIComponent(query)}`,"_blank","noopener,noreferrer");
+  if(!query)return;
+  const requestId=++searchRequest;
+  searchResults.classList.add("show");
+  searchResults.setAttribute("aria-busy","true");
+  searchTitle.textContent=`Searching for “${query}”`;
+  showSearchMessage("Loading results…");
+  searchResults.scrollIntoView({behavior:"smooth",block:"nearest"});
+  if(SEARCH_API_URL.includes("YOUR-CLOUDFLARE-SUBDOMAIN")){
+    showSearchMessage("The hosted search service still needs to be deployed and its URL added to SEARCH_API_URL in index.html. Follow the setup steps in README.md.");
+    searchResults.setAttribute("aria-busy","false");
+    return;
+  }
+  try{
+    const response=await fetch(`${SEARCH_API_URL}?q=${encodeURIComponent(query)}`);
+    const data=await response.json();
+    if(!response.ok)throw new Error(data.error||`Search failed (${response.status}).`);
+    if(requestId!==searchRequest)return;
+    searchTitle.textContent=`Results for “${query}”`;
+    const items=data.results||[];
+    searchResultList.innerHTML=items.map(item=>{
+      let url;
+      try{url=new URL(item.url)}catch{return""}
+      if(!["http:","https:"].includes(url.protocol))return"";
+      return `<article class="searchresult"><h3><a href="${escapeHtml(url.href)}" target="_blank" rel="noopener noreferrer">${escapeHtml(item.title||url.hostname)}</a></h3><p>${escapeHtml(item.description||"")}</p><small>${escapeHtml(url.hostname)}</small></article>`;
+    }).join("")||'<p class="searchmessage">No results found. Try a different search.</p>';
+  }catch(error){
+    if(requestId!==searchRequest)return;
+    searchTitle.textContent=`Results for “${query}”`;
+    showSearchMessage(`Could not load results: ${error.message}`);
+  }finally{
+    if(requestId===searchRequest)searchResults.setAttribute("aria-busy","false");
+  }
 });
 document.querySelectorAll("[data-view]").forEach(b=>b.addEventListener("click",()=>{document.querySelectorAll("[data-view]").forEach(x=>x.classList.remove("active"));document.querySelectorAll(`[data-view="${b.dataset.view}"]`).forEach(x=>x.classList.add("active"));const v=b.dataset.view;if(v==="home")document.getElementById("home").scrollIntoView({behavior:"smooth"});if(v==="games")document.getElementById("games").scrollIntoView({behavior:"smooth"});if(v==="search"){document.getElementById("webQuery").focus();document.getElementById("home").scrollIntoView({behavior:"smooth"});}if(v==="more")document.getElementById("about").scrollIntoView({behavior:"smooth"});}));
 </script>
