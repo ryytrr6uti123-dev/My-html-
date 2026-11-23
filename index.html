@@ -5,574 +5,1393 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#08090b">
 <title>NEXUS — Search & Watch</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-:root{color-scheme:dark;--bg:#08090b;--panel:#111316;--panel2:#191b1f;--line:#292c31;--text:#f4f5f6;--muted:#92979f;--mint:#83efc1;--green:#30c98b;--wall-a:#0a1e18;--wall-b:#11152a}
-:root[data-theme="violet"]{--mint:#c5a5ff;--green:#9a6cff;--wall-a:#211039;--wall-b:#101a37}
-:root[data-theme="ocean"]{--mint:#79dfff;--green:#398ee8;--wall-a:#09243b;--wall-b:#10182c}
-:root[data-theme="sunset"]{--mint:#ffc18a;--green:#fa786b;--wall-a:#391b27;--wall-b:#2b1c42}
-:root[data-theme="rose"]{--mint:#ff9bd0;--green:#e45ba8;--wall-a:#35152f;--wall-b:#17162f}
-*{box-sizing:border-box}
-html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font:15px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Arial}
-body{min-height:100vh}
-button,input{font:inherit}
-button,a{color:inherit}
-button{cursor:pointer}
-a{text-decoration:none}
-.app{min-height:100vh;padding-bottom:76px;background:radial-gradient(ellipse at 50% 45%,color-mix(in srgb,var(--wall-a),transparent 16%),transparent 60%),linear-gradient(145deg,var(--bg),var(--wall-b))}
-.topbar{position:sticky;top:0;z-index:5;background:rgba(8,9,11,.96);border-bottom:1px solid var(--line);backdrop-filter:blur(16px)}
-.topline{height:58px;display:flex;align-items:center;gap:18px;padding:0 22px}
-.brand{display:flex;align-items:center;gap:10px;font-weight:900;letter-spacing:.13em;white-space:nowrap}
-.brandmark{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(145deg,#a4ffdc,#27b980);color:#06140d;letter-spacing:0}
-.tabs{display:flex;align-self:stretch;align-items:stretch;gap:4px;overflow-x:auto;flex:1}
-.tab{border:0;border-bottom:2px solid transparent;padding:0 15px;background:transparent;color:var(--muted);white-space:nowrap}
-.tab:hover,.tab.active{color:var(--text);background:rgba(255,255,255,.045)}
-.tab.active{border-bottom-color:var(--mint)}
-.presence{font-size:12px;color:#c5d0ca;white-space:nowrap}
-.presence:before{content:"";display:inline-block;width:8px;height:8px;margin-right:8px;border-radius:50%;background:#65e8ac}
-.browserbar{height:56px;display:flex;align-items:center;gap:8px;padding:7px 18px;border-top:1px solid #17191c}
-.toolbtn{width:36px;height:36px;border:0;border-radius:10px;background:transparent;color:#aab0b8;font-size:20px}
-.toolbtn:hover{background:var(--panel2);color:white}
-.address{display:flex;align-items:center;gap:8px;flex:1;min-width:0;height:40px;padding:0 12px;border:1px solid var(--line);border-radius:12px;background:#050607}
-.address:focus-within{border-color:#5a9c7d;box-shadow:0 0 0 3px #83efc11a}
-.address input{flex:1;min-width:0;border:0;outline:0;background:transparent;color:white}
-.address input::placeholder{color:#777e87}
-.go{border:0;border-radius:10px;background:var(--mint);color:#06140d;font-weight:800;padding:8px 14px}
-.browser-actions{display:flex;gap:4px}
-.browser-actions .toolbtn{border:1px solid var(--line);font-size:16px}
-main{width:min(1200px,100%);margin:0 auto;padding:24px 24px 40px}
-.view{display:none}.view.active{display:block}
-.home{min-height:calc(100vh - 150px);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:35px 0 70px}
-.clock{font-size:clamp(34px,7vw,72px);line-height:1;font-weight:300;letter-spacing:-.06em;font-variant-numeric:tabular-nums;color:#f6faf8}
-.desktop-center{width:min(900px,100%);margin-top:22px;padding:35px 20px 30px;border:1px solid color-mix(in srgb,var(--mint),transparent 85%);border-radius:26px;background:linear-gradient(145deg,#090d0bcc,#12151bcc);box-shadow:0 20px 80px #0005;backdrop-filter:blur(14px)}
-.eyebrow{font-size:11px;letter-spacing:.24em;color:var(--mint);font-weight:800}
-h1{font-size:clamp(58px,11vw,100px);line-height:1;margin:8px 0 18px;letter-spacing:-.08em}
-.gradient{background:linear-gradient(180deg,#fff 25%,#8fe7bf 95%);color:transparent;background-clip:text;-webkit-background-clip:text}
-.subtitle{margin:0 0 26px;color:var(--muted)}
-.searchform{width:min(760px,100%);display:flex;gap:10px;padding:8px;border:1px solid #30343a;border-radius:19px;background:#111316;box-shadow:0 18px 65px #0008}
-.searchform input{flex:1;min-width:0;padding:12px;border:0;outline:0;background:transparent;color:white;font-size:17px}
-.searchform button{border:0;border-radius:13px;background:linear-gradient(135deg,#a4f6d1,#3dc88f);color:#06140d;font-weight:850;padding:0 22px}
-.engine-select{width:142px;min-width:110px;padding:9px 8px;border:1px solid var(--line);border-radius:11px;background:var(--panel2);color:var(--text);font-size:12px;font-weight:750}
-.shortcuts{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:22px}
-.shortcut{min-width:105px;border:1px solid var(--line);border-radius:14px;background:#111316;padding:12px 16px;color:#d4d8dc}
-.shortcut:hover,.game:hover{border-color:#57bd8c;background:#171c1a}
-.shortcut span{display:block;font-size:19px;color:var(--mint)}
-.helper{max-width:740px;margin:20px auto 0;color:#848b91;font-size:12px}
-.section-title{display:flex;justify-content:space-between;align-items:end;gap:12px;margin:14px 0 20px}
-.section-title h2{margin:0;font-size:26px}
-.section-title p{margin:4px 0 0;color:var(--muted)}
-.youtube-tools{max-width:760px;margin:20px auto}
-.youtube-tools h2{font-size:23px;margin:0 0 6px}
-.youtube-tools p{margin:0 0 14px;color:var(--muted);font-size:13px}
-.smallform{display:flex;gap:8px;margin:14px 0}
-.smallform input{flex:1;min-width:0;border:1px solid var(--line);border-radius:12px;background:#111316;color:white;padding:11px 13px}
-.smallform button,.secondary{border:1px solid #3b4e43;border-radius:12px;background:#17241d;color:#c8f4dc;padding:10px 15px;font-weight:700}
-.viewer{display:none;margin:18px auto 0;max-width:1120px;border:1px solid var(--line);border-radius:16px;background:#101214;overflow:hidden}
-.viewer.active{display:block}
-.viewer-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 15px;border-bottom:1px solid var(--line)}
-.viewer-head strong{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.viewer-head span{font-size:12px;color:var(--muted)}
-.webframe{display:block;width:100%;height:min(73vh,850px);min-height:420px;border:0;background:white}
-.viewer-help{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:11px 14px;border-bottom:1px solid var(--line);background:#16191d;color:var(--muted);font-size:12px}
-.viewer-help a{flex:none;border:1px solid color-mix(in srgb,var(--mint),transparent 45%);border-radius:10px;background:#17241d;color:var(--mint);padding:8px 11px;font-weight:750}
-.games{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px}
-.game{min-height:110px;display:flex;flex-direction:column;justify-content:space-between;border:1px solid var(--line);border-radius:15px;background:#111316;padding:15px}
-.game small{color:var(--muted)}
-.game b{font-size:16px}
-.game span{color:var(--mint);font-size:12px}
-.desktop-icons{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin:27px auto 0}
-.desktop-icon{width:88px;min-height:90px;border:1px solid transparent;border-radius:16px;background:transparent;color:#e3e7e5;padding:10px 6px;font-size:12px}
-.desktop-icon:hover{background:#ffffff12;border-color:#ffffff20}
-.desktop-icon span{display:grid;place-items:center;width:42px;height:42px;margin:0 auto 6px;border-radius:14px;background:linear-gradient(145deg,color-mix(in srgb,var(--mint),#101214 65%),#15191b);color:var(--mint);font-size:22px}
-.dock{position:fixed;z-index:7;left:50%;bottom:14px;transform:translate(-50%,calc(100% + 22px));opacity:0;pointer-events:none;display:flex;gap:4px;width:min(680px,calc(100% - 24px));justify-content:space-around;padding:8px;border:1px solid #454950;border-radius:23px;background:rgba(10,11,13,.96);box-shadow:0 14px 48px #000b;backdrop-filter:blur(18px);transition:transform .22s ease,opacity .22s ease}
-body.dock-visible .dock{transform:translate(-50%,0);opacity:1;pointer-events:auto}
-.dock-zone{position:fixed;z-index:6;bottom:0;left:0;right:0;height:18px}
-.dock button{flex:1;border:0;border-radius:15px;background:transparent;color:var(--muted);padding:5px 8px;font-size:11px;font-weight:700}
-.dock button span{display:block;font-size:19px}
-.dock button.active,.dock button:hover{background:#15251d;color:#b5f5d2}
-.settings-backdrop{position:fixed;z-index:10;inset:0;background:#0008;opacity:0;pointer-events:none;transition:opacity .2s}
-.settings-backdrop.open{opacity:1;pointer-events:auto}
-.settings-panel{position:fixed;z-index:11;right:0;top:0;bottom:0;width:min(390px,92vw);padding:22px;background:#111316;border-left:1px solid var(--line);box-shadow:-20px 0 70px #0009;transform:translateX(105%);transition:transform .24s;overflow:auto}
-.settings-panel.open{transform:translateX(0)}
-.settings-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
-.settings-head h2{margin:0}
-.settings-panel h3{margin:22px 0 10px;font-size:15px}
-.theme-options{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
-.theme-choice{border:1px solid var(--line);border-radius:12px;background:#1a1d21;color:var(--text);padding:10px;text-align:left}
-.theme-choice:before{content:"";display:inline-block;width:12px;height:12px;margin-right:8px;border-radius:50%;background:var(--theme-swatch)}
-.theme-choice[aria-pressed="true"]{border-color:var(--mint)}
-.theme-choice[data-theme-choice="mint"]{--theme-swatch:#83efc1}.theme-choice[data-theme-choice="violet"]{--theme-swatch:#c5a5ff}.theme-choice[data-theme-choice="ocean"]{--theme-swatch:#79dfff}.theme-choice[data-theme-choice="sunset"]{--theme-swatch:#ffc18a}.theme-choice[data-theme-choice="rose"]{--theme-swatch:#ff9bd0}
-.upload-label{display:block;margin:10px 0 6px;color:var(--muted);font-size:13px}
-.file-input{width:100%;border:1px dashed #555d65;border-radius:12px;background:#0b0d0f;padding:12px;color:var(--muted)}
-.file-note{font-size:12px;color:var(--muted)}
-.upload-list{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:12px}
-.upload-item{min-width:0;padding:7px;border:1px solid var(--line);border-radius:10px;background:#0b0d0f;font-size:11px;overflow-wrap:anywhere}
-.upload-item img{display:block;width:100%;height:100px;object-fit:cover;border-radius:7px;margin-bottom:6px}
-.upload-item a{color:var(--mint)}
-.fullscreen .topbar{position:relative}
-.fullscreen .webframe{height:calc(100vh - 190px);max-height:none}
-.assistant-note{border:1px solid var(--line);border-radius:12px;background:#0b0d0f;padding:12px;color:var(--muted);font-size:12px}
-.notice{max-width:760px;margin:22px auto 0;border:1px solid #373329;background:#181611;color:#d2c8a9;border-radius:12px;padding:12px 14px;font-size:12px;text-align:left}
-.appearance-switch{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
-.appearance-choice{border:1px solid var(--line);border-radius:10px;background:var(--panel2);color:var(--text);padding:10px;font-weight:700}
-.appearance-choice[aria-pressed="true"]{border-color:var(--mint);color:var(--mint)}
-.proxy-endpoint-input{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:11px;background:var(--panel2);color:var(--text)}
-.proxy-actions{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:8px}
-:root[data-mode="light"]{color-scheme:light;--bg:#eef3f0;--panel:#fff;--panel2:#e9efec;--line:#cbd6d0;--text:#17231c;--muted:#5e6b64;--wall-a:#d7efe3;--wall-b:#e7edf5;--mint:#08754c;--green:#108451}
-:root[data-mode="light"] .topbar{background:rgba(248,251,249,.96)}
-:root[data-mode="light"] .browserbar{border-color:var(--line)}
-:root[data-mode="light"] .toolbtn{color:#536158}
-:root[data-mode="light"] .toolbtn:hover{background:#dce7e1;color:#14231b}
-:root[data-mode="light"] .address,:root[data-mode="light"] .searchform,:root[data-mode="light"] .smallform input{background:#fff}
-:root[data-mode="light"] .address input,:root[data-mode="light"] .searchform input,:root[data-mode="light"] .smallform input{color:var(--text)}
-:root[data-mode="light"] .desktop-center{background:linear-gradient(145deg,#ffffffed,#f2f7f4ed);box-shadow:0 20px 70px #29473722}
-:root[data-mode="light"] .shortcut,:root[data-mode="light"] .game,:root[data-mode="light"] .viewer,:root[data-mode="light"] .settings-panel,:root[data-mode="light"] .theme-choice,:root[data-mode="light"] .file-input,:root[data-mode="light"] .upload-item,:root[data-mode="light"] .assistant-note{background:#fff;color:var(--text)}
-:root[data-mode="light"] .desktop-icon{color:#26372e}
-:root[data-mode="light"] .desktop-icon:hover{background:#153a2410;border-color:#153a2420}
-:root[data-mode="light"] .viewer-head,:root[data-mode="light"] .viewer-help{background:#f2f5f3;color:#4f5c55}
-:root[data-mode="light"] .viewer-help a{background:#e2f1e9;color:#08633f}
-:root[data-mode="light"] .dock{background:rgba(250,252,250,.97);border-color:#cbd6d0;box-shadow:0 14px 48px #24372d33}
-:root[data-mode="light"] .dock button.active,:root[data-mode="light"] .dock button:hover{background:#e1f1e8;color:#075d3b}
-:root[data-mode="light"] .notice{background:#fff8e9;border-color:#e7d8b8;color:#6b542b}
-:focus-visible{outline:2px solid var(--mint);outline-offset:3px}
-@media(max-width:650px){.topline{gap:8px;padding:0 10px}.brand{font-size:12px;gap:6px}.brandmark{width:27px;height:27px}.tab{padding:0 10px;font-size:12px}.presence{display:none}.browserbar{padding:7px 9px;gap:4px}.toolbtn{width:31px}.browserbar .go{padding:8px 10px}.browserbar .address{padding:0 8px}main{padding:18px 14px 28px}.home{min-height:calc(100vh - 150px)}.desktop-center{padding:27px 12px}.desktop-icons{gap:2px}.desktop-icon{width:76px}.browser-actions .toolbtn{width:31px}.searchform{gap:3px}.searchform input{font-size:15px;padding:10px}.searchform button{padding:0 13px}.engine-select{width:108px;min-width:98px;padding:8px 4px;font-size:11px}.webframe{height:68vh;min-height:340px}.viewer-help{align-items:flex-start;flex-direction:column}.dock button{padding:5px 3px}.dock button span{font-size:17px}}
+:root {
+  color-scheme: dark;
+  --bg: #0b0e14;
+  --panel: rgba(20, 24, 32, 0.88);
+  --panel2: rgba(32, 38, 49, 0.9);
+  --line: rgba(255, 255, 255, 0.12);
+  --text: #f4f6f8;
+  --muted: #9aa3b2;
+  --mint: #83efc1;
+  --green: #30c98b;
+  --shelf-bg: rgba(16, 19, 26, 0.84);
+  --wall-tint: rgba(10, 15, 25, 0.28);
+}
+:root[data-theme="violet"] { --mint: #c5a5ff; --green: #9a6cff; }
+:root[data-theme="ocean"]  { --mint: #79dfff; --green: #398ee8; }
+:root[data-theme="sunset"] { --mint: #ffc18a; --green: #fa786b; }
+:root[data-theme="rose"]   { --mint: #ff9bd0; --green: #e45ba8; }
+
+:root[data-mode="light"] {
+  color-scheme: light;
+  --bg: #eef3f0;
+  --panel: rgba(255, 255, 255, 0.92);
+  --panel2: rgba(235, 241, 238, 0.95);
+  --line: rgba(15, 23, 42, 0.14);
+  --text: #141e18;
+  --muted: #526058;
+  --mint: #08754c;
+  --green: #108451;
+  --shelf-bg: rgba(245, 248, 246, 0.86);
+  --wall-tint: rgba(255, 255, 255, 0.12);
+}
+
+* { box-sizing: border-box; }
+html, body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--bg);
+  color: var(--text);
+  font: 15px/1.5 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
+  overflow-x: hidden;
+}
+button, input, select { font: inherit; }
+button, a { color: inherit; }
+button { cursor: pointer; }
+a { text-decoration: none; }
+
+/* Fullscreen Desktop Wallpaper Canvas */
+.app {
+  position: relative;
+  min-height: 100vh;
+  padding-bottom: 56px;
+  background-image:
+    linear-gradient(to bottom, var(--wall-tint) 0%, rgba(8, 12, 20, 0.22) 65%, rgba(8, 12, 20, 0.72) 100%),
+    url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=2070&q=85');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+}
+
+/* Browser Topbar: Hidden on Home Desktop, Visible in App Views */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 15;
+  background: var(--panel);
+  border-bottom: 1px solid var(--line);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  transition: transform 0.25s ease, opacity 0.25s ease;
+}
+body.is-home .topbar {
+  display: none;
+}
+
+.topline {
+  height: 50px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 0 18px;
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  white-space: nowrap;
+}
+.brandmark {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(145deg, var(--mint), var(--green));
+  color: #06140d;
+  font-size: 13px;
+  letter-spacing: 0;
+}
+.tabs {
+  display: flex;
+  align-self: stretch;
+  gap: 4px;
+  overflow-x: auto;
+  flex: 1;
+}
+.tab {
+  border: 0;
+  border-bottom: 2px solid transparent;
+  padding: 0 14px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 13.5px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.tab:hover, .tab.active {
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.05);
+}
+.tab.active {
+  border-bottom-color: var(--mint);
+}
+.presence {
+  font-size: 12px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+.presence:before {
+  content: "";
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  margin-right: 7px;
+  border-radius: 50%;
+  background: var(--mint);
+}
+
+.browserbar {
+  height: 50px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 16px;
+  border-top: 1px solid var(--line);
+}
+.toolbtn {
+  width: 34px;
+  height: 34px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 18px;
+  display: grid;
+  place-items: center;
+}
+.toolbtn:hover {
+  background: var(--panel2);
+  color: var(--text);
+}
+.address {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+  height: 36px;
+  padding: 0 12px;
+  border: 1px solid var(--line);
+  border-radius: 11px;
+  background: rgba(0, 0, 0, 0.25);
+}
+:root[data-mode="light"] .address { background: rgba(255, 255, 255, 0.85); }
+.address:focus-within {
+  border-color: var(--mint);
+}
+.address input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--text);
+  font-size: 13.5px;
+}
+.go {
+  border: 0;
+  border-radius: 8px;
+  background: var(--mint);
+  color: #06140d;
+  font-weight: 800;
+  font-size: 12.5px;
+  padding: 5px 12px;
+}
+.browser-actions {
+  display: flex;
+  gap: 4px;
+}
+.browser-actions .toolbtn {
+  border: 1px solid var(--line);
+  font-size: 15px;
+}
+
+/* Main Content Area */
+main {
+  width: min(1200px, 100%);
+  margin: 0 auto;
+  padding: 24px 24px 70px;
+}
+body.is-home main {
+  width: 100%;
+  max-width: none;
+  padding: 0;
+}
+.view { display: none; }
+.view.active { display: block; }
+
+/* ChromeOS-Style Desktop Home View */
+.home {
+  position: relative;
+  width: 100%;
+  height: calc(100vh - 48px);
+  overflow: hidden;
+  user-select: none;
+}
+
+.desktop-widgets {
+  position: absolute;
+  bottom: 24px;
+  left: 24px;
+  right: 32px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  pointer-events: none;
+}
+
+/* Bottom-Left Ctrl+K Launcher Pill */
+.launcher-hint {
+  pointer-events: auto;
+  background: rgba(20, 24, 32, 0.72);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  padding: 9px 16px;
+  border-radius: 999px;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.92);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.3);
+  transition: transform 0.15s ease, background 0.2s ease, border-color 0.2s ease;
+}
+.launcher-hint:hover {
+  background: rgba(30, 36, 48, 0.9);
+  border-color: var(--mint);
+  transform: translateY(-1px);
+}
+.kbd {
+  background: rgba(255, 255, 255, 0.16);
+  padding: 2px 6px;
+  border-radius: 5px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}
+
+/* Bottom-Right Clock & Stacked Date Widget */
+.clock-widget {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  color: #ffffff;
+  text-shadow: 0 4px 24px rgba(0, 0, 0, 0.5);
+}
+.time-group {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+.clock {
+  font-size: clamp(46px, 6vw, 66px);
+  font-weight: 700;
+  letter-spacing: -2px;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.time-ampm {
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  opacity: 0.95;
+}
+.clock-divider {
+  width: 2px;
+  height: 52px;
+  background: rgba(255, 255, 255, 0.65);
+  border-radius: 2px;
+}
+.date-group {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  line-height: 1.15;
+}
+.date-month {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.6px;
+  text-transform: uppercase;
+  opacity: 0.92;
+}
+.date-day-num {
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.1;
+}
+.date-weekday {
+  font-size: 13px;
+  font-weight: 500;
+  opacity: 0.9;
+}
+
+/* Glassmorphic Backdrop for Sub-Views (Search, YouTube, Games) */
+.subview-card {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  padding: 24px;
+  backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(22px);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.45);
+}
+
+.section-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 12px;
+  margin: 0 0 18px;
+}
+.section-title h2 { margin: 0; font-size: 24px; }
+.section-title p { margin: 4px 0 0; color: var(--muted); font-size: 13.5px; }
+
+.searchform {
+  width: 100%;
+  display: flex;
+  gap: 8px;
+  padding: 7px;
+  border: 1px solid var(--line);
+  border-radius: 15px;
+  background: rgba(0, 0, 0, 0.25);
+}
+:root[data-mode="light"] .searchform { background: rgba(255, 255, 255, 0.9); }
+.searchform input {
+  flex: 1;
+  min-width: 0;
+  padding: 10px 12px;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--text);
+  font-size: 15px;
+}
+.searchform button {
+  border: 0;
+  border-radius: 11px;
+  background: linear-gradient(135deg, var(--mint), var(--green));
+  color: #06140d;
+  font-weight: 800;
+  padding: 0 20px;
+}
+.engine-select {
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  border-radius: 11px;
+  background: var(--panel2);
+  color: var(--text);
+  font-size: 12.5px;
+  font-weight: 700;
+}
+
+.youtube-tools { max-width: 760px; margin: 10px auto; }
+.smallform { display: flex; gap: 8px; margin: 14px 0; }
+.smallform input {
+  flex: 1;
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.25);
+  color: var(--text);
+  padding: 11px 13px;
+}
+:root[data-mode="light"] .smallform input { background: #fff; }
+.smallform button, .secondary {
+  border: 1px solid color-mix(in srgb, var(--mint), transparent 55%);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--mint), transparent 85%);
+  color: var(--mint);
+  padding: 10px 15px;
+  font-weight: 700;
+}
+
+.viewer {
+  display: none;
+  margin: 18px auto 0;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--panel);
+  overflow: hidden;
+}
+.viewer.active { display: block; }
+.viewer-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 15px;
+  border-bottom: 1px solid var(--line);
+}
+.viewer-head strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.viewer-head span { font-size: 12px; color: var(--muted); }
+.webframe {
+  display: block;
+  width: 100%;
+  height: min(70vh, 820px);
+  min-height: 420px;
+  border: 0;
+  background: white;
+}
+.viewer-help {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--line);
+  background: rgba(0, 0, 0, 0.2);
+  color: var(--muted);
+  font-size: 12px;
+}
+.viewer-help a {
+  flex: none;
+  border: 1px solid color-mix(in srgb, var(--mint), transparent 45%);
+  border-radius: 9px;
+  background: color-mix(in srgb, var(--mint), transparent 85%);
+  color: var(--mint);
+  padding: 7px 11px;
+  font-weight: 750;
+}
+
+.games {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(175px, 1fr));
+  gap: 12px;
+}
+.game {
+  min-height: 106px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border: 1px solid var(--line);
+  border-radius: 15px;
+  background: rgba(255, 255, 255, 0.04);
+  padding: 15px;
+  transition: transform 0.15s ease, border-color 0.2s ease;
+}
+.game:hover {
+  border-color: var(--mint);
+  transform: translateY(-2px);
+}
+.game small { color: var(--muted); }
+.game b { font-size: 15.5px; }
+.game span { color: var(--mint); font-size: 12px; font-weight: 600; }
+
+/* Persistent ChromeOS Bottom Shelf / Taskbar */
+.shelf {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 48px;
+  z-index: 20;
+  background: var(--shelf-bg);
+  backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(22px);
+  border-top: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 12px;
+  user-select: none;
+}
+.shelf-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.launcher-circle-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  border: 0;
+  display: grid;
+  place-items: center;
+  transition: background 0.2s, transform 0.15s;
+}
+.launcher-circle-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.05);
+}
+.launcher-ring {
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  border: 2.5px solid var(--text);
+}
+
+.shelf-apps {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: 4px;
+}
+.shelf-icon {
+  position: relative;
+  width: 34px;
+  height: 34px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--text);
+  display: grid;
+  place-items: center;
+  font-size: 16px;
+  transition: background 0.15s, transform 0.15s;
+}
+.shelf-icon:hover {
+  background: rgba(255, 255, 255, 0.12);
+  transform: translateY(-2px);
+}
+.shelf-icon.active::after {
+  content: "";
+  position: absolute;
+  bottom: 2px;
+  width: 12px;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--mint);
+}
+
+.shelf-center-pill {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 36px;
+  height: 4px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.35);
+  pointer-events: none;
+}
+
+.system-tray {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid transparent;
+  padding: 5px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  transition: background 0.2s, border-color 0.2s;
+}
+.system-tray:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: var(--line);
+}
+.tray-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+  font-weight: 500;
+}
+
+/* Ctrl + K Command Launcher Modal */
+.launcher-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  background: rgba(6, 9, 15, 0.58);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+.launcher-backdrop.open { display: flex; }
+
+.launcher-modal {
+  width: min(580px, 100%);
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  padding: 20px;
+  box-shadow: 0 28px 80px rgba(0, 0, 0, 0.65);
+  animation: modalIn 0.16s ease-out;
+}
+@keyframes modalIn {
+  from { opacity: 0; transform: scale(0.96) translateY(8px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+.launcher-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  color: var(--mint);
+}
+.launcher-search-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.launcher-search-row input {
+  flex: 1;
+  min-width: 0;
+  background: rgba(0, 0, 0, 0.28);
+  border: 1px solid var(--line);
+  border-radius: 13px;
+  padding: 11px 14px;
+  color: var(--text);
+  font-size: 14.5px;
+  outline: none;
+}
+:root[data-mode="light"] .launcher-search-row input { background: #fff; }
+.launcher-search-row input:focus { border-color: var(--mint); }
+.launcher-search-row button {
+  border: 0;
+  border-radius: 13px;
+  background: linear-gradient(135deg, var(--mint), var(--green));
+  color: #06140d;
+  font-weight: 800;
+  padding: 0 18px;
+}
+
+.launcher-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+.launcher-tile {
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.04);
+  padding: 12px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  text-align: center;
+  transition: background 0.15s, border-color 0.15s, transform 0.15s;
+}
+.launcher-tile:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--mint);
+  transform: translateY(-2px);
+}
+.launcher-tile span {
+  font-size: 20px;
+  color: var(--mint);
+}
+
+/* Settings Drawer */
+.settings-backdrop {
+  position: fixed;
+  z-index: 40;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+}
+.settings-backdrop.open { opacity: 1; pointer-events: auto; }
+.settings-panel {
+  position: fixed;
+  z-index: 41;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: min(390px, 92vw);
+  padding: 22px;
+  background: var(--panel);
+  backdrop-filter: blur(24px);
+  border-left: 1px solid var(--line);
+  box-shadow: -20px 0 70px rgba(0, 0, 0, 0.6);
+  transform: translateX(105%);
+  transition: transform 0.24s;
+  overflow: auto;
+}
+.settings-panel.open { transform: translateX(0); }
+.settings-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
+.settings-head h2 { margin: 0; }
+.settings-panel h3 { margin: 20px 0 10px; font-size: 14px; color: var(--mint); letter-spacing: 0.04em; text-transform: uppercase; }
+.theme-options { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+.theme-choice {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--panel2);
+  color: var(--text);
+  padding: 10px;
+  text-align: left;
+}
+.theme-choice:before {
+  content: "";
+  display: inline-block;
+  width: 11px;
+  height: 11px;
+  margin-right: 8px;
+  border-radius: 50%;
+  background: var(--theme-swatch);
+}
+.theme-choice[aria-pressed="true"] { border-color: var(--mint); }
+.theme-choice[data-theme-choice="mint"]   { --theme-swatch: #83efc1; }
+.theme-choice[data-theme-choice="violet"] { --theme-swatch: #c5a5ff; }
+.theme-choice[data-theme-choice="ocean"]  { --theme-swatch: #79dfff; }
+.theme-choice[data-theme-choice="sunset"] { --theme-swatch: #ffc18a; }
+.theme-choice[data-theme-choice="rose"]   { --theme-swatch: #ff9bd0; }
+
+.upload-label { display: block; margin: 10px 0 6px; color: var(--muted); font-size: 13px; }
+.file-input { width: 100%; border: 1px dashed var(--line); border-radius: 12px; background: rgba(0, 0, 0, 0.2); padding: 12px; color: var(--muted); }
+.file-note { font-size: 12px; color: var(--muted); }
+.upload-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 12px; }
+.upload-item { min-width: 0; padding: 7px; border: 1px solid var(--line); border-radius: 10px; background: rgba(0, 0, 0, 0.2); font-size: 11px; overflow-wrap: anywhere; }
+.upload-item img { display: block; width: 100%; height: 90px; object-fit: cover; border-radius: 7px; margin-bottom: 6px; }
+.upload-item a { color: var(--mint); }
+
+.assistant-note { border: 1px solid var(--line); border-radius: 12px; background: rgba(0, 0, 0, 0.2); padding: 12px; color: var(--muted); font-size: 12px; }
+.notice { margin: 18px auto 0; border: 1px solid var(--line); background: rgba(0, 0, 0, 0.25); color: var(--muted); border-radius: 12px; padding: 12px 14px; font-size: 12px; }
+.appearance-switch { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+.appearance-choice { border: 1px solid var(--line); border-radius: 10px; background: var(--panel2); color: var(--text); padding: 10px; font-weight: 700; }
+.appearance-choice[aria-pressed="true"] { border-color: var(--mint); color: var(--mint); }
+.proxy-endpoint-input { width: 100%; padding: 10px 12px; border: 1px solid var(--line); border-radius: 11px; background: var(--panel2); color: var(--text); }
+.proxy-actions { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 8px; }
+
+.fullscreen .topbar { position: relative; }
+.fullscreen .webframe { height: calc(100vh - 190px); max-height: none; }
+:focus-visible { outline: 2px solid var(--mint); outline-offset: 2px; }
+
+@media (max-width: 720px) {
+  .desktop-widgets {
+    flex-direction: column-reverse;
+    align-items: flex-start;
+    left: 16px;
+    right: 16px;
+    gap: 16px;
+  }
+  .launcher-grid { grid-template-columns: repeat(3, 1fr); }
+  .shelf-center-pill, .tray-meta { display: none; }
+}
 </style>
 </head>
-<body>
+<body class="is-home">
 <div class="app">
- <header class="topbar">
-  <div class="topline">
-   <a class="brand" href="#" data-page="home"><span class="brandmark">N</span>NEXUS</a>
-   <nav class="tabs" aria-label="NEXUS sections">
-    <button class="tab active" data-page="home">Home</button>
-    <button class="tab" data-page="search">Search</button>
-    <button class="tab" data-page="youtube">YouTube</button>
-    <button class="tab" data-page="games">Games</button>
-   </nav>
-   <span class="presence">NEXUS</span>
-  </div>
-  <div class="browserbar">
-   <button class="toolbtn" id="backButton" aria-label="Go back" title="Go back">‹</button>
-   <button class="toolbtn" id="reloadButton" aria-label="Reload page" title="Reload">⟳</button>
-   <button class="toolbtn" data-page="home" aria-label="Home" title="Home">⌂</button>
-   <form class="address" id="addressForm" role="search">
-    <span aria-hidden="true">⌕</span>
-    <input id="addressInput" type="text" placeholder="Search Google or enter a website address" autocomplete="off" aria-label="Search Google or enter a website address">
-    <button class="go" type="submit">Go</button>
-   </form>
-   <div class="browser-actions">
-    <button class="toolbtn" id="settingsButton" aria-label="Open settings" title="Settings">⚙</button>
-    <button class="toolbtn" id="fullscreenButton" aria-label="Enter fullscreen" title="Fullscreen">⛶</button>
-   </div>
-  </div>
- </header>
- <main>
-  <section class="view active" id="homeView">
-   <div class="home">
-    <div class="clock" id="clock" aria-label="Current time">--:--</div>
-    <div class="desktop-center">
-     <div class="eyebrow">YOUR WEB, IN ONE PLACE</div>
-     <h1><span class="gradient">NEXUS</span></h1>
-     <p class="subtitle" id="dateText">Loading date…</p>
-     <form class="searchform" id="homeForm" role="search">
-      <select class="engine-select" id="homeEngineSelect" aria-label="Search engine">
-       <option value="duckduckgo">DuckDuckGo</option><option value="brave">Brave</option><option value="bing">Bing</option><option value="firefox">Firefox</option><option value="operagx">Opera GX</option><option value="google">Google</option>
-      </select>
-      <input id="homeQuery" type="search" placeholder="Search anything or enter a website..." aria-label="Search anything or enter a website" required>
-      <button type="submit">Search</button>
-     </form>
-     <div class="desktop-icons">
-      <button class="desktop-icon" data-page="search"><span>⌕</span>Web Search</button>
-      <button class="desktop-icon" data-page="youtube"><span>▶</span>YouTube</button>
-      <button class="desktop-icon" data-action="roblox"><span>▧</span>Roblox</button>
-      <button class="desktop-icon" data-page="games"><span>▦</span>Games</button>
-      <button class="desktop-icon" data-action="github"><span>⌘</span>GitHub</button>
-      <a class="desktop-icon" href="https://github.com/ryytrr6uti123-dev/My-html-/archive/refs/heads/main.zip" aria-label="Download the NEXUS project as a ZIP" title="Download the latest GitHub version as a ZIP"><span>↓</span>Download ZIP</a>
-      <button class="desktop-icon" data-action="assistant"><span>✦</span>AI Assistant</button>
-      <button class="desktop-icon" data-action="files"><span>▤</span>My Files</button>
-      <button class="desktop-icon" data-action="settings"><span>⚙</span>Settings</button>
-     </div>
+  <!-- Adaptive Top Browser Bar (Appears in Search, YouTube, Games) -->
+  <header class="topbar">
+    <div class="topline">
+      <a class="brand" href="#" data-page="home"><span class="brandmark">N</span>NEXUS</a>
+      <nav class="tabs" aria-label="NEXUS sections">
+        <button class="tab active" data-page="home">Desktop</button>
+        <button class="tab" data-page="search">Search</button>
+        <button class="tab" data-page="youtube">YouTube</button>
+        <button class="tab" data-page="games">Games</button>
+      </nav>
+      <span class="presence">NEXUS OS</span>
     </div>
-    <p class="helper">Search Google, watch YouTube videos, open games and customize your NEXUS desktop.</p>
-   </div>
-  </section>
-  <section class="view" id="searchView">
-   <div class="section-title"><div><h2>Search the web</h2><p>Search results open inside the NEXUS page.</p></div></div>
-   <form class="searchform" id="webSearchForm" role="search">
-    <input id="webQuery" type="search" placeholder="What are you looking for?" aria-label="Search the web" required>
-    <button type="submit">Search</button>
-   </form>
-   <section class="viewer" id="viewer" aria-label="NEXUS website viewer">
-    <div class="viewer-head"><strong id="viewerTitle">Web page</strong><span id="viewerStatus" role="status">Ready</span></div>
-    <div class="viewer-help"><span id="viewerHelp">If this page is blank, Chrome may block embedding. Open it in this tab instead.</span><a id="openCurrent" href="#" data-current-link>Open in this tab</a></div>
-    <iframe class="webframe" id="webFrame" title="NEXUS web page" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
-   </section>
-  </section>
-  <section class="view" id="youtubeView">
-   <div class="section-title"><div><h2>YouTube in NEXUS</h2><p>Find videos or play a YouTube video without leaving this page.</p></div></div>
-   <div class="youtube-tools">
-    <form class="smallform" id="youtubeSearchForm" role="search">
-     <input id="youtubeQuery" type="search" placeholder="Search YouTube videos..." aria-label="Search YouTube videos" required>
-     <button type="submit">Find videos</button>
-    </form>
-    <form class="smallform" id="watchForm">
-     <input id="videoInput" type="text" placeholder="Paste a YouTube link or video ID to watch" aria-label="YouTube video link or ID">
-     <button type="submit">Watch here</button>
-    </form>
-    <div class="notice">Search results show YouTube videos through Google. Paste a video link or ID to play it here. YouTube blocks its full search page from being embedded in other sites.</div>
-   </div>
-  </section>
-  <section class="view" id="gamesView">
-   <div class="section-title"><div><h2>Games</h2><p>Open a game inside NEXUS when its website allows it.</p></div></div>
-   <div class="games">
-    <a class="game" href="https://now.gg/apps/roblox-corporation/5349/roblox.html"><b>Roblox on now.gg</b><small>Cloud game</small><span>Open in NEXUS ↗</span></a>
-    <a class="game" href="https://play2048.co/"><b>2048</b><small>Puzzle</small><span>Play here ↗</span></a>
-    <a class="game" href="https://adarkroom.doublespeakgames.com/"><b>A Dark Room</b><small>Adventure</small><span>Play here ↗</span></a>
-    <a class="game" href="https://orteil.dashnet.org/cookieclicker/"><b>Cookie Clicker</b><small>Idle</small><span>Play here ↗</span></a>
-    <a class="game" href="https://lichess.org/"><b>Lichess</b><small>Board</small><span>Play here ↗</span></a>
-    <a class="game" href="https://hex.frvr.com/"><b>Hex FRVR</b><small>Puzzle</small><span>Play here ↗</span></a>
-    <a class="game" href="https://slither.io/"><b>Slither.io</b><small>Arcade</small><span>Play here ↗</span></a>
-    <a class="game" href="https://agar.io/"><b>Agar.io</b><small>Arcade</small><span>Play here ↗</span></a>
-    <a class="game" href="https://www.coolmathgames.com/0-run-3"><b>Run 3</b><small>Platformer</small><span>Play here ↗</span></a>
-   </div>
-  </section>
- </main>
- <div class="dock-zone" id="dockZone" aria-hidden="true"></div>
- <nav class="dock" aria-label="NEXUS navigation">
-  <button class="active" data-page="home"><span>⌂</span>Home</button>
-  <button data-page="search"><span>⌕</span>Search</button>
-  <button data-page="youtube"><span>▶</span>YouTube</button>
-  <button data-page="games"><span>▦</span>Games</button>
-  <button data-action="settings"><span>⚙</span>Settings</button>
- </nav>
+    <div class="browserbar">
+      <button class="toolbtn" id="backButton" aria-label="Go back" title="Go back">‹</button>
+      <button class="toolbtn" id="reloadButton" aria-label="Reload page" title="Reload">⟳</button>
+      <button class="toolbtn" data-page="home" aria-label="Home" title="Desktop">⌂</button>
+      <form class="address" id="addressForm" role="search">
+        <span aria-hidden="true">⌕</span>
+        <input id="addressInput" type="text" placeholder="Search Google or enter a website address" autocomplete="off" aria-label="Search Google or enter a website address">
+        <button class="go" type="submit">Go</button>
+      </form>
+      <div class="browser-actions">
+        <button class="toolbtn" id="settingsButton" aria-label="Open settings" title="Settings">⚙</button>
+        <button class="toolbtn" id="fullscreenButton" aria-label="Enter fullscreen" title="Fullscreen">⛶</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- ChromeOS-Style Desktop Home View -->
+    <section class="view active" id="homeView">
+      <div class="home">
+        <div class="desktop-widgets">
+          <button class="launcher-hint" id="openLauncherHint" type="button">
+            press <span class="kbd">ctrl</span> <span class="kbd">k</span> or click here to open the launcher
+          </button>
+
+          <div class="clock-widget" aria-label="Current time and date">
+            <div class="time-group">
+              <span class="clock" id="clock">07:10</span>
+              <span class="time-ampm" id="clockAmPm">PM</span>
+            </div>
+            <div class="clock-divider"></div>
+            <div class="date-group">
+              <span class="date-month" id="dateMonth">NOVEMBER</span>
+              <span class="date-day-num" id="dateDay">22</span>
+              <span class="date-weekday" id="dateWeekday">Sunday</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Web Search & Embedded Viewer -->
+    <section class="view" id="searchView">
+      <div class="subview-card">
+        <div class="section-title">
+          <div>
+            <h2>Search the web</h2>
+            <p>Search results open inside the NEXUS page.</p>
+          </div>
+        </div>
+        <form class="searchform" id="webSearchForm" role="search">
+          <input id="webQuery" type="search" placeholder="What are you looking for?" aria-label="Search the web" required>
+          <button type="submit">Search</button>
+        </form>
+        <section class="viewer" id="viewer" aria-label="NEXUS website viewer">
+          <div class="viewer-head"><strong id="viewerTitle">Web page</strong><span id="viewerStatus" role="status">Ready</span></div>
+          <div class="viewer-help"><span id="viewerHelp">If this page is blank, Chrome may block embedding. Open it in this tab instead.</span><a id="openCurrent" href="#" data-current-link>Open in this tab</a></div>
+          <iframe class="webframe" id="webFrame" title="NEXUS web page" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
+        </section>
+      </div>
+    </section>
+
+    <!-- YouTube View -->
+    <section class="view" id="youtubeView">
+      <div class="subview-card">
+        <div class="section-title">
+          <div>
+            <h2>YouTube in NEXUS</h2>
+            <p>Find videos or play a YouTube video without leaving this page.</p>
+          </div>
+        </div>
+        <div class="youtube-tools">
+          <form class="smallform" id="youtubeSearchForm" role="search">
+            <input id="youtubeQuery" type="search" placeholder="Search YouTube videos..." aria-label="Search YouTube videos" required>
+            <button type="submit">Find videos</button>
+          </form>
+          <form class="smallform" id="watchForm">
+            <input id="videoInput" type="text" placeholder="Paste a YouTube link or video ID to watch" aria-label="YouTube video link or ID">
+            <button type="submit">Watch here</button>
+          </form>
+          <div class="notice">Search results show YouTube videos through Google. Paste a video link or ID to play it here. YouTube blocks its full search page from being embedded in other sites.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Games View -->
+    <section class="view" id="gamesView">
+      <div class="subview-card">
+        <div class="section-title">
+          <div>
+            <h2>Games</h2>
+            <p>Open a game inside NEXUS when its website allows it.</p>
+          </div>
+        </div>
+        <div class="games">
+          <a class="game" href="https://now.gg/apps/roblox-corporation/5349/roblox.html"><b>Roblox on now.gg</b><small>Cloud game</small><span>Open in NEXUS ↗</span></a>
+          <a class="game" href="https://play2048.co/"><b>2048</b><small>Puzzle</small><span>Play here ↗</span></a>
+          <a class="game" href="https://adarkroom.doublespeakgames.com/"><b>A Dark Room</b><small>Adventure</small><span>Play here ↗</span></a>
+          <a class="game" href="https://orteil.dashnet.org/cookieclicker/"><b>Cookie Clicker</b><small>Idle</small><span>Play here ↗</span></a>
+          <a class="game" href="https://lichess.org/"><b>Lichess</b><small>Board</small><span>Play here ↗</span></a>
+          <a class="game" href="https://hex.frvr.com/"><b>Hex FRVR</b><small>Puzzle</small><span>Play here ↗</span></a>
+          <a class="game" href="https://slither.io/"><b>Slither.io</b><small>Arcade</small><span>Play here ↗</span></a>
+          <a class="game" href="https://agar.io/"><b>Agar.io</b><small>Arcade</small><span>Play here ↗</span></a>
+          <a class="game" href="https://www.coolmathgames.com/0-run-3"><b>Run 3</b><small>Platformer</small><span>Play here ↗</span></a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Persistent Bottom ChromeOS-Style Shelf -->
+  <footer class="shelf" aria-label="NEXUS taskbar">
+    <div class="shelf-left">
+      <button class="launcher-circle-btn" id="shelfLauncherBtn" title="Open Launcher (Ctrl + K)" aria-label="Open Launcher">
+        <div class="launcher-ring"></div>
+      </button>
+
+      <div class="shelf-apps">
+        <button class="shelf-icon active" data-page="home" title="Desktop">⌂</button>
+        <button class="shelf-icon" data-page="search" title="Web Search">⌕</button>
+        <button class="shelf-icon" data-page="youtube" title="YouTube">▶</button>
+        <button class="shelf-icon" data-page="games" title="Games">▦</button>
+        <button class="shelf-icon" data-action="roblox" title="Roblox">▧</button>
+        <button class="shelf-icon" data-action="github" title="GitHub">⌘</button>
+        <button class="shelf-icon" data-action="assistant" title="AI Assistant">✦</button>
+        <button class="shelf-icon" data-action="files" title="My Files">▤</button>
+      </div>
+    </div>
+
+    <div class="shelf-center-pill" aria-hidden="true"></div>
+
+    <button class="system-tray" data-action="settings" title="Open Settings">
+      <span class="tray-meta">
+        <span>Wi-Fi</span>
+        <span>100%</span>
+      </span>
+      <span id="trayClock">7:10 PM</span>
+    </button>
+  </footer>
 </div>
+
+<!-- Ctrl + K Command Launcher Modal -->
+<div class="launcher-backdrop" id="launcherBackdrop" role="dialog" aria-modal="true" aria-label="NEXUS Launcher">
+  <div class="launcher-modal" id="launcherModal">
+    <div class="launcher-header">
+      <span>NEXUS LAUNCHER</span>
+      <span>ESC TO CLOSE</span>
+    </div>
+    <form class="launcher-search-row" id="homeForm" role="search">
+      <select class="engine-select" id="homeEngineSelect" aria-label="Search engine">
+        <option value="duckduckgo">DuckDuckGo</option>
+        <option value="brave">Brave</option>
+        <option value="bing">Bing</option>
+        <option value="firefox">Firefox</option>
+        <option value="operagx">Opera GX</option>
+        <option value="google">Google</option>
+      </select>
+      <input id="homeQuery" type="search" placeholder="Search anything or enter a website..." aria-label="Search anything or enter a website" autocomplete="off" required>
+      <button type="submit">Go</button>
+    </form>
+
+    <div class="launcher-grid">
+      <button class="launcher-tile" data-page="search"><span>⌕</span>Web Search</button>
+      <button class="launcher-tile" data-page="youtube"><span>▶</span>YouTube</button>
+      <button class="launcher-tile" data-action="roblox"><span>▧</span>Roblox</button>
+      <button class="launcher-tile" data-page="games"><span>▦</span>Games</button>
+      <button class="launcher-tile" data-action="github"><span>⌘</span>GitHub</button>
+      <a class="launcher-tile" href="https://github.com/ryytrr6uti123-dev/My-html-/archive/refs/heads/main.zip" title="Download the latest GitHub version as a ZIP"><span>↓</span>Download ZIP</a>
+      <button class="launcher-tile" data-action="assistant"><span>✦</span>AI Assistant</button>
+      <button class="launcher-tile" data-action="files"><span>▤</span>My Files</button>
+      <button class="launcher-tile" data-action="settings"><span>⚙</span>Settings</button>
+    </div>
+  </div>
+</div>
+
+<!-- Settings Drawer -->
 <div class="settings-backdrop" id="settingsBackdrop"></div>
 <aside class="settings-panel" id="settingsPanel" role="dialog" aria-modal="true" aria-label="NEXUS settings" aria-hidden="true">
- <div class="settings-head"><h2>Settings</h2><button class="toolbtn" id="closeSettings" aria-label="Close settings">×</button></div>
- <h3>Search engine</h3>
- <select class="engine-select" id="settingsEngineSelect" aria-label="Default search engine" style="width:100%">
-  <option value="duckduckgo">DuckDuckGo</option><option value="brave">Brave</option><option value="bing">Bing</option><option value="firefox">Firefox</option><option value="operagx">Opera GX</option><option value="google">Google</option>
- </select>
- <p class="file-note">Firefox and Opera GX are browsers; these choices use Google Search.</p>
- <h3>Proxy endpoint</h3>
- <label class="upload-label" for="proxyEndpointInput">Trusted proxy URL</label>
- <input class="proxy-endpoint-input" id="proxyEndpointInput" type="url" placeholder="https://proxy.example/proxy" autocomplete="url">
- <div class="proxy-actions">
-  <button class="secondary" id="applyProxyEndpoint" type="button">Use endpoint</button>
-  <button class="secondary" id="useBuiltInProxy" type="button">Built-in</button>
- </div>
- <p class="file-note">Remote endpoints must use HTTPS and accept the destination as a `url` query parameter. The endpoint receives the addresses you open.</p>
- <p class="file-note" id="proxyEndpointStatus" role="status">Using built-in proxy.</p>
- <h3>Appearance</h3>
- <div class="appearance-switch" role="group" aria-label="Choose light or dark mode">
-  <button class="appearance-choice" id="darkModeButton" aria-pressed="true">Dark</button>
-  <button class="appearance-choice" id="lightModeButton" aria-pressed="false">Light</button>
- </div>
- <h3>Desktop theme</h3>
- <div class="theme-options" role="group" aria-label="Choose a color theme">
-  <button class="theme-choice" data-theme-choice="mint" aria-pressed="true">Mint</button>
-  <button class="theme-choice" data-theme-choice="violet" aria-pressed="false">Violet</button>
-  <button class="theme-choice" data-theme-choice="ocean" aria-pressed="false">Ocean</button>
-  <button class="theme-choice" data-theme-choice="sunset" aria-pressed="false">Sunset</button>
-  <button class="theme-choice" data-theme-choice="rose" aria-pressed="false">Rose</button>
- </div>
- <h3>My files</h3>
- <label class="upload-label" for="fileInput">Choose photos or files to preview on this device</label>
- <input class="file-input" id="fileInput" type="file" multiple accept="image/*,video/*,audio/*,.pdf,.txt">
- <p class="file-note">Files stay in this browser session; this single HTML page has no cloud storage or unlimited upload quota. Large files use your device's browser memory/storage.</p>
- <div class="upload-list" id="uploadList" aria-live="polite"></div>
- <h3>AI assistant</h3>
- <div class="assistant-note">Open Gemini in the NEXUS viewer. A live AI assistant or private file analysis needs an AI service and account/API setup.</div>
- <button class="secondary" id="openAssistant" style="margin-top:10px">Open Gemini</button>
+  <div class="settings-head"><h2>Settings</h2><button class="toolbtn" id="closeSettings" aria-label="Close settings">×</button></div>
+  <h3>Search engine</h3>
+  <select class="engine-select" id="settingsEngineSelect" aria-label="Default search engine" style="width:100%">
+    <option value="duckduckgo">DuckDuckGo</option>
+    <option value="brave">Brave</option>
+    <option value="bing">Bing</option>
+    <option value="firefox">Firefox</option>
+    <option value="operagx">Opera GX</option>
+    <option value="google">Google</option>
+  </select>
+  <p class="file-note">Firefox and Opera GX are browsers; these choices use Google Search.</p>
+
+  <h3>Proxy endpoint</h3>
+  <label class="upload-label" for="proxyEndpointInput">Trusted proxy URL</label>
+  <input class="proxy-endpoint-input" id="proxyEndpointInput" type="url" placeholder="https://proxy.example/proxy" autocomplete="url">
+  <div class="proxy-actions">
+    <button class="secondary" id="applyProxyEndpoint" type="button">Use endpoint</button>
+    <button class="secondary" id="useBuiltInProxy" type="button">Built-in</button>
+  </div>
+  <p class="file-note">Remote endpoints must use HTTPS and accept the destination as a `url` query parameter. The endpoint receives the addresses you open.</p>
+  <p class="file-note" id="proxyEndpointStatus" role="status">Using built-in proxy.</p>
+
+  <h3>Appearance</h3>
+  <div class="appearance-switch" role="group" aria-label="Choose light or dark mode">
+    <button class="appearance-choice" id="darkModeButton" aria-pressed="true">Dark</button>
+    <button class="appearance-choice" id="lightModeButton" aria-pressed="false">Light</button>
+  </div>
+
+  <h3>Desktop theme</h3>
+  <div class="theme-options" role="group" aria-label="Choose a color theme">
+    <button class="theme-choice" data-theme-choice="mint" aria-pressed="true">Mint</button>
+    <button class="theme-choice" data-theme-choice="violet" aria-pressed="false">Violet</button>
+    <button class="theme-choice" data-theme-choice="ocean" aria-pressed="false">Ocean</button>
+    <button class="theme-choice" data-theme-choice="sunset" aria-pressed="false">Sunset</button>
+    <button class="theme-choice" data-theme-choice="rose" aria-pressed="false">Rose</button>
+  </div>
+
+  <h3>My files</h3>
+  <label class="upload-label" for="fileInput">Choose photos or files to preview on this device</label>
+  <input class="file-input" id="fileInput" type="file" multiple accept="image/*,video/*,audio/*,.pdf,.txt">
+  <p class="file-note">Files stay in this browser session; this single HTML page has no cloud storage or unlimited upload quota. Large files use your device's browser memory/storage.</p>
+  <div class="upload-list" id="uploadList" aria-live="polite"></div>
+
+  <h3>AI assistant</h3>
+  <div class="assistant-note">Open Gemini in the NEXUS viewer. A live AI assistant or private file analysis needs an AI service and account/API setup.</div>
+  <button class="secondary" id="openAssistant" style="margin-top:10px">Open Gemini</button>
 </aside>
+
 <script>
-const pages={home:document.getElementById("homeView"),search:document.getElementById("searchView"),youtube:document.getElementById("youtubeView"),games:document.getElementById("gamesView")};
-const viewer=document.getElementById("viewer"),frame=document.getElementById("webFrame"),addressInput=document.getElementById("addressInput"),viewerTitle=document.getElementById("viewerTitle"),viewerStatus=document.getElementById("viewerStatus"),openCurrent=document.getElementById("openCurrent");
-const searchEngines={duckduckgo:{label:"DuckDuckGo",url:"https://html.duckduckgo.com/html/"},brave:{label:"Brave Search",url:"https://search.brave.com/search"},bing:{label:"Bing",url:"https://www.bing.com/search"},google:{label:"Google",url:"https://www.google.com/search"},firefox:{label:"Firefox (Google)",url:"https://www.google.com/search"},operagx:{label:"Opera GX (Google)",url:"https://www.google.com/search"}};
-const searchProxyReady=fetch("/healthz",{cache:"no-store"}).then(response=>response.ok).catch(()=>false);
-let trustedProxyEndpoint="";
-try{
-  trustedProxyEndpoint=localStorage.getItem("nexus-proxy-endpoint")||"";
-  document.getElementById("proxyEndpointInput").value=trustedProxyEndpoint;
-  if(trustedProxyEndpoint)document.getElementById("proxyEndpointStatus").textContent=`Using ${new URL(trustedProxyEndpoint).host}.`;
-}catch{}
-let lastUrl="",historyStack=[];
-function showPage(name){
-  if(!pages[name])return;
-  for(const [key,page] of Object.entries(pages))page.classList.toggle("active",key===name);
-  document.querySelectorAll("[data-page]").forEach(button=>button.classList.toggle("active",button.dataset.page===name));
-  if(name==="search")document.getElementById("webQuery").focus();
-  if(name==="youtube")document.getElementById("youtubeQuery").focus();
+const pages = {
+  home: document.getElementById("homeView"),
+  search: document.getElementById("searchView"),
+  youtube: document.getElementById("youtubeView"),
+  games: document.getElementById("gamesView")
+};
+const viewer = document.getElementById("viewer"),
+      frame = document.getElementById("webFrame"),
+      addressInput = document.getElementById("addressInput"),
+      viewerTitle = document.getElementById("viewerTitle"),
+      viewerStatus = document.getElementById("viewerStatus"),
+      openCurrent = document.getElementById("openCurrent");
+
+const searchEngines = {
+  duckduckgo: { label: "DuckDuckGo", url: "https://html.duckduckgo.com/html/" },
+  brave: { label: "Brave Search", url: "https://search.brave.com/search" },
+  bing: { label: "Bing", url: "https://www.bing.com/search" },
+  google: { label: "Google", url: "https://www.google.com/search" },
+  firefox: { label: "Firefox (Google)", url: "https://www.google.com/search" },
+  operagx: { label: "Opera GX (Google)", url: "https://www.google.com/search" }
+};
+
+const searchProxyReady = fetch("/healthz", { cache: "no-store" }).then(r => r.ok).catch(() => false);
+let trustedProxyEndpoint = "";
+try {
+  trustedProxyEndpoint = localStorage.getItem("nexus-proxy-endpoint") || "";
+  document.getElementById("proxyEndpointInput").value = trustedProxyEndpoint;
+  if (trustedProxyEndpoint) {
+    document.getElementById("proxyEndpointStatus").textContent = `Using ${new URL(trustedProxyEndpoint).host}.`;
+  }
+} catch {}
+
+let lastUrl = "", historyStack = [];
+
+/* Launcher Modal Controls */
+const launcherBackdrop = document.getElementById("launcherBackdrop");
+const homeQueryInput = document.getElementById("homeQuery");
+
+function toggleLauncher(force) {
+  const isOpen = typeof force === "boolean" ? force : !launcherBackdrop.classList.contains("open");
+  launcherBackdrop.classList.toggle("open", isOpen);
+  if (isOpen) {
+    setTimeout(() => homeQueryInput.focus(), 25);
+  }
 }
-function parsedVideoId(value){
-  const text=value.trim();
-  if(/^[\w-]{11}$/.test(text))return text;
+
+document.getElementById("openLauncherHint").addEventListener("click", () => toggleLauncher(true));
+document.getElementById("shelfLauncherBtn").addEventListener("click", () => toggleLauncher());
+launcherBackdrop.addEventListener("click", (e) => {
+  if (e.target === launcherBackdrop) toggleLauncher(false);
+});
+
+function showPage(name) {
+  if (!pages[name]) return;
+  toggleLauncher(false);
+  document.body.classList.toggle("is-home", name === "home");
+  for (const [key, page] of Object.entries(pages)) {
+    page.classList.toggle("active", key === name);
+  }
+  document.querySelectorAll("[data-page]").forEach(btn => {
+    btn.classList.toggle("active", btn.dataset.page === name);
+  });
+  if (name === "search") document.getElementById("webQuery").focus();
+  if (name === "youtube") document.getElementById("youtubeQuery").focus();
+}
+
+function parsedVideoId(value) {
+  const text = value.trim();
+  if (/^[\w-]{11}$/.test(text)) return text;
   let url;
-  try{url=new URL(/^https?:\/\//i.test(text)?text:`https://${text}`)}catch{return null}
-  const host=url.hostname.replace(/^www\./,"");
-  if(host==="youtu.be")return url.pathname.split("/").filter(Boolean)[0]||null;
-  if(host==="youtube.com"||host.endsWith(".youtube.com"))return url.searchParams.get("v")||url.pathname.match(/^\/(?:embed|shorts|live)\/([^/?]+)/)?.[1]||null;
-  return null;
-}
-function normalizeAddress(value){
-  const text=value.trim();
-  if(!text)return null;
-  if(/^(https?:\/\/|www\.)/i.test(text)||/^[\w-]+(?:\.[\w-]+)+(?:[/:?#].*)?$/i.test(text)){
-    try{return new URL(/^https?:\/\//i.test(text)?text:`https://${text}`)}catch{return null}
+  try { url = new URL(/^https?:\/\//i.test(text) ? text : `https://${text}`); } catch { return null; }
+  const host = url.hostname.replace(/^www\./, "");
+  if (host === "youtu.be") return url.pathname.split("/").filter(Boolean)[0] || null;
+  if (host === "youtube.com" || host.endsWith(".youtube.com")) {
+    return url.searchParams.get("v") || url.pathname.match(/^\/(?:embed|shorts|live)\/([^/?]+)/)?.[1] || null;
   }
   return null;
 }
-function proxyUrlFor(destination){
-  const endpoint=trustedProxyEndpoint?new URL(trustedProxyEndpoint):new URL("/proxy",location.href);
-  endpoint.searchParams.set("url",destination.href);
+
+function normalizeAddress(value) {
+  const text = value.trim();
+  if (!text) return null;
+  if (/^(https?:\/\/|www\.)/i.test(text) || /^[\w-]+(?:\.[\w-]+)+(?:[/:?#].*)?$/i.test(text)) {
+    try { return new URL(/^https?:\/\//i.test(text) ? text : `https://${text}`); } catch { return null; }
+  }
+  return null;
+}
+
+function proxyUrlFor(destination) {
+  const endpoint = trustedProxyEndpoint ? new URL(trustedProxyEndpoint) : new URL("/proxy", location.href);
+  endpoint.searchParams.set("url", destination.href);
   return endpoint.href;
 }
-function openPage(destination,title,record=true){
+
+function openPage(destination, title, record = true) {
   let url;
-  try{url=new URL(destination)}catch{viewerStatus.textContent="That address is not valid.";return}
-  if(!["http:","https:"].includes(url.protocol)){viewerStatus.textContent="Only website addresses can be opened.";return}
-  const videoId=parsedVideoId(url.href);
-  const youtubeHost=url.hostname==="youtu.be"||url.hostname==="youtube.com"||url.hostname.endsWith(".youtube.com");
-  if(youtubeHost&&!videoId){
-    const query=url.searchParams.get("search_query");
-    if(query)document.getElementById("youtubeQuery").value=query;
+  try { url = new URL(destination); } catch { viewerStatus.textContent = "That address is not valid."; return; }
+  if (!["http:", "https:"].includes(url.protocol)) { viewerStatus.textContent = "Only website addresses can be opened."; return; }
+  const videoId = parsedVideoId(url.href);
+  const youtubeHost = url.hostname === "youtu.be" || url.hostname === "youtube.com" || url.hostname.endsWith(".youtube.com");
+  if (youtubeHost && !videoId) {
+    const query = url.searchParams.get("search_query");
+    if (query) document.getElementById("youtubeQuery").value = query;
     showPage("youtube");
     return;
   }
-  if(videoId)url=new URL(`https://www.youtube-nocookie.com/embed/${encodeURIComponent(videoId)}`);
-  const topLevelDomains=["now.gg","github.com","gemini.google.com"];
-  if(!trustedProxyEndpoint&&topLevelDomains.some(domain=>url.hostname===domain||url.hostname.endsWith(`.${domain}`))){
+  if (videoId) url = new URL(`https://www.youtube-nocookie.com/embed/${encodeURIComponent(videoId)}`);
+  const topLevelDomains = ["now.gg", "github.com", "gemini.google.com"];
+  if (!trustedProxyEndpoint && topLevelDomains.some(domain => url.hostname === domain || url.hostname.endsWith(`.${domain}`))) {
     window.location.assign(url.href);
     return;
   }
-  if(record&&lastUrl&&lastUrl!==url.href)historyStack.push(lastUrl);
-  lastUrl=url.href;
-  addressInput.value=videoId?`https://www.youtube.com/watch?v=${videoId}`:url.href;
-  openCurrent.href=addressInput.value;
-  openCurrent.hidden=false;
-  viewerTitle.textContent=title||url.hostname;
-  viewerStatus.textContent=videoId?"Loading YouTube video…":"Loading page…";
-  document.getElementById("viewerHelp").textContent=url.hostname==="www.google.com"?"Google search can be embedded here. If your browser still shows a blank page, open the search in this tab.":"If this page is blank, the website may block embedding. Use the same-tab link to continue.";
-  if(trustedProxyEndpoint)frame.setAttribute("sandbox","allow-forms allow-scripts allow-presentation");
-  else if(url.hostname==="www.google.com")frame.removeAttribute("sandbox");
-  else frame.setAttribute("sandbox","allow-forms allow-scripts allow-same-origin allow-presentation");
+  if (record && lastUrl && lastUrl !== url.href) historyStack.push(lastUrl);
+  lastUrl = url.href;
+  addressInput.value = videoId ? `https://www.youtube.com/watch?v=${videoId}` : url.href;
+  openCurrent.href = addressInput.value;
+  openCurrent.hidden = false;
+  viewerTitle.textContent = title || url.hostname;
+  viewerStatus.textContent = videoId ? "Loading YouTube video…" : "Loading page…";
+  document.getElementById("viewerHelp").textContent = url.hostname === "www.google.com"
+    ? "Google search can be embedded here. If your browser still shows a blank page, open the search in this tab."
+    : "If this page is blank, the website may block embedding. Use the same-tab link to continue.";
+  if (trustedProxyEndpoint) frame.setAttribute("sandbox", "allow-forms allow-scripts allow-presentation");
+  else if (url.hostname === "www.google.com") frame.removeAttribute("sandbox");
+  else frame.setAttribute("sandbox", "allow-forms allow-scripts allow-same-origin allow-presentation");
   viewer.classList.add("active");
-  frame.src=trustedProxyEndpoint?proxyUrlFor(url):url.href;
+  frame.src = trustedProxyEndpoint ? proxyUrlFor(url) : url.href;
   showPage("search");
 }
-function openSearchResults(url,title){
-  viewerTitle.textContent=title;
-  viewerStatus.textContent="Loading search results…";
-  document.getElementById("viewerHelp").textContent="Search results stay inside NEXUS. Choose another provider in Settings if this engine is unavailable.";
-  openCurrent.hidden=true;
-  addressInput.value=url.href;
-  frame.setAttribute("sandbox","allow-forms allow-scripts allow-presentation");
+
+function openSearchResults(url, title) {
+  viewerTitle.textContent = title;
+  viewerStatus.textContent = "Loading search results…";
+  document.getElementById("viewerHelp").textContent = "Search results stay inside NEXUS. Choose another provider in Settings if this engine is unavailable.";
+  openCurrent.hidden = true;
+  addressInput.value = url.href;
+  frame.setAttribute("sandbox", "allow-forms allow-scripts allow-presentation");
   viewer.classList.add("active");
-  frame.src=proxyUrlFor(url);
+  frame.src = proxyUrlFor(url);
   showPage("search");
 }
-async function searchWeb(query,site){
-  const text=query.trim();
-  if(!text)return;
-  const selected=document.getElementById("homeEngineSelect").value;
-  const engine=searchEngines[selected]||searchEngines.duckduckgo;
-  const url=new URL(engine.url);
-  url.searchParams.set("q",site?`site:youtube.com/watch ${text}`:text);
-  const hasProxy=Boolean(trustedProxyEndpoint)||await searchProxyReady;
-  if(!hasProxy){
-    viewerTitle.textContent=`${engine.label} search`;
-    viewerStatus.textContent="Search proxy unavailable";
-    document.getElementById("viewerHelp").textContent="Embedded search needs the NEXUS proxy server. Run npm start to keep results inside this page; no new tab will be opened.";
-    openCurrent.hidden=true;
+
+async function searchWeb(query, site) {
+  const text = query.trim();
+  if (!text) return;
+  const selected = document.getElementById("homeEngineSelect").value;
+  const engine = searchEngines[selected] || searchEngines.duckduckgo;
+  const url = new URL(engine.url);
+  url.searchParams.set("q", site ? `site:youtube.com/watch ${text}` : text);
+  const hasProxy = Boolean(trustedProxyEndpoint) || await searchProxyReady;
+  if (!hasProxy) {
+    viewerTitle.textContent = `${engine.label} search`;
+    viewerStatus.textContent = "Search proxy unavailable";
+    document.getElementById("viewerHelp").textContent = "Embedded search needs the NEXUS proxy server. Run npm start to keep results inside this page; no new tab will be opened.";
+    openCurrent.hidden = true;
     frame.removeAttribute("src");
     viewer.classList.add("active");
     showPage("search");
     return;
   }
-  openSearchResults(url,`${engine.label} results for “${text}”`);
+  openSearchResults(url, `${engine.label} results for “${text}”`);
 }
-function go(value){
-  const address=normalizeAddress(value);
-  if(address){openPage(address.href,address.hostname);return}
+
+function go(value) {
+  toggleLauncher(false);
+  const address = normalizeAddress(value);
+  if (address) { openPage(address.href, address.hostname); return; }
   searchWeb(value);
 }
-document.querySelectorAll("[data-page]").forEach(button=>button.addEventListener("click",event=>{
+
+document.querySelectorAll("[data-page]").forEach(button => button.addEventListener("click", event => {
   event.preventDefault();
   showPage(button.dataset.page);
 }));
-document.getElementById("addressForm").addEventListener("submit",event=>{event.preventDefault();go(addressInput.value)});
-document.getElementById("homeForm").addEventListener("submit",event=>{event.preventDefault();go(document.getElementById("homeQuery").value)});
-document.getElementById("webSearchForm").addEventListener("submit",event=>{event.preventDefault();go(document.getElementById("webQuery").value)});
-document.getElementById("youtubeSearchForm").addEventListener("submit",event=>{
+
+document.getElementById("addressForm").addEventListener("submit", event => { event.preventDefault(); go(addressInput.value); });
+document.getElementById("homeForm").addEventListener("submit", event => { event.preventDefault(); go(homeQueryInput.value); });
+document.getElementById("webSearchForm").addEventListener("submit", event => { event.preventDefault(); go(document.getElementById("webQuery").value); });
+document.getElementById("youtubeSearchForm").addEventListener("submit", event => {
   event.preventDefault();
-  searchWeb(document.getElementById("youtubeQuery").value,true);
+  searchWeb(document.getElementById("youtubeQuery").value, true);
 });
-document.getElementById("homeEngineSelect").addEventListener("change",event=>setSearchEngine(event.target.value));
-document.getElementById("settingsEngineSelect").addEventListener("change",event=>setSearchEngine(event.target.value));
-function applyProxyEndpoint(){
-  const input=document.getElementById("proxyEndpointInput"),status=document.getElementById("proxyEndpointStatus"),value=input.value.trim();
-  if(!value){status.textContent="Enter an HTTPS endpoint or choose Built-in.";return}
+document.getElementById("homeEngineSelect").addEventListener("change", event => setSearchEngine(event.target.value));
+document.getElementById("settingsEngineSelect").addEventListener("change", event => setSearchEngine(event.target.value));
+
+function applyProxyEndpoint() {
+  const input = document.getElementById("proxyEndpointInput"), status = document.getElementById("proxyEndpointStatus"), value = input.value.trim();
+  if (!value) { status.textContent = "Enter an HTTPS endpoint or choose Built-in."; return; }
   let endpoint;
-  try{endpoint=new URL(value)}catch{status.textContent="Enter a valid endpoint URL.";return}
-  const localHost=["localhost","127.0.0.1","[::1]"].includes(endpoint.hostname);
-  if(endpoint.protocol!=="https:"&&!(endpoint.protocol==="http:"&&localHost)){status.textContent="Remote proxy endpoints must use HTTPS.";return}
-  if(endpoint.username||endpoint.password||endpoint.search||endpoint.hash){status.textContent="Remove credentials, query parameters, and fragments from the endpoint URL.";return}
-  trustedProxyEndpoint=endpoint.href;
-  try{localStorage.setItem("nexus-proxy-endpoint",trustedProxyEndpoint)}catch{}
-  status.textContent=`Using ${endpoint.host}. Addresses opened in NEXUS are sent to this endpoint.`;
+  try { endpoint = new URL(value); } catch { status.textContent = "Enter a valid endpoint URL."; return; }
+  const localHost = ["localhost", "127.0.0.1", "[::1]"].includes(endpoint.hostname);
+  if (endpoint.protocol !== "https:" && !(endpoint.protocol === "http:" && localHost)) { status.textContent = "Remote proxy endpoints must use HTTPS."; return; }
+  if (endpoint.username || endpoint.password || endpoint.search || endpoint.hash) { status.textContent = "Remove credentials, query parameters, and fragments from the endpoint URL."; return; }
+  trustedProxyEndpoint = endpoint.href;
+  try { localStorage.setItem("nexus-proxy-endpoint", trustedProxyEndpoint); } catch {}
+  status.textContent = `Using ${endpoint.host}. Addresses opened in NEXUS are sent to this endpoint.`;
 }
-function useBuiltInProxy(){
-  trustedProxyEndpoint="";
-  document.getElementById("proxyEndpointInput").value="";
-  try{localStorage.removeItem("nexus-proxy-endpoint")}catch{}
-  document.getElementById("proxyEndpointStatus").textContent="Using built-in proxy.";
+
+function useBuiltInProxy() {
+  trustedProxyEndpoint = "";
+  document.getElementById("proxyEndpointInput").value = "";
+  try { localStorage.removeItem("nexus-proxy-endpoint"); } catch {}
+  document.getElementById("proxyEndpointStatus").textContent = "Using built-in proxy.";
 }
-document.getElementById("applyProxyEndpoint").addEventListener("click",applyProxyEndpoint);
-document.getElementById("useBuiltInProxy").addEventListener("click",useBuiltInProxy);
-document.getElementById("watchForm").addEventListener("submit",event=>{
+
+document.getElementById("applyProxyEndpoint").addEventListener("click", applyProxyEndpoint);
+document.getElementById("useBuiltInProxy").addEventListener("click", useBuiltInProxy);
+
+document.getElementById("watchForm").addEventListener("submit", event => {
   event.preventDefault();
-  const id=parsedVideoId(document.getElementById("videoInput").value);
-  if(!id){viewerStatus.textContent="Enter a valid YouTube video link or 11-character video ID.";return}
-  openPage(`https://www.youtube.com/watch?v=${encodeURIComponent(id)}`,`YouTube video ${id}`);
+  const id = parsedVideoId(document.getElementById("videoInput").value);
+  if (!id) { viewerStatus.textContent = "Enter a valid YouTube video link or 11-character video ID."; return; }
+  openPage(`https://www.youtube.com/watch?v=${encodeURIComponent(id)}`, `YouTube video ${id}`);
 });
-document.addEventListener("click",event=>{
-  if(!(event.target instanceof Element))return;
-  const link=event.target.closest("a[href]");
-  if(!link||link.hasAttribute("data-current-link")||link.dataset.page)return;
+
+document.addEventListener("click", event => {
+  if (!(event.target instanceof Element)) return;
+  const link = event.target.closest("a[href]");
+  if (!link || link.hasAttribute("data-current-link") || link.dataset.page) return;
   let url;
-  try{url=new URL(link.href)}catch{return}
-  if(!["http:","https:"].includes(url.protocol))return;
+  try { url = new URL(link.href); } catch { return; }
+  if (!["http:", "https:"].includes(url.protocol)) return;
   event.preventDefault();
-  openPage(url.href,link.textContent.trim()||url.hostname);
+  toggleLauncher(false);
+  openPage(url.href, link.textContent.trim() || url.hostname);
 });
-document.getElementById("reloadButton").addEventListener("click",()=>{
-  if(frame.src&&frame.src!=="about:blank"){viewerStatus.textContent="Reloading…";frame.src=frame.src}
+
+document.getElementById("reloadButton").addEventListener("click", () => {
+  if (frame.src && frame.src !== "about:blank") { viewerStatus.textContent = "Reloading…"; frame.src = frame.src; }
 });
-document.getElementById("backButton").addEventListener("click",()=>{
-  const previous=historyStack.pop();
-  if(previous)openPage(previous,"Previous page",false);
+document.getElementById("backButton").addEventListener("click", () => {
+  const previous = historyStack.pop();
+  if (previous) openPage(previous, "Previous page", false);
   else showPage("home");
 });
-frame.addEventListener("load",()=>{viewerStatus.textContent="Loaded. If the viewer is blank, use the same-tab link below."});
-document.querySelectorAll("[data-action]").forEach(button=>button.addEventListener("click",()=>{
-  const action=button.dataset.action;
-  if(action==="settings")openSettings();
-  if(action==="files")openSettings("fileInput");
-  if(action==="roblox")openPage("https://now.gg/apps/roblox-corporation/5349/roblox.html","Roblox on now.gg");
-  if(action==="github")openPage("https://github.com","GitHub");
-  if(action==="assistant")openPage("https://gemini.google.com/app","Gemini AI Assistant");
+frame.addEventListener("load", () => { viewerStatus.textContent = "Loaded. If the viewer is blank, use the same-tab link below."; });
+
+document.querySelectorAll("[data-action]").forEach(button => button.addEventListener("click", () => {
+  const action = button.dataset.action;
+  toggleLauncher(false);
+  if (action === "settings") openSettings();
+  if (action === "files") openSettings("fileInput");
+  if (action === "roblox") openPage("https://now.gg/apps/roblox-corporation/5349/roblox.html", "Roblox on now.gg");
+  if (action === "github") openPage("https://github.com", "GitHub");
+  if (action === "assistant") openPage("https://gemini.google.com/app", "Gemini AI Assistant");
 }));
-function updateClock(){
-  const now=new Date();
-  document.getElementById("clock").textContent=now.toLocaleTimeString([], {hour:"numeric",minute:"2-digit"});
-  document.getElementById("dateText").textContent=now.toLocaleDateString([], {weekday:"long",month:"long",day:"numeric",year:"numeric"});
+
+/* Live Desktop & Shelf Clock */
+function updateClock() {
+  const now = new Date();
+  let hours = now.getHours();
+  const minutes = String(now.getMinutes()).padStart(2, "0");
+  const ampm = hours >= 12 ? "PM" : "AM";
+  hours = hours % 12 || 12;
+  const formattedHours = String(hours).padStart(2, "0");
+
+  const months = ["JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE", "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"];
+  const weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
+  document.getElementById("clock").textContent = `${formattedHours}:${minutes}`;
+  document.getElementById("clockAmPm").textContent = ampm;
+  document.getElementById("trayClock").textContent = `${hours}:${minutes} ${ampm}`;
+  document.getElementById("dateMonth").textContent = months[now.getMonth()];
+  document.getElementById("dateDay").textContent = now.getDate();
+  document.getElementById("dateWeekday").textContent = weekdays[now.getDay()];
 }
 updateClock();
-setInterval(updateClock,1000);
-const settingsPanel=document.getElementById("settingsPanel"),settingsBackdrop=document.getElementById("settingsBackdrop");
-function openSettings(focusId){
+setInterval(updateClock, 1000);
+
+/* Settings Drawer Controls */
+const settingsPanel = document.getElementById("settingsPanel"), settingsBackdrop = document.getElementById("settingsBackdrop");
+function openSettings(focusId) {
   settingsPanel.classList.add("open");
   settingsBackdrop.classList.add("open");
-  settingsPanel.setAttribute("aria-hidden","false");
-  if(focusId)document.getElementById(focusId).focus();
+  settingsPanel.setAttribute("aria-hidden", "false");
+  if (focusId) document.getElementById(focusId).focus();
 }
-function closeSettings(){
+function closeSettings() {
   settingsPanel.classList.remove("open");
   settingsBackdrop.classList.remove("open");
-  settingsPanel.setAttribute("aria-hidden","true");
+  settingsPanel.setAttribute("aria-hidden", "true");
 }
-document.getElementById("settingsButton").addEventListener("click",()=>openSettings());
-document.getElementById("closeSettings").addEventListener("click",closeSettings);
-settingsBackdrop.addEventListener("click",closeSettings);
-document.addEventListener("keydown",event=>{if(event.key==="Escape")closeSettings()});
-function setTheme(theme){
-  const allowed=["mint","violet","ocean","sunset","rose"];
-  if(!allowed.includes(theme))return;
-  document.documentElement.dataset.theme=theme==="mint"?"":theme;
-  document.querySelectorAll("[data-theme-choice]").forEach(button=>button.setAttribute("aria-pressed",String(button.dataset.themeChoice===theme)));
-  try{localStorage.setItem("nexus-theme",theme)}catch{viewerStatus.textContent="Theme changed for this session; browser storage is unavailable."}
+document.getElementById("settingsButton").addEventListener("click", () => openSettings());
+document.getElementById("closeSettings").addEventListener("click", closeSettings);
+settingsBackdrop.addEventListener("click", closeSettings);
+
+/* Global Keyboard Shortcuts (Ctrl+K & Escape) */
+document.addEventListener("keydown", event => {
+  if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "k") {
+    event.preventDefault();
+    closeSettings();
+    toggleLauncher();
+  } else if (event.key === "Escape") {
+    closeSettings();
+    toggleLauncher(false);
+  }
+});
+
+function setTheme(theme) {
+  const allowed = ["mint", "violet", "ocean", "sunset", "rose"];
+  if (!allowed.includes(theme)) return;
+  document.documentElement.dataset.theme = theme === "mint" ? "" : theme;
+  document.querySelectorAll("[data-theme-choice]").forEach(button => button.setAttribute("aria-pressed", String(button.dataset.themeChoice === theme)));
+  try { localStorage.setItem("nexus-theme", theme); } catch { viewerStatus.textContent = "Theme changed for this session; browser storage is unavailable."; }
 }
-try{setTheme(localStorage.getItem("nexus-theme")||"mint")}catch{setTheme("mint")}
-document.querySelectorAll("[data-theme-choice]").forEach(button=>button.addEventListener("click",()=>setTheme(button.dataset.themeChoice)));
-function setSearchEngine(engine){
-  if(!searchEngines[engine])return;
-  document.getElementById("homeEngineSelect").value=engine;
-  document.getElementById("settingsEngineSelect").value=engine;
-  try{localStorage.setItem("nexus-search-engine",engine)}catch{}
+try { setTheme(localStorage.getItem("nexus-theme") || "mint"); } catch { setTheme("mint"); }
+document.querySelectorAll("[data-theme-choice]").forEach(button => button.addEventListener("click", () => setTheme(button.dataset.themeChoice)));
+
+function setSearchEngine(engine) {
+  if (!searchEngines[engine]) return;
+  document.getElementById("homeEngineSelect").value = engine;
+  document.getElementById("settingsEngineSelect").value = engine;
+  try { localStorage.setItem("nexus-search-engine", engine); } catch {}
 }
-try{setSearchEngine(localStorage.getItem("nexus-search-engine")||"duckduckgo")}catch{setSearchEngine("duckduckgo")}
-function setMode(mode){
-  if(!["dark","light"].includes(mode))return;
-  document.documentElement.dataset.mode=mode;
-  document.getElementById("darkModeButton").setAttribute("aria-pressed",String(mode==="dark"));
-  document.getElementById("lightModeButton").setAttribute("aria-pressed",String(mode==="light"));
-  try{localStorage.setItem("nexus-mode",mode)}catch{}
+try { setSearchEngine(localStorage.getItem("nexus-search-engine") || "duckduckgo"); } catch { setSearchEngine("duckduckgo"); }
+
+function setMode(mode) {
+  if (!["dark", "light"].includes(mode)) return;
+  document.documentElement.dataset.mode = mode;
+  document.getElementById("darkModeButton").setAttribute("aria-pressed", String(mode === "dark"));
+  document.getElementById("lightModeButton").setAttribute("aria-pressed", String(mode === "light"));
+  try { localStorage.setItem("nexus-mode", mode); } catch {}
 }
-try{setMode(localStorage.getItem("nexus-mode")||"dark")}catch{setMode("dark")}
-document.getElementById("darkModeButton").addEventListener("click",()=>setMode("dark"));
-document.getElementById("lightModeButton").addEventListener("click",()=>setMode("light"));
-document.getElementById("fullscreenButton").addEventListener("click",async()=>{
-  try{
-    if(document.fullscreenElement)await document.exitFullscreen();
+try { setMode(localStorage.getItem("nexus-mode") || "dark"); } catch { setMode("dark"); }
+document.getElementById("darkModeButton").addEventListener("click", () => setMode("dark"));
+document.getElementById("lightModeButton").addEventListener("click", () => setMode("light"));
+
+document.getElementById("fullscreenButton").addEventListener("click", async () => {
+  try {
+    if (document.fullscreenElement) await document.exitFullscreen();
     else await document.querySelector(".app").requestFullscreen();
-  }catch(error){viewerStatus.textContent=`Fullscreen is unavailable: ${error.message}`}
+  } catch (error) { viewerStatus.textContent = `Fullscreen is unavailable: ${error.message}`; }
 });
-document.addEventListener("fullscreenchange",()=>{
-  const active=Boolean(document.fullscreenElement);
-  document.body.classList.toggle("fullscreen",active);
-  const button=document.getElementById("fullscreenButton");
-  button.setAttribute("aria-label",active?"Exit fullscreen":"Enter fullscreen");
-  button.title=active?"Exit fullscreen":"Fullscreen";
+document.addEventListener("fullscreenchange", () => {
+  const active = Boolean(document.fullscreenElement);
+  document.body.classList.toggle("fullscreen", active);
+  const button = document.getElementById("fullscreenButton");
+  button.setAttribute("aria-label", active ? "Exit fullscreen" : "Enter fullscreen");
+  button.title = active ? "Exit fullscreen" : "Fullscreen";
 });
-let dockTimer;
-function showDock(){
-  clearTimeout(dockTimer);
-  document.body.classList.add("dock-visible");
-}
-function hideDockSoon(){
-  clearTimeout(dockTimer);
-  dockTimer=setTimeout(()=>document.body.classList.remove("dock-visible"),1800);
-}
-const dock=document.querySelector(".dock");
-document.getElementById("dockZone").addEventListener("pointerenter",showDock);
-dock.addEventListener("pointerenter",showDock);
-dock.addEventListener("pointerleave",hideDockSoon);
-dock.addEventListener("focusin",showDock);
-dock.addEventListener("focusout",hideDockSoon);
-document.addEventListener("pointermove",event=>{
-  if(event.clientY>=window.innerHeight-90)showDock();
-  else if(document.body.classList.contains("dock-visible")&&!dock.matches(":hover"))hideDockSoon();
-});
-document.addEventListener("touchstart",event=>{
-  if(event.touches[0]?.clientY>=window.innerHeight-100){showDock();hideDockSoon()}
-  else hideDockSoon();
-},{passive:true});
-const uploadList=document.getElementById("uploadList"),objectUrls=[];
-document.getElementById("fileInput").addEventListener("change",event=>{
-  for(const file of event.target.files){
-    const url=URL.createObjectURL(file);
+
+const uploadList = document.getElementById("uploadList"), objectUrls = [];
+document.getElementById("fileInput").addEventListener("change", event => {
+  for (const file of event.target.files) {
+    const url = URL.createObjectURL(file);
     objectUrls.push(url);
-    const item=document.createElement("div");
-    item.className="upload-item";
-    if(file.type.startsWith("image/")){
-      const image=document.createElement("img");
-      image.src=url;
-      image.alt=file.name;
+    const item = document.createElement("div");
+    item.className = "upload-item";
+    if (file.type.startsWith("image/")) {
+      const image = document.createElement("img");
+      image.src = url;
+      image.alt = file.name;
       item.append(image);
     }
-    const name=document.createElement("div");
-    name.textContent=`${file.name} · ${(file.size/1048576).toFixed(1)} MB`;
+    const name = document.createElement("div");
+    name.textContent = `${file.name} · ${(file.size / 1048576).toFixed(1)} MB`;
     item.append(name);
-    const download=document.createElement("a");
-    download.href=url;
-    download.download=file.name;
-    download.textContent="Open / download";
+    const download = document.createElement("a");
+    download.href = url;
+    download.download = file.name;
+    download.textContent = "Open / download";
     item.append(download);
     uploadList.append(item);
   }
-  event.target.value="";
+  event.target.value = "";
 });
-window.addEventListener("beforeunload",()=>objectUrls.forEach(url=>URL.revokeObjectURL(url)));
-document.getElementById("openAssistant").addEventListener("click",()=>openPage("https://gemini.google.com/app","Gemini AI Assistant"));
+window.addEventListener("beforeunload", () => objectUrls.forEach(url => URL.revokeObjectURL(url)));
+document.getElementById("openAssistant").addEventListener("click", () => { closeSettings(); openPage("https://gemini.google.com/app", "Gemini AI Assistant"); });
 </script>
 </body>
 </html>
