@@ -757,8 +757,6 @@ body.is-home main {
 }
 .game-play-row span { color: var(--mint); font-size: 12px; font-weight: 700; }
 
-/* YouTube View */
-.youtube-tools { max-width: 760px; margin: 10px auto; }
 .smallform { display: flex; gap: 8px; margin: 14px 0; }
 .smallform input {
   flex: 1;
@@ -876,7 +874,6 @@ body.is-home main {
 .ic-home    { --icon-bg: linear-gradient(145deg, #34d399, #059669); }
 .ic-search  { --icon-bg: linear-gradient(145deg, #38bdf8, #2563eb); }
 .ic-music   { --icon-bg: linear-gradient(145deg, #f472b6, #9333ea); }
-.ic-youtube { --icon-bg: linear-gradient(145deg, #ff4d4d, #dc2626); }
 .ic-games   { --icon-bg: linear-gradient(145deg, #a855f7, #7c3aed); }
 .ic-roblox  { --icon-bg: linear-gradient(145deg, #475569, #1e293b); }
 .ic-github  { --icon-bg: linear-gradient(145deg, #334155, #0f172a); }
@@ -992,6 +989,27 @@ body.is-home main {
   transition: transform 0.15s, border-color 0.15s;
 }
 .wp-swatch:hover { transform: scale(1.06); border-color: var(--mint); }
+.wp-upload-btn {
+  margin-top: 8px;
+  width: 100%;
+  padding: 8px 12px;
+  border-radius: 11px;
+  border: 1px dashed var(--line);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: border-color 0.15s, background 0.15s, color 0.15s;
+}
+.wp-upload-btn:hover {
+  border-color: var(--mint);
+  background: rgba(255, 255, 255, 0.09);
+  color: var(--mint);
+}
 
 /* Ctrl + K Command Launcher Modal */
 .launcher-backdrop {
@@ -1184,7 +1202,6 @@ body.is-home main {
         <button class="tab active" data-page="home">Desktop</button>
         <button class="tab" data-page="search">Browser</button>
         <button class="tab" data-page="music">Music</button>
-        <button class="tab" data-page="youtube">YouTube</button>
         <button class="tab" data-page="games">Games</button>
       </nav>
       <span class="presence">NEXUS OS</span>
@@ -1317,7 +1334,7 @@ body.is-home main {
     </section>
 
     <!-- =========================================================
-         NEW MUSIC TAB (READY FOR YOU TO EXPAND!)
+         MUSIC TAB (READY FOR YOU TO EXPAND!)
          ========================================================= -->
     <section class="view" id="musicView">
       <div class="subview-card">
@@ -1354,7 +1371,7 @@ body.is-home main {
             <audio id="streamAudio" controls style="width:100%;margin-top:14px;display:none"></audio>
 
             <form class="smallform" id="customAudioForm" style="margin-top:16px;margin-bottom:0">
-              <input id="customAudioUrl" type="text" placeholder="Paste direct .mp3/.ogg audio URL or YouTube link..." aria-label="Custom audio URL or YouTube link">
+              <input id="customAudioUrl" type="text" placeholder="Paste direct .mp3/.ogg audio URL or video link..." aria-label="Custom audio URL or video link">
               <button type="submit">Load</button>
             </form>
           </div>
@@ -1380,36 +1397,13 @@ body.is-home main {
               </button>
               <button class="station-card" data-preset="rain" type="button">
                 <b>Rainy Glass Loft</b>
-                <small>Soft noise · Study vibe</small>
+                <small>Soft bell tones · Study vibe</small>
               </button>
             </div>
             <div class="notice" style="margin-top:0">
               <strong>Tip for expanding:</strong> Add your own stations, playlists, or embedded players inside the <code>customMusicStations</code> array in <code>&lt;script&gt;</code>.
             </div>
           </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- YouTube View -->
-    <section class="view" id="youtubeView">
-      <div class="subview-card">
-        <div class="section-title">
-          <div>
-            <h2>YouTube in NEXUS</h2>
-            <p>Find videos or play a YouTube video without leaving this page.</p>
-          </div>
-        </div>
-        <div class="youtube-tools">
-          <form class="smallform" id="youtubeSearchForm" role="search">
-            <input id="youtubeQuery" type="search" placeholder="Search YouTube videos..." aria-label="Search YouTube videos" required>
-            <button type="submit">Find videos</button>
-          </form>
-          <form class="smallform" id="watchForm">
-            <input id="videoInput" type="text" placeholder="Paste a YouTube link or video ID to watch" aria-label="YouTube video link or ID">
-            <button type="submit">Watch here</button>
-          </form>
-          <div class="notice">Search results show YouTube videos through Google. Paste a video link or ID to play it here. YouTube blocks its full search page from being embedded in other sites.</div>
         </div>
       </div>
     </section>
@@ -1621,10 +1615,6 @@ body.is-home main {
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3" fill="currentColor"/><circle cx="18" cy="16" r="3" fill="currentColor"/></svg>
         </button>
 
-        <button class="shelf-icon ic-youtube" data-page="youtube" data-tooltip="YouTube" aria-label="YouTube">
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M21.8 8s-.2-1.4-.8-2c-.8-.8-1.6-.8-2-.9C16.2 5 12 5 12 5s-4.2 0-7 .1c-.4.1-1.2.1-2 .9-.6.6-.8 2-.8 2S2 9.6 2 11.2v1.5c0 1.6.2 3.2.2 3.2s.2 1.4.8 2c.8.8 1.8.8 2.2.9 1.6.1 6.8.2 6.8.2s4.2 0 7-.1c.4-.1 1.2-.1 2-.9.6-.6.8-2 .8-2s.2-1.6.2-3.2v-1.5C22 9.6 21.8 8 21.8 8ZM10 14.8V8.8l5.4 3-5.4 3Z"/></svg>
-        </button>
-
         <button class="shelf-icon ic-games" data-page="games" data-tooltip="Arcade Games" aria-label="Arcade Games">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="4"/><path d="M6 12h4M8 10v4"/><circle cx="15.5" cy="11" r="1" fill="currentColor"/><circle cx="17.5" cy="13" r="1" fill="currentColor"/></svg>
         </button>
@@ -1696,11 +1686,16 @@ body.is-home main {
   </div>
   <div class="qp-section-label">Desktop Wallpaper</div>
   <div class="qp-wallpapers">
-    <button class="wp-swatch" title="Alpine Valley" data-wp="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=2070&q=85" style="background-image:url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=300&q=60')"></button>
-    <button class="wp-swatch" title="Night Aurora" data-wp="https://images.unsplash.com/photo-1531366936337-7c912a4589a7?auto=format&fit=crop&w=2070&q=85" style="background-image:url('https://images.unsplash.com/photo-1531366936337-7c912a4589a7?auto=format&fit=crop&w=300&q=60')"></button>
-    <button class="wp-swatch" title="Midnight Peaks" data-wp="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=2070&q=85" style="background-image:url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=300&q=60')"></button>
-    <button class="wp-swatch" title="Ocean Horizon" data-wp="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=2070&q=85" style="background-image:url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=300&q=60')"></button>
+    <button class="wp-swatch" type="button" title="Alpine Valley" data-wp="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=2070&q=85" style="background-image:url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=300&q=60')"></button>
+    <button class="wp-swatch" type="button" title="Night Aurora" data-wp="https://images.unsplash.com/photo-1531366936337-7c912a4589a7?auto=format&fit=crop&w=2070&q=85" style="background-image:url('https://images.unsplash.com/photo-1531366936337-7c912a4589a7?auto=format&fit=crop&w=300&q=60')"></button>
+    <button class="wp-swatch" type="button" title="Midnight Peaks" data-wp="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=2070&q=85" style="background-image:url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=300&q=60')"></button>
+    <button class="wp-swatch" type="button" title="Ocean Horizon" data-wp="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=2070&q=85" style="background-image:url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=300&q=60')"></button>
   </div>
+  <button class="wp-upload-btn" id="quickWallpaperUploadBtn" type="button">
+    <span>🖼️</span>
+    <span>Upload Custom Wallpaper</span>
+  </button>
+  <input id="quickWallpaperInput" type="file" accept="image/*" hidden>
 </div>
 
 <!-- Ctrl + K Command Launcher Modal -->
@@ -1731,10 +1726,6 @@ body.is-home main {
       <button class="launcher-tile" data-page="music">
         <div class="tile-badge ic-music"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3" fill="currentColor"/><circle cx="18" cy="16" r="3" fill="currentColor"/></svg></div>
         <span>Music</span>
-      </button>
-      <button class="launcher-tile" data-page="youtube">
-        <div class="tile-badge ic-youtube"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 15V9l5 3-5 3Z"/></svg></div>
-        <span>YouTube</span>
       </button>
       <button class="launcher-tile" data-page="games">
         <div class="tile-badge ic-games"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1"><rect x="2" y="6" width="20" height="12" rx="4"/><path d="M6 12h4M8 10v4"/></svg></div>
@@ -1816,7 +1807,6 @@ const pages = {
   home: document.getElementById("homeView"),
   search: document.getElementById("searchView"),
   music: document.getElementById("musicView"),
-  youtube: document.getElementById("youtubeView"),
   games: document.getElementById("gamesView")
 };
 const viewer = document.getElementById("viewer"),
@@ -1851,7 +1841,7 @@ try {
   }
 } catch {}
 
-let lastUrl = "", historyStack = [], recentSites = [];
+let lastUrl = "", historyStack = [], recentSites = [], customWallpaperBlobUrl = "";
 
 function renderRecentSites() {
   const bar = document.getElementById("recentSitesBar");
@@ -1909,17 +1899,56 @@ document.addEventListener("click", (e) => {
   }
 });
 
-/* Wallpaper Swatches */
+/* Preset & Custom Uploaded Wallpapers */
+function applyWallpaperUrl(wp, persist = true) {
+  document.documentElement.style.setProperty("--wallpaper", `url('${wp}')`);
+  if (!persist) return;
+  try { localStorage.setItem("nexus-wallpaper", wp); } catch {}
+}
+
 document.querySelectorAll(".wp-swatch").forEach(btn => {
   btn.addEventListener("click", () => {
-    const wp = btn.dataset.wp;
-    document.documentElement.style.setProperty("--wallpaper", `url('${wp}')`);
-    try { localStorage.setItem("nexus-wallpaper", wp); } catch {}
+    if (customWallpaperBlobUrl) {
+      URL.revokeObjectURL(customWallpaperBlobUrl);
+      customWallpaperBlobUrl = "";
+    }
+    applyWallpaperUrl(btn.dataset.wp, true);
   });
 });
+
+const quickWallpaperInput = document.getElementById("quickWallpaperInput");
+document.getElementById("quickWallpaperUploadBtn").addEventListener("click", () => {
+  quickWallpaperInput.click();
+});
+
+quickWallpaperInput.addEventListener("change", (event) => {
+  const file = event.target.files && event.target.files[0];
+  if (!file || !file.type.startsWith("image/")) return;
+
+  if (customWallpaperBlobUrl) {
+    URL.revokeObjectURL(customWallpaperBlobUrl);
+    customWallpaperBlobUrl = "";
+  }
+
+  const blobUrl = URL.createObjectURL(file);
+  customWallpaperBlobUrl = blobUrl;
+  applyWallpaperUrl(blobUrl, false);
+
+  if (file.size <= 2 * 1024 * 1024) {
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (typeof reader.result === "string") {
+        try { localStorage.setItem("nexus-wallpaper", reader.result); } catch {}
+      }
+    };
+    reader.readAsDataURL(file);
+  }
+  event.target.value = "";
+});
+
 try {
   const savedWp = localStorage.getItem("nexus-wallpaper");
-  if (savedWp) document.documentElement.style.setProperty("--wallpaper", `url('${savedWp}')`);
+  if (savedWp) applyWallpaperUrl(savedWp, false);
 } catch {}
 
 /* Live Battery & Network Status in Tray */
@@ -1977,7 +2006,6 @@ function showPage(name) {
     btn.classList.toggle("active", btn.dataset.page === name);
   });
   if (name === "search") document.getElementById("webQuery").focus();
-  if (name === "youtube") document.getElementById("youtubeQuery").focus();
 }
 
 function parsedVideoId(value) {
@@ -2013,13 +2041,6 @@ function openPage(destination, title, record = true) {
   try { url = new URL(destination); } catch { viewerStatus.textContent = "That address is not valid."; return; }
   if (!["http:", "https:"].includes(url.protocol)) { viewerStatus.textContent = "Only website addresses can be opened."; return; }
   const videoId = parsedVideoId(url.href);
-  const youtubeHost = url.hostname === "youtu.be" || url.hostname === "youtube.com" || url.hostname.endsWith(".youtube.com");
-  if (youtubeHost && !videoId) {
-    const query = url.searchParams.get("search_query");
-    if (query) document.getElementById("youtubeQuery").value = query;
-    showPage("youtube");
-    return;
-  }
   if (videoId) url = new URL(`https://www.youtube-nocookie.com/embed/${encodeURIComponent(videoId)}`);
   const topLevelDomains = ["now.gg", "github.com", "gemini.google.com"];
   if (!trustedProxyEndpoint && topLevelDomains.some(domain => url.hostname === domain || url.hostname.endsWith(`.${domain}`))) {
@@ -2034,7 +2055,7 @@ function openPage(destination, title, record = true) {
   openCurrent.href = addressInput.value;
   openCurrent.hidden = false;
   viewerTitle.textContent = cleanTitle;
-  viewerStatus.textContent = videoId ? "Loading YouTube video…" : "Loading page…";
+  viewerStatus.textContent = videoId ? "Loading video…" : "Loading page…";
   document.getElementById("viewerHelp").textContent = url.hostname === "www.google.com"
     ? "Google search can be embedded here. If your browser still shows a blank page, open the search in this tab."
     : "If this page is blank, the website may block embedding. Use the same-tab link to continue.";
@@ -2098,10 +2119,6 @@ document.getElementById("webSearchForm").addEventListener("submit", event => {
   go(document.getElementById("webQuery").value, document.getElementById("browserEngineSelect").value);
 });
 document.getElementById("browserEngineSelect").addEventListener("change", event => setSearchEngine(event.target.value));
-document.getElementById("youtubeSearchForm").addEventListener("submit", event => {
-  event.preventDefault();
-  searchWeb(document.getElementById("youtubeQuery").value, true);
-});
 document.getElementById("homeEngineSelect").addEventListener("change", event => setSearchEngine(event.target.value));
 document.getElementById("settingsEngineSelect").addEventListener("change", event => setSearchEngine(event.target.value));
 
@@ -2127,13 +2144,6 @@ function useBuiltInProxy() {
 
 document.getElementById("applyProxyEndpoint").addEventListener("click", applyProxyEndpoint);
 document.getElementById("useBuiltInProxy").addEventListener("click", useBuiltInProxy);
-
-document.getElementById("watchForm").addEventListener("submit", event => {
-  event.preventDefault();
-  const id = parsedVideoId(document.getElementById("videoInput").value);
-  if (!id) { viewerStatus.textContent = "Enter a valid YouTube video link or 11-character video ID."; return; }
-  openPage(`https://www.youtube.com/watch?v=${encodeURIComponent(id)}`, `YouTube video ${id}`);
-});
 
 document.addEventListener("click", event => {
   if (!(event.target instanceof Element)) return;
@@ -2191,7 +2201,7 @@ function updateClock() {
 updateClock();
 setInterval(updateClock, 1000);
 
-/* Music Lounge: Web Audio Synth + Direct Audio/YouTube Loader */
+/* Music Lounge: Web Audio Synth + Direct Audio/Video Loader */
 const presets = {
   mint:   { title: "Midnight Mint Synth", desc: "Calm pads · Chill focus", notes: [261.63, 329.63, 392.00, 493.88], tempo: 1400 },
   violet: { title: "Velvet Night Drift", desc: "Deep space · Late night", notes: [196.00, 246.94, 293.66, 392.00], tempo: 1700 },
@@ -2275,7 +2285,7 @@ document.getElementById("customAudioForm").addEventListener("submit", (e) => {
   const ytId = parsedVideoId(raw);
   if (ytId) {
     stopSynth();
-    openPage(`https://www.youtube.com/watch?v=${encodeURIComponent(ytId)}`, `YouTube Music ${ytId}`);
+    openPage(`https://www.youtube.com/watch?v=${encodeURIComponent(ytId)}`, `Media ${ytId}`);
     return;
   }
   const url = normalizeAddress(raw);
@@ -2409,7 +2419,10 @@ document.getElementById("fileInput").addEventListener("change", event => {
   }
   event.target.value = "";
 });
-window.addEventListener("beforeunload", () => objectUrls.forEach(url => URL.revokeObjectURL(url)));
+window.addEventListener("beforeunload", () => {
+  objectUrls.forEach(url => URL.revokeObjectURL(url));
+  if (customWallpaperBlobUrl) URL.revokeObjectURL(customWallpaperBlobUrl);
+});
 document.getElementById("openAssistant").addEventListener("click", () => { closeSettings(); openPage("https://gemini.google.com/app", "Gemini AI Assistant"); });
 </script>
 </body>
