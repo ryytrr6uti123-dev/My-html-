@@ -51,6 +51,7 @@ h1{font-size:clamp(58px,11vw,100px);line-height:1;margin:8px 0 18px;letter-spaci
 .searchform{width:min(760px,100%);display:flex;gap:10px;padding:8px;border:1px solid #30343a;border-radius:19px;background:#111316;box-shadow:0 18px 65px #0008}
 .searchform input{flex:1;min-width:0;padding:12px;border:0;outline:0;background:transparent;color:white;font-size:17px}
 .searchform button{border:0;border-radius:13px;background:linear-gradient(135deg,#a4f6d1,#3dc88f);color:#06140d;font-weight:850;padding:0 22px}
+.engine-select{width:142px;min-width:110px;padding:9px 8px;border:1px solid var(--line);border-radius:11px;background:var(--panel2);color:var(--text);font-size:12px;font-weight:750}
 .shortcuts{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:22px}
 .shortcut{min-width:105px;border:1px solid var(--line);border-radius:14px;background:#111316;padding:12px 16px;color:#d4d8dc}
 .shortcut:hover,.game:hover{border-color:#57bd8c;background:#171c1a}
@@ -111,8 +112,27 @@ body.dock-visible .dock{transform:translate(-50%,0);opacity:1;pointer-events:aut
 .fullscreen .webframe{height:calc(100vh - 190px);max-height:none}
 .assistant-note{border:1px solid var(--line);border-radius:12px;background:#0b0d0f;padding:12px;color:var(--muted);font-size:12px}
 .notice{max-width:760px;margin:22px auto 0;border:1px solid #373329;background:#181611;color:#d2c8a9;border-radius:12px;padding:12px 14px;font-size:12px;text-align:left}
+.appearance-switch{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.appearance-choice{border:1px solid var(--line);border-radius:10px;background:var(--panel2);color:var(--text);padding:10px;font-weight:700}
+.appearance-choice[aria-pressed="true"]{border-color:var(--mint);color:var(--mint)}
+:root[data-mode="light"]{color-scheme:light;--bg:#eef3f0;--panel:#fff;--panel2:#e9efec;--line:#cbd6d0;--text:#17231c;--muted:#5e6b64;--wall-a:#d7efe3;--wall-b:#e7edf5;--mint:#08754c;--green:#108451}
+:root[data-mode="light"] .topbar{background:rgba(248,251,249,.96)}
+:root[data-mode="light"] .browserbar{border-color:var(--line)}
+:root[data-mode="light"] .toolbtn{color:#536158}
+:root[data-mode="light"] .toolbtn:hover{background:#dce7e1;color:#14231b}
+:root[data-mode="light"] .address,:root[data-mode="light"] .searchform,:root[data-mode="light"] .smallform input{background:#fff}
+:root[data-mode="light"] .address input,:root[data-mode="light"] .searchform input,:root[data-mode="light"] .smallform input{color:var(--text)}
+:root[data-mode="light"] .desktop-center{background:linear-gradient(145deg,#ffffffed,#f2f7f4ed);box-shadow:0 20px 70px #29473722}
+:root[data-mode="light"] .shortcut,:root[data-mode="light"] .game,:root[data-mode="light"] .viewer,:root[data-mode="light"] .settings-panel,:root[data-mode="light"] .theme-choice,:root[data-mode="light"] .file-input,:root[data-mode="light"] .upload-item,:root[data-mode="light"] .assistant-note{background:#fff;color:var(--text)}
+:root[data-mode="light"] .desktop-icon{color:#26372e}
+:root[data-mode="light"] .desktop-icon:hover{background:#153a2410;border-color:#153a2420}
+:root[data-mode="light"] .viewer-head,:root[data-mode="light"] .viewer-help{background:#f2f5f3;color:#4f5c55}
+:root[data-mode="light"] .viewer-help a{background:#e2f1e9;color:#08633f}
+:root[data-mode="light"] .dock{background:rgba(250,252,250,.97);border-color:#cbd6d0;box-shadow:0 14px 48px #24372d33}
+:root[data-mode="light"] .dock button.active,:root[data-mode="light"] .dock button:hover{background:#e1f1e8;color:#075d3b}
+:root[data-mode="light"] .notice{background:#fff8e9;border-color:#e7d8b8;color:#6b542b}
 :focus-visible{outline:2px solid var(--mint);outline-offset:3px}
-@media(max-width:650px){.topline{gap:8px;padding:0 10px}.brand{font-size:12px;gap:6px}.brandmark{width:27px;height:27px}.tab{padding:0 10px;font-size:12px}.presence{display:none}.browserbar{padding:7px 9px;gap:4px}.toolbtn{width:31px}.browserbar .go{padding:8px 10px}.browserbar .address{padding:0 8px}main{padding:18px 14px 28px}.home{min-height:calc(100vh - 150px)}.desktop-center{padding:27px 12px}.desktop-icons{gap:2px}.desktop-icon{width:76px}.browser-actions .toolbtn{width:31px}.searchform{gap:3px}.searchform input{font-size:15px;padding:10px}.searchform button{padding:0 13px}.webframe{height:68vh;min-height:340px}.viewer-help{align-items:flex-start;flex-direction:column}.dock button{padding:5px 3px}.dock button span{font-size:17px}}
+@media(max-width:650px){.topline{gap:8px;padding:0 10px}.brand{font-size:12px;gap:6px}.brandmark{width:27px;height:27px}.tab{padding:0 10px;font-size:12px}.presence{display:none}.browserbar{padding:7px 9px;gap:4px}.toolbtn{width:31px}.browserbar .go{padding:8px 10px}.browserbar .address{padding:0 8px}main{padding:18px 14px 28px}.home{min-height:calc(100vh - 150px)}.desktop-center{padding:27px 12px}.desktop-icons{gap:2px}.desktop-icon{width:76px}.browser-actions .toolbtn{width:31px}.searchform{gap:3px}.searchform input{font-size:15px;padding:10px}.searchform button{padding:0 13px}.engine-select{width:108px;min-width:98px;padding:8px 4px;font-size:11px}.webframe{height:68vh;min-height:340px}.viewer-help{align-items:flex-start;flex-direction:column}.dock button{padding:5px 3px}.dock button span{font-size:17px}}
 </style>
 </head>
 <body>
@@ -152,6 +172,9 @@ body.dock-visible .dock{transform:translate(-50%,0);opacity:1;pointer-events:aut
      <h1><span class="gradient">NEXUS</span></h1>
      <p class="subtitle" id="dateText">Loading date…</p>
      <form class="searchform" id="homeForm" role="search">
+      <select class="engine-select" id="homeEngineSelect" aria-label="Search engine">
+       <option value="duckduckgo">DuckDuckGo</option><option value="brave">Brave</option><option value="bing">Bing</option><option value="firefox">Firefox</option><option value="operagx">Opera GX</option><option value="google">Google</option>
+      </select>
       <input id="homeQuery" type="search" placeholder="Search anything or enter a website..." aria-label="Search anything or enter a website" required>
       <button type="submit">Search</button>
      </form>
@@ -223,6 +246,16 @@ body.dock-visible .dock{transform:translate(-50%,0);opacity:1;pointer-events:aut
 <div class="settings-backdrop" id="settingsBackdrop"></div>
 <aside class="settings-panel" id="settingsPanel" role="dialog" aria-modal="true" aria-label="NEXUS settings" aria-hidden="true">
  <div class="settings-head"><h2>Settings</h2><button class="toolbtn" id="closeSettings" aria-label="Close settings">×</button></div>
+ <h3>Search engine</h3>
+ <select class="engine-select" id="settingsEngineSelect" aria-label="Default search engine" style="width:100%">
+  <option value="duckduckgo">DuckDuckGo</option><option value="brave">Brave</option><option value="bing">Bing</option><option value="firefox">Firefox</option><option value="operagx">Opera GX</option><option value="google">Google</option>
+ </select>
+ <p class="file-note">Firefox and Opera GX are browsers; these choices use Google Search.</p>
+ <h3>Appearance</h3>
+ <div class="appearance-switch" role="group" aria-label="Choose light or dark mode">
+  <button class="appearance-choice" id="darkModeButton" aria-pressed="true">Dark</button>
+  <button class="appearance-choice" id="lightModeButton" aria-pressed="false">Light</button>
+ </div>
  <h3>Desktop theme</h3>
  <div class="theme-options" role="group" aria-label="Choose a color theme">
   <button class="theme-choice" data-theme-choice="mint" aria-pressed="true">Mint</button>
@@ -243,6 +276,8 @@ body.dock-visible .dock{transform:translate(-50%,0);opacity:1;pointer-events:aut
 <script>
 const pages={home:document.getElementById("homeView"),search:document.getElementById("searchView"),youtube:document.getElementById("youtubeView"),games:document.getElementById("gamesView")};
 const viewer=document.getElementById("viewer"),frame=document.getElementById("webFrame"),addressInput=document.getElementById("addressInput"),viewerTitle=document.getElementById("viewerTitle"),viewerStatus=document.getElementById("viewerStatus"),openCurrent=document.getElementById("openCurrent");
+const searchEngines={duckduckgo:{label:"DuckDuckGo",url:"https://html.duckduckgo.com/html/"},brave:{label:"Brave Search",url:"https://search.brave.com/search"},bing:{label:"Bing",url:"https://www.bing.com/search"},google:{label:"Google",url:"https://www.google.com/search"},firefox:{label:"Firefox (Google)",url:"https://www.google.com/search"},operagx:{label:"Opera GX (Google)",url:"https://www.google.com/search"}};
+const searchProxyReady=fetch("/healthz",{cache:"no-store"}).then(response=>response.ok).catch(()=>false);
 let lastUrl="",historyStack=[];
 function showPage(name){
   if(!pages[name])return;
@@ -291,6 +326,7 @@ function openPage(destination,title,record=true){
   lastUrl=url.href;
   addressInput.value=videoId?`https://www.youtube.com/watch?v=${videoId}`:url.href;
   openCurrent.href=addressInput.value;
+  openCurrent.hidden=false;
   viewerTitle.textContent=title||url.hostname;
   viewerStatus.textContent=videoId?"Loading YouTube video…":"Loading page…";
   document.getElementById("viewerHelp").textContent=url.hostname==="www.google.com"?"Google search can be embedded here. If your browser still shows a blank page, open the search in this tab.":"If this page is blank, the website may block embedding. Use the same-tab link to continue.";
@@ -300,11 +336,38 @@ function openPage(destination,title,record=true){
   frame.src=url.href;
   showPage("search");
 }
-function searchWeb(query,site){
-  const q=site?`site:youtube.com/watch ${query}`:query;
-  const url=new URL("https://www.google.com/search");
-  url.search=new URLSearchParams({igu:"1",q});
-  openPage(url.href,site?`YouTube results for “${query}”`:`Google results for “${query}”`);
+function openSearchResults(url,title){
+  const proxied=new URL("/proxy",location.href);
+  proxied.searchParams.set("url",url.href);
+  viewerTitle.textContent=title;
+  viewerStatus.textContent="Loading search results…";
+  document.getElementById("viewerHelp").textContent="Search results stay inside NEXUS. Choose another provider in Settings if this engine is unavailable.";
+  openCurrent.hidden=true;
+  addressInput.value=url.href;
+  frame.setAttribute("sandbox","allow-forms allow-scripts allow-presentation");
+  viewer.classList.add("active");
+  frame.src=proxied.href;
+  showPage("search");
+}
+async function searchWeb(query,site){
+  const text=query.trim();
+  if(!text)return;
+  const selected=document.getElementById("homeEngineSelect").value;
+  const engine=searchEngines[selected]||searchEngines.duckduckgo;
+  const url=new URL(engine.url);
+  url.searchParams.set("q",site?`site:youtube.com/watch ${text}`:text);
+  const hasProxy=await searchProxyReady;
+  if(!hasProxy){
+    viewerTitle.textContent=`${engine.label} search`;
+    viewerStatus.textContent="Search proxy unavailable";
+    document.getElementById("viewerHelp").textContent="Embedded search needs the NEXUS proxy server. Run npm start to keep results inside this page; no new tab will be opened.";
+    openCurrent.hidden=true;
+    frame.removeAttribute("src");
+    viewer.classList.add("active");
+    showPage("search");
+    return;
+  }
+  openSearchResults(url,`${engine.label} results for “${text}”`);
 }
 function go(value){
   const address=normalizeAddress(value);
@@ -322,6 +385,8 @@ document.getElementById("youtubeSearchForm").addEventListener("submit",event=>{
   event.preventDefault();
   searchWeb(document.getElementById("youtubeQuery").value,true);
 });
+document.getElementById("homeEngineSelect").addEventListener("change",event=>setSearchEngine(event.target.value));
+document.getElementById("settingsEngineSelect").addEventListener("change",event=>setSearchEngine(event.target.value));
 document.getElementById("watchForm").addEventListener("submit",event=>{
   event.preventDefault();
   const id=parsedVideoId(document.getElementById("videoInput").value);
@@ -387,6 +452,23 @@ function setTheme(theme){
 }
 try{setTheme(localStorage.getItem("nexus-theme")||"mint")}catch{setTheme("mint")}
 document.querySelectorAll("[data-theme-choice]").forEach(button=>button.addEventListener("click",()=>setTheme(button.dataset.themeChoice)));
+function setSearchEngine(engine){
+  if(!searchEngines[engine])return;
+  document.getElementById("homeEngineSelect").value=engine;
+  document.getElementById("settingsEngineSelect").value=engine;
+  try{localStorage.setItem("nexus-search-engine",engine)}catch{}
+}
+try{setSearchEngine(localStorage.getItem("nexus-search-engine")||"duckduckgo")}catch{setSearchEngine("duckduckgo")}
+function setMode(mode){
+  if(!["dark","light"].includes(mode))return;
+  document.documentElement.dataset.mode=mode;
+  document.getElementById("darkModeButton").setAttribute("aria-pressed",String(mode==="dark"));
+  document.getElementById("lightModeButton").setAttribute("aria-pressed",String(mode==="light"));
+  try{localStorage.setItem("nexus-mode",mode)}catch{}
+}
+try{setMode(localStorage.getItem("nexus-mode")||"dark")}catch{setMode("dark")}
+document.getElementById("darkModeButton").addEventListener("click",()=>setMode("dark"));
+document.getElementById("lightModeButton").addEventListener("click",()=>setMode("light"));
 document.getElementById("fullscreenButton").addEventListener("click",async()=>{
   try{
     if(document.fullscreenElement)await document.exitFullscreen();

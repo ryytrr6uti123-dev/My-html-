@@ -5,6 +5,7 @@
 - [Open NEXUS](https://ryytrr6uti123-dev.github.io/My-html-/)
 - [Download the ZIP](https://github.com/ryytrr6uti123-dev/My-html-/archive/refs/heads/main.zip)
 
-Open `index.html` directly or use GitHub Pages. Search results render inside the page; no local server or Worker setup is required.
+Open `index.html` directly or use GitHub Pages. Website addresses open in the NEXUS viewer, though some sites block embedding.
 
-Search uses the DuckDuckGo Instant Answer API and Wikipedia's public search API. It displays quick answers, related topics, and Wikipedia matches—not a complete list of general web results. Search providers block their full results pages from being embedded in a standalone HTML file. Selecting a result opens that destination in a new tab so the NEXUS page stays available.
+To search inside NEXUS, run `npm start`; the local proxy is needed to show search results without opening another tab. GitHub Pages is static and cannot run this proxy.
+

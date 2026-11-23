@@ -136,6 +136,11 @@ async function handleProxy(req, res, target) {
 
 const server = http.createServer(async (req, res) => {
   const requestUrl = new URL(req.url, `http://${req.headers.host || "localhost"}`);
+  if (requestUrl.pathname === "/healthz") {
+    res.writeHead(200, {"content-type":"text/plain; charset=utf-8", "cache-control":"no-store"});
+    res.end("ok");
+    return;
+  }
   if (requestUrl.pathname === "/proxy") {
     await handleProxy(req, res, requestUrl.searchParams.get("url"));
     return;
