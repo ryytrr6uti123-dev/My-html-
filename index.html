@@ -651,6 +651,18 @@ body.is-home main {
   font-size: 12px;
   font-weight: 700;
 }
+.github-dashboard { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+.github-panel { min-width: 0; padding: 18px; border: 1px solid var(--line); border-radius: 16px; background: var(--panel); }
+.github-panel h3 { margin: 0 0 12px; font-size: 17px; }
+.github-list { display: grid; gap: 8px; }
+.github-item { min-width: 0; padding: 12px; border: 1px solid var(--line); border-radius: 11px; background: rgba(255,255,255,.035); }
+.github-item a { display: block; color: var(--mint); font-weight: 700; overflow-wrap: anywhere; }
+.github-item small, .github-state { color: var(--muted); font-size: 12px; }
+.github-links { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.github-links a, .github-refresh { border: 1px solid color-mix(in srgb, var(--mint), transparent 55%); border-radius: 10px; background: color-mix(in srgb, var(--mint), transparent 88%); color: var(--mint); padding: 8px 11px; font-size: 12px; font-weight: 700; }
+.github-toolbar { display: flex; justify-content: flex-end; margin-bottom: 12px; }
+.github-refresh { cursor: pointer; }
+@media (max-width: 640px) { .github-dashboard { grid-template-columns: 1fr; } }
 
 /* YouTube View */
 .youtube-tools { max-width: 760px; margin: 10px auto; }
@@ -1084,6 +1096,7 @@ body.is-home main {
         <button class="tab" data-page="search">Browser</button>
         <button class="tab" data-page="youtube">YouTube</button>
         <button class="tab" data-page="games">Games</button>
+        <button class="tab" data-page="github">GitHub</button>
       </nav>
       <span class="presence">NEXUS OS</span>
     </div>
@@ -1424,6 +1437,21 @@ body.is-home main {
         </div>
       </div>
     </section>
+
+    <section class="view" id="githubView">
+      <div class="subview-card">
+        <div class="section-title">
+          <div><h2>GitHub dashboard</h2><p>Recent open issues and commits for My-html-.</p></div>
+          <a class="secondary" href="https://github.com/ryytrr6uti123-dev/My-html-" target="_blank" rel="noopener noreferrer">Repository</a>
+        </div>
+        <div class="github-toolbar"><span class="github-state" id="githubStatus" role="status">Open the dashboard to load repository activity.</span><button class="github-refresh" id="refreshGithub" type="button">Refresh</button></div>
+        <div class="github-dashboard">
+          <section class="github-panel"><h3>Open issues</h3><div class="github-list" id="githubIssues" aria-live="polite"><p class="github-state">Not loaded yet.</p></div><div class="github-links"><a href="https://github.com/ryytrr6uti123-dev/My-html-/issues" target="_blank" rel="noopener noreferrer">Review issues on GitHub</a></div></section>
+          <section class="github-panel"><h3>Recent commits</h3><div class="github-list" id="githubCommits" aria-live="polite"><p class="github-state">Not loaded yet.</p></div><div class="github-links"><a href="https://github.com/ryytrr6uti123-dev/My-html-/commits/main/" target="_blank" rel="noopener noreferrer">View full history</a></div></section>
+        </div>
+        <p class="notice">Activity is public and read-only here. Use GitHub to comment on issues, review changes, and publish code.</p>
+      </div>
+    </section>
   </main>
 
   <!-- Persistent Bottom Shelf / Taskbar with Custom SVG Icons -->
@@ -1456,7 +1484,7 @@ body.is-home main {
           <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6.8 3.2 20.8 6.8l-3.6 14L3.2 17.2l3.6-14Zm4.7 7.1-.9 3.4 3.4.9.9-3.4-3.4-.9Z"/></svg>
         </button>
 
-        <button class="shelf-icon ic-github" data-action="github" data-tooltip="GitHub" aria-label="GitHub">
+        <button class="shelf-icon ic-github" data-page="github" data-tooltip="GitHub dashboard" aria-label="GitHub dashboard">
           <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.58 2 12.23c0 4.52 2.87 8.35 6.84 9.7.5.1.68-.22.68-.48 0-.24-.01-1.03-.01-1.87-2.78.62-3.37-1.21-3.37-1.21-.45-1.18-1.11-1.49-1.11-1.49-.91-.64.07-.62.07-.62 1 .07 1.53 1.05 1.53 1.05.9 1.56 2.35 1.11 2.92.85.09-.66.35-1.11.63-1.37-2.22-.26-4.56-1.14-4.56-5.06 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.3.1-2.71 0 0 .84-.27 2.75 1.05A9.38 9.38 0 0 1 12 6.84c.85 0 1.7.12 2.5.34 1.91-1.32 2.75-1.05 2.75-1.05.55 1.41.2 2.45.1 2.71.64.72 1.03 1.63 1.03 2.75 0 3.93-2.34 4.8-4.57 5.05.36.32.68.94.68 1.9 0 1.37-.01 2.47-.01 2.81 0 .27.18.59.69.48A10.25 10.25 0 0 0 22 12.23C22 6.58 17.52 2 12 2Z"/></svg>
         </button>
 
@@ -1563,7 +1591,7 @@ body.is-home main {
         <div class="tile-badge ic-games"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1"><rect x="2" y="6" width="20" height="12" rx="4"/><path d="M6 12h4M8 10v4"/></svg></div>
         <span>Games</span>
       </button>
-      <button class="launcher-tile" data-action="github">
+      <button class="launcher-tile" data-page="github">
         <div class="tile-badge ic-github"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.58 2 12.23c0 4.52 2.87 8.35 6.84 9.7.5.1.68-.22.68-.48 0-.24-.01-1.03-.01-1.87-2.78.62-3.37-1.21-3.37-1.21-.45-1.18-1.11-1.49-1.11-1.49-.91-.64.07-.62.07-.62 1 .07 1.53 1.05 1.53 1.05.9 1.56 2.35 1.11 2.92.85.09-.66.35-1.11.63-1.37-2.22-.26-4.56-1.14-4.56-5.06 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.3.1-2.71 0 0 .84-.27 2.75 1.05A9.38 9.38 0 0 1 12 6.84c.85 0 1.7.12 2.5.34 1.91-1.32 2.75-1.05 2.75-1.05.55 1.41.2 2.45.1 2.71.64.72 1.03 1.63 1.03 2.75 0 3.93-2.34 4.8-4.57 5.05.36.32.68.94.68 1.9 0 1.37-.01 2.47-.01 2.81 0 .27.18.59.69.48A10.25 10.25 0 0 0 22 12.23C22 6.58 17.52 2 12 2Z"/></svg></div>
         <span>GitHub</span>
       </button>
@@ -1639,7 +1667,8 @@ const pages = {
   home: document.getElementById("homeView"),
   search: document.getElementById("searchView"),
   youtube: document.getElementById("youtubeView"),
-  games: document.getElementById("gamesView")
+  games: document.getElementById("gamesView"),
+  github: document.getElementById("githubView")
 };
 const viewer = document.getElementById("viewer"),
       frame = document.getElementById("webFrame"),
@@ -1770,7 +1799,67 @@ function showPage(name) {
   });
   if (name === "search") document.getElementById("webQuery").focus();
   if (name === "youtube") document.getElementById("youtubeQuery").focus();
+  if (name === "github") loadGithubDashboard();
 }
+
+const githubRepository = "ryytrr6uti123-dev/My-html-";
+function renderGithubItems(container, items, type) {
+  container.replaceChildren();
+  if (!items.length) {
+    const empty = document.createElement("p");
+    empty.className = "github-state";
+    empty.textContent = type === "issue" ? "No open issues." : "No recent commits found.";
+    container.append(empty);
+    return;
+  }
+  for (const item of items) {
+    const row = document.createElement("article");
+    row.className = "github-item";
+    const link = document.createElement("a");
+    link.href = item.html_url;
+    link.target = "_blank";
+    link.rel = "noopener noreferrer";
+    const detail = document.createElement("small");
+    if (type === "issue") {
+      link.textContent = `#${item.number} ${item.title}`;
+      detail.textContent = `Updated ${new Date(item.updated_at).toLocaleDateString()} · ${item.user?.login || "unknown"}`;
+    } else {
+      link.textContent = `${item.sha.slice(0, 7)} ${item.commit.message.split("\n")[0]}`;
+      detail.textContent = `${item.commit.author?.name || item.author?.login || "Contributor"} · ${new Date(item.commit.author?.date || Date.now()).toLocaleDateString()}`;
+    }
+    row.append(link, detail);
+    container.append(row);
+  }
+}
+async function loadGithubDashboard() {
+  const status = document.getElementById("githubStatus");
+  const issues = document.getElementById("githubIssues");
+  const commits = document.getElementById("githubCommits");
+  status.textContent = "Loading public GitHub activity…";
+  try {
+    const headers = { Accept: "application/vnd.github+json" };
+    const responses = await Promise.all([
+      fetch(`https://api.github.com/repos/${githubRepository}/issues?state=open&per_page=8`, { headers }),
+      fetch(`https://api.github.com/repos/${githubRepository}/commits?per_page=8`, { headers })
+    ]);
+    const failed = responses.find(response => !response.ok);
+    if (failed) throw new Error(failed.status === 403 ? "GitHub API rate limit reached. Try again later." : "GitHub could not load repository activity.");
+    const [issueItems, commitItems] = await Promise.all(responses.map(response => response.json()));
+    renderGithubItems(issues, issueItems.filter(item => !item.pull_request), "issue");
+    renderGithubItems(commits, commitItems, "commit");
+    status.textContent = "Showing public repository activity. Open an issue or commit to review it on GitHub.";
+  } catch (error) {
+    for (const [container, label] of [[issues, "issues"], [commits, "commits"]]) {
+      container.replaceChildren();
+      const message = document.createElement("p");
+      message.className = "github-state";
+      message.textContent = `Could not load ${label}. Check your connection or use the GitHub links below.`;
+      container.append(message);
+    }
+    status.textContent = error.message;
+  }
+}
+document.getElementById("refreshGithub").addEventListener("click", loadGithubDashboard);
 
 function parsedVideoId(value) {
   const text = value.trim();
@@ -1951,7 +2040,6 @@ document.querySelectorAll("[data-action]").forEach(button => button.addEventList
   if (action === "settings") openSettings();
   if (action === "files") openSettings("fileInput");
   if (action === "roblox") openPage("https://now.gg/apps/roblox-corporation/5349/roblox.html", "Roblox on now.gg");
-  if (action === "github") openPage("https://github.com", "GitHub");
   if (action === "assistant") openPage("https://gemini.google.com/app", "Gemini AI Assistant");
 }));
 
@@ -2091,4 +2179,7 @@ document.getElementById("fileInput").addEventListener("change", event => {
   event.target.value = "";
 });
 window.addEventListener("beforeunload", () => objectUrls.forEach(url => URL.revokeObjectURL(url)));
-document.getElementById("openAssistant").addEventListener("click", () => { closeSettings(); openPage("https://gemini.google.com/app", "Gemini AI
+document.getElementById("openAssistant").addEventListener("click", () => { closeSettings(); openPage("https://gemini.google.com/app", "Gemini AI Assistant"); });
+</script>
+</body>
+</html>
