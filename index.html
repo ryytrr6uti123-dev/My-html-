@@ -7,19 +7,19 @@
 <title>NEXUS — Search & Watch</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root {
   color-scheme: dark;
   --bg: #0b0e14;
-  --panel: rgba(20, 24, 32, 0.88);
-  --panel2: rgba(32, 38, 49, 0.9);
+  --panel: rgba(18, 22, 30, 0.88);
+  --panel2: rgba(30, 36, 48, 0.92);
   --line: rgba(255, 255, 255, 0.13);
   --text: #f4f6f8;
   --muted: #9aa3b2;
   --mint: #83efc1;
   --green: #30c98b;
-  --shelf-bg: rgba(14, 17, 23, 0.82);
+  --shelf-bg: rgba(14, 17, 23, 0.84);
   --wall-tint: rgba(10, 15, 25, 0.25);
   --wallpaper: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=2070&q=85');
 }
@@ -31,14 +31,14 @@
 :root[data-mode="light"] {
   color-scheme: light;
   --bg: #eef3f0;
-  --panel: rgba(255, 255, 255, 0.92);
+  --panel: rgba(255, 255, 255, 0.93);
   --panel2: rgba(235, 241, 238, 0.95);
   --line: rgba(15, 23, 42, 0.14);
   --text: #141e18;
   --muted: #526058;
   --mint: #08754c;
   --green: #108451;
-  --shelf-bg: rgba(245, 248, 246, 0.86);
+  --shelf-bg: rgba(245, 248, 246, 0.88);
   --wall-tint: rgba(255, 255, 255, 0.1);
 }
 
@@ -63,7 +63,7 @@ a { text-decoration: none; }
   min-height: 100vh;
   padding-bottom: 62px;
   background-image:
-    linear-gradient(to bottom, var(--wall-tint) 0%, rgba(8, 12, 20, 0.2) 65%, rgba(8, 12, 20, 0.72) 100%),
+    linear-gradient(to bottom, var(--wall-tint) 0%, rgba(8, 12, 20, 0.22) 65%, rgba(8, 12, 20, 0.74) 100%),
     var(--wallpaper);
   background-size: cover;
   background-position: center;
@@ -77,13 +77,14 @@ a { text-decoration: none; }
   z-index: 15;
   background: var(--panel);
   border-bottom: 1px solid var(--line);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(24px) saturate(160%);
+  -webkit-backdrop-filter: blur(24px) saturate(160%);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
 }
 body.is-home .topbar { display: none; }
 
 .topline {
-  height: 50px;
+  height: 48px;
   display: flex;
   align-items: center;
   gap: 16px;
@@ -118,22 +119,24 @@ body.is-home .topbar { display: none; }
 .tab {
   border: 0;
   border-bottom: 2px solid transparent;
-  padding: 0 14px;
+  padding: 0 15px;
   background: transparent;
   color: var(--muted);
   font-size: 13.5px;
-  font-weight: 500;
+  font-weight: 600;
   white-space: nowrap;
+  transition: color 0.15s, background 0.15s;
 }
 .tab:hover, .tab.active {
   color: var(--text);
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.06);
 }
 .tab.active { border-bottom-color: var(--mint); }
 .presence {
   font-size: 12px;
   color: var(--muted);
   white-space: nowrap;
+  font-weight: 600;
 }
 .presence:before {
   content: "";
@@ -143,10 +146,11 @@ body.is-home .topbar { display: none; }
   margin-right: 7px;
   border-radius: 50%;
   background: var(--mint);
+  box-shadow: 0 0 8px var(--mint);
 }
 
 .browserbar {
-  height: 50px;
+  height: 52px;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -163,22 +167,32 @@ body.is-home .topbar { display: none; }
   font-size: 18px;
   display: grid;
   place-items: center;
+  transition: background 0.15s, color 0.15s;
 }
 .toolbtn:hover { background: var(--panel2); color: var(--text); }
 .address {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 9px;
   flex: 1;
   min-width: 0;
-  height: 36px;
-  padding: 0 12px;
+  height: 38px;
+  padding: 0 6px 0 13px;
   border: 1px solid var(--line);
-  border-radius: 11px;
-  background: rgba(0, 0, 0, 0.25);
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.3);
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
-:root[data-mode="light"] .address { background: rgba(255, 255, 255, 0.85); }
-.address:focus-within { border-color: var(--mint); }
+:root[data-mode="light"] .address { background: rgba(255, 255, 255, 0.92); }
+.address:focus-within {
+  border-color: var(--mint);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--mint), transparent 82%);
+}
+.address-lock {
+  color: var(--mint);
+  display: flex;
+  align-items: center;
+}
 .address input {
   flex: 1;
   min-width: 0;
@@ -190,21 +204,21 @@ body.is-home .topbar { display: none; }
 }
 .go {
   border: 0;
-  border-radius: 8px;
-  background: var(--mint);
+  border-radius: 999px;
+  background: linear-gradient(135deg, var(--mint), var(--green));
   color: #06140d;
   font-weight: 800;
   font-size: 12.5px;
-  padding: 5px 12px;
+  padding: 6px 15px;
 }
-.browser-actions { display: flex; gap: 4px; }
+.browser-actions { display: flex; gap: 5px; }
 .browser-actions .toolbtn { border: 1px solid var(--line); font-size: 15px; }
 
 /* Main Content Area */
 main {
-  width: min(1200px, 100%);
+  width: min(1240px, 100%);
   margin: 0 auto;
-  padding: 24px 24px 76px;
+  padding: 22px 22px 76px;
 }
 body.is-home main {
   width: 100%;
@@ -222,7 +236,6 @@ body.is-home main {
   overflow: hidden;
   user-select: none;
 }
-
 .desktop-widgets {
   position: absolute;
   bottom: 24px;
@@ -233,8 +246,6 @@ body.is-home main {
   align-items: flex-end;
   pointer-events: none;
 }
-
-/* Bottom-Left Ctrl+K Launcher Pill */
 .launcher-hint {
   pointer-events: auto;
   background: rgba(18, 22, 30, 0.74);
@@ -272,8 +283,6 @@ body.is-home main {
   font-weight: 700;
   letter-spacing: 0.3px;
 }
-
-/* Bottom-Right Clock & Stacked Date Widget */
 .clock-widget {
   display: flex;
   align-items: center;
@@ -305,54 +314,345 @@ body.is-home main {
 .subview-card {
   background: var(--panel);
   border: 1px solid var(--line);
-  border-radius: 22px;
-  padding: 24px;
-  backdrop-filter: blur(22px);
-  -webkit-backdrop-filter: blur(22px);
-  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.45);
+  border-radius: 24px;
+  padding: 26px;
+  backdrop-filter: blur(26px) saturate(150%);
+  -webkit-backdrop-filter: blur(26px) saturate(150%);
+  box-shadow: 0 28px 80px rgba(0, 0, 0, 0.5);
 }
-.section-title { display: flex; justify-content: space-between; align-items: end; gap: 12px; margin: 0 0 18px; }
-.section-title h2 { margin: 0; font-size: 24px; }
+.section-title { display: flex; justify-content: space-between; align-items: end; gap: 12px; margin: 0 0 20px; }
+.section-title h2 { margin: 0; font-size: 25px; font-weight: 800; letter-spacing: -0.02em; }
 .section-title p { margin: 4px 0 0; color: var(--muted); font-size: 13.5px; }
+
+/* =========================================================
+   10000000x BETTER WEB BROWSER PAGE & SPEED DIAL
+   ========================================================= */
+.browser-hero {
+  text-align: center;
+  max-width: 720px;
+  margin: 12px auto 28px;
+}
+.browser-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--mint), transparent 86%);
+  border: 1px solid color-mix(in srgb, var(--mint), transparent 60%);
+  color: var(--mint);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+.browser-hero h2 {
+  font-size: clamp(28px, 4vw, 38px);
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  margin: 0 0 8px;
+  background: linear-gradient(135deg, #ffffff 30%, var(--mint) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+:root[data-mode="light"] .browser-hero h2 {
+  background: linear-gradient(135deg, #0f172a 30%, var(--mint) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.browser-hero p {
+  color: var(--muted);
+  font-size: 14px;
+  margin: 0 0 20px;
+}
 
 .searchform {
   width: 100%;
   display: flex;
+  align-items: center;
   gap: 8px;
-  padding: 7px;
+  padding: 7px 7px 7px 16px;
   border: 1px solid var(--line);
-  border-radius: 15px;
-  background: rgba(0, 0, 0, 0.25);
+  border-radius: 18px;
+  background: rgba(0, 0, 0, 0.34);
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.28);
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
-:root[data-mode="light"] .searchform { background: rgba(255, 255, 255, 0.9); }
+:root[data-mode="light"] .searchform { background: rgba(255, 255, 255, 0.95); }
+.searchform:focus-within {
+  border-color: var(--mint);
+  box-shadow: 0 14px 45px rgba(0, 0, 0, 0.35), 0 0 0 3px color-mix(in srgb, var(--mint), transparent 82%);
+}
 .searchform input {
   flex: 1;
   min-width: 0;
-  padding: 10px 12px;
+  padding: 10px 6px;
   border: 0;
   outline: 0;
   background: transparent;
   color: var(--text);
-  font-size: 15px;
+  font-size: 15.5px;
 }
 .searchform button {
   border: 0;
-  border-radius: 11px;
+  border-radius: 13px;
   background: linear-gradient(135deg, var(--mint), var(--green));
   color: #06140d;
   font-weight: 800;
-  padding: 0 20px;
+  padding: 11px 22px;
+  transition: transform 0.15s, filter 0.15s;
 }
-.engine-select {
-  padding: 8px 10px;
+.searchform button:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.06);
+}
+
+/* Speed Dial Quick Bookmarks Grid */
+.speed-dial-wrap {
+  max-width: 760px;
+  margin: 0 auto 10px;
+}
+.speed-dial-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.speed-dial {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 10px;
+}
+.dial-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 8px;
+  border-radius: 16px;
   border: 1px solid var(--line);
-  border-radius: 11px;
-  background: var(--panel2);
-  color: var(--text);
+  background: rgba(255, 255, 255, 0.04);
+  font-size: 12px;
+  font-weight: 600;
+  transition: transform 0.16s ease, background 0.16s ease, border-color 0.16s ease;
+}
+.dial-card:hover {
+  transform: translateY(-3px);
+  background: rgba(255, 255, 255, 0.09);
+  border-color: var(--mint);
+}
+.dial-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  color: #fff;
+  font-weight: 800;
+  font-size: 16px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+}
+
+/* Realistic Browser Window Frame for Embedded Viewer */
+.viewer {
+  display: none;
+  margin: 22px auto 0;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: #0d1016;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.55);
+  overflow: hidden;
+}
+.viewer.active { display: block; }
+
+.viewer-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 11px 16px;
+  background: rgba(255, 255, 255, 0.04);
+  border-bottom: 1px solid var(--line);
+}
+.window-controls {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.win-dot {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  border: 0;
+  padding: 0;
+}
+.win-close { background: #ff5f56; }
+.win-min   { background: #ffbd2e; }
+.win-max   { background: #27c93f; }
+
+.viewer-tab-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid var(--line);
+  padding: 4px 14px;
+  border-radius: 999px;
+  max-width: 60%;
+}
+.viewer-tab-pill strong {
   font-size: 12.5px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.viewer-head span#viewerStatus {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--mint);
+}
+
+.webframe {
+  display: block;
+  width: 100%;
+  height: min(72vh, 840px);
+  min-height: 440px;
+  border: 0;
+  background: white;
+}
+.viewer-help {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 9px 16px;
+  border-bottom: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.02);
+  color: var(--muted);
+  font-size: 12px;
+}
+.viewer-help-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+.viewer-help a, .viewer-close-btn {
+  border: 1px solid color-mix(in srgb, var(--mint), transparent 45%);
+  border-radius: 9px;
+  background: color-mix(in srgb, var(--mint), transparent 85%);
+  color: var(--mint);
+  padding: 6px 11px;
+  font-size: 12px;
+  font-weight: 700;
+}
+.viewer-close-btn {
+  border-color: rgba(248, 113, 113, 0.4);
+  background: rgba(248, 113, 113, 0.12);
+  color: #fca5a5;
+}
+
+/* =========================================================
+   RICH VISUAL GAME CARDS WITH MATCHING ARTWORK
+   ========================================================= */
+.games {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 16px;
+}
+.game {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.04);
+  overflow: hidden;
+  transition: transform 0.2s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.game:hover {
+  border-color: var(--mint);
+  transform: translateY(-4px);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.4);
+}
+.game-cover {
+  position: relative;
+  height: 124px;
+  width: 100%;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background: var(--cover-bg, linear-gradient(135deg, #1e293b, #0f172a));
+}
+.game-cover::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(12, 15, 22, 0.85) 0%, transparent 60%);
+}
+.game-cover svg {
+  width: 64px;
+  height: 64px;
+  z-index: 1;
+  filter: drop-shadow(0 8px 18px rgba(0, 0, 0, 0.45));
+  transition: transform 0.25s ease;
+}
+.game:hover .game-cover svg {
+  transform: scale(1.1) rotate(-2deg);
+}
+.game-tag {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 2;
+  background: rgba(10, 14, 22, 0.72);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-size: 10.5px;
+  font-weight: 700;
+  color: #fff;
+}
+.game-body {
+  padding: 14px 16px 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  flex: 1;
+  gap: 8px;
+}
+.game-body b {
+  font-size: 16px;
+  font-weight: 700;
+}
+.game-body small {
+  color: var(--muted);
+  font-size: 12.5px;
+  line-height: 1.4;
+}
+.game-play-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 4px;
+  padding-top: 10px;
+  border-top: 1px solid var(--line);
+}
+.game-play-row span {
+  color: var(--mint);
+  font-size: 12px;
   font-weight: 700;
 }
 
+/* YouTube View */
 .youtube-tools { max-width: 760px; margin: 10px auto; }
 .smallform { display: flex; gap: 8px; margin: 14px 0; }
 .smallform input {
@@ -373,79 +673,17 @@ body.is-home main {
   padding: 10px 15px;
   font-weight: 700;
 }
-
-.viewer {
-  display: none;
-  margin: 18px auto 0;
+.engine-select {
+  padding: 8px 10px;
   border: 1px solid var(--line);
-  border-radius: 16px;
-  background: var(--panel);
-  overflow: hidden;
-}
-.viewer.active { display: block; }
-.viewer-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 12px 15px;
-  border-bottom: 1px solid var(--line);
-}
-.viewer-head strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.viewer-head span { font-size: 12px; color: var(--muted); }
-.webframe {
-  display: block;
-  width: 100%;
-  height: min(70vh, 820px);
-  min-height: 420px;
-  border: 0;
-  background: white;
-}
-.viewer-help {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-  padding: 10px 14px;
-  border-bottom: 1px solid var(--line);
-  background: rgba(0, 0, 0, 0.2);
-  color: var(--muted);
-  font-size: 12px;
-}
-.viewer-help a {
-  flex: none;
-  border: 1px solid color-mix(in srgb, var(--mint), transparent 45%);
-  border-radius: 9px;
-  background: color-mix(in srgb, var(--mint), transparent 85%);
-  color: var(--mint);
-  padding: 7px 11px;
-  font-weight: 750;
+  border-radius: 11px;
+  background: var(--panel2);
+  color: var(--text);
+  font-size: 12.5px;
+  font-weight: 700;
 }
 
-.games {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(175px, 1fr));
-  gap: 12px;
-}
-.game {
-  min-height: 106px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  border: 1px solid var(--line);
-  border-radius: 15px;
-  background: rgba(255, 255, 255, 0.04);
-  padding: 15px;
-  transition: transform 0.15s ease, border-color 0.2s ease;
-}
-.game:hover { border-color: var(--mint); transform: translateY(-2px); }
-.game small { color: var(--muted); }
-.game b { font-size: 15.5px; }
-.game span { color: var(--mint); font-size: 12px; font-weight: 600; }
-
-/* =========================================================
-   UPGRADED BOTTOM SHELF / TASKBAR & CUSTOM APP ICONS
-   ========================================================= */
+/* Persistent Bottom Shelf / Taskbar */
 .shelf {
   position: fixed;
   bottom: 0;
@@ -464,14 +702,7 @@ body.is-home main {
   padding: 0 14px;
   user-select: none;
 }
-
-.shelf-left {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-/* Circular OS Launcher Button */
+.shelf-left { display: flex; align-items: center; gap: 8px; }
 .launcher-circle-btn {
   width: 38px;
   height: 38px;
@@ -494,20 +725,8 @@ body.is-home main {
   border: 2.5px solid var(--text);
   box-shadow: 0 0 10px rgba(255, 255, 255, 0.25);
 }
-
-.shelf-divider {
-  width: 1px;
-  height: 24px;
-  background: var(--line);
-  margin: 0 2px;
-}
-
-/* Custom Squircle App Icons */
-.shelf-apps {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
+.shelf-divider { width: 1px; height: 24px; background: var(--line); margin: 0 2px; }
+.shelf-apps { display: flex; align-items: center; gap: 8px; }
 .shelf-icon {
   position: relative;
   width: 38px;
@@ -521,18 +740,12 @@ body.is-home main {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.25);
   transition: transform 0.18s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.18s ease, filter 0.18s ease;
 }
-.shelf-icon svg {
-  width: 19px;
-  height: 19px;
-  display: block;
-}
+.shelf-icon svg { width: 19px; height: 19px; display: block; }
 .shelf-icon:hover {
   transform: translateY(-4px) scale(1.07);
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.4);
   filter: brightness(1.08);
 }
-
-/* Hover Tooltip Pill */
 .shelf-icon::before {
   content: attr(data-tooltip);
   position: absolute;
@@ -552,12 +765,7 @@ body.is-home main {
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4);
   transition: opacity 0.15s ease, transform 0.15s ease;
 }
-.shelf-icon:hover::before {
-  opacity: 1;
-  transform: translateX(-50%) translateY(0);
-}
-
-/* Active App Indicator Pill */
+.shelf-icon:hover::before { opacity: 1; transform: translateX(-50%) translateY(0); }
 .shelf-icon.active::after {
   content: "";
   position: absolute;
@@ -569,7 +777,6 @@ body.is-home main {
   box-shadow: 0 0 8px var(--mint);
 }
 
-/* Custom Gradients per App Icon */
 .ic-home    { --icon-bg: linear-gradient(145deg, #34d399, #059669); }
 .ic-search  { --icon-bg: linear-gradient(145deg, #38bdf8, #2563eb); }
 .ic-youtube { --icon-bg: linear-gradient(145deg, #ff4d4d, #dc2626); }
@@ -579,7 +786,6 @@ body.is-home main {
 .ic-ai      { --icon-bg: linear-gradient(145deg, #6366f1, #ec4899); }
 .ic-files   { --icon-bg: linear-gradient(145deg, #fbbf24, #d97706); }
 
-/* Center Taskbar Gesture Handle */
 .shelf-center-pill {
   position: absolute;
   left: 50%;
@@ -591,18 +797,9 @@ body.is-home main {
   cursor: pointer;
   transition: background 0.2s, width 0.2s;
 }
-.shelf-center-pill:hover {
-  background: var(--mint);
-  width: 54px;
-}
+.shelf-center-pill:hover { background: var(--mint); width: 54px; }
 
-/* Right-Side Interactive System Tray */
-.shelf-right {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
+.shelf-right { display: flex; align-items: center; gap: 8px; }
 .quick-search-pill {
   display: flex;
   align-items: center;
@@ -640,24 +837,9 @@ body.is-home main {
   background: rgba(255, 255, 255, 0.16);
   border-color: var(--mint);
 }
-.tray-icons {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: var(--text);
-}
-.tray-icons svg {
-  width: 15px;
-  height: 15px;
-  display: block;
-}
-.tray-battery {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 11.5px;
-  color: var(--mint);
-}
+.tray-icons { display: flex; align-items: center; gap: 8px; color: var(--text); }
+.tray-icons svg { width: 15px; height: 15px; display: block; }
+.tray-battery { display: flex; align-items: center; gap: 4px; font-size: 11.5px; color: var(--mint); }
 
 /* Quick Settings Control Center Popover */
 .quick-panel {
@@ -681,21 +863,8 @@ body.is-home main {
   from { opacity: 0; transform: translateY(10px) scale(0.97); }
   to   { opacity: 1; transform: translateY(0) scale(1); }
 }
-.qp-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 12px;
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--muted);
-}
-.qp-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 8px;
-  margin-bottom: 14px;
-}
+.qp-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; font-size: 12px; font-weight: 700; color: var(--muted); }
+.qp-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 14px; }
 .qp-tile {
   display: flex;
   align-items: center;
@@ -709,28 +878,14 @@ body.is-home main {
   text-align: left;
   transition: background 0.15s, border-color 0.15s;
 }
-.qp-tile:hover {
-  background: rgba(255, 255, 255, 0.11);
-  border-color: var(--mint);
-}
+.qp-tile:hover { background: rgba(255, 255, 255, 0.11); border-color: var(--mint); }
 .qp-tile.active {
   background: color-mix(in srgb, var(--mint), transparent 82%);
   border-color: var(--mint);
   color: var(--mint);
 }
-.qp-section-label {
-  font-size: 11px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--muted);
-  margin-bottom: 8px;
-}
-.qp-wallpapers {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 6px;
-}
+.qp-section-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin-bottom: 8px; }
+.qp-wallpapers { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
 .wp-swatch {
   height: 36px;
   border-radius: 9px;
@@ -755,7 +910,6 @@ body.is-home main {
   padding: 16px;
 }
 .launcher-backdrop.open { display: flex; }
-
 .launcher-modal {
   width: min(580px, 100%);
   background: var(--panel);
@@ -775,11 +929,7 @@ body.is-home main {
   letter-spacing: 0.16em;
   color: var(--mint);
 }
-.launcher-search-row {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 16px;
-}
+.launcher-search-row { display: flex; gap: 8px; margin-bottom: 16px; }
 .launcher-search-row input {
   flex: 1;
   min-width: 0;
@@ -801,12 +951,7 @@ body.is-home main {
   font-weight: 800;
   padding: 0 18px;
 }
-
-.launcher-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 10px;
-}
+.launcher-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
 .launcher-tile {
   border: 1px solid var(--line);
   border-radius: 14px;
@@ -821,11 +966,7 @@ body.is-home main {
   text-align: center;
   transition: background 0.15s, border-color 0.15s, transform 0.15s;
 }
-.launcher-tile:hover {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: var(--mint);
-  transform: translateY(-2px);
-}
+.launcher-tile:hover { background: rgba(255, 255, 255, 0.1); border-color: var(--mint); transform: translateY(-2px); }
 .launcher-tile .tile-badge {
   width: 34px;
   height: 34px;
@@ -917,6 +1058,7 @@ body.is-home main {
   .shelf-center-pill, .quick-search-pill { display: none; }
   .shelf-apps { gap: 5px; }
   .shelf-icon { width: 34px; height: 34px; border-radius: 10px; }
+  .speed-dial { grid-template-columns: repeat(3, 1fr); }
 }
 @media (max-width: 640px) {
   .desktop-widgets {
@@ -939,7 +1081,7 @@ body.is-home main {
       <a class="brand" href="#" data-page="home"><span class="brandmark">N</span>NEXUS</a>
       <nav class="tabs" aria-label="NEXUS sections">
         <button class="tab active" data-page="home">Desktop</button>
-        <button class="tab" data-page="search">Search</button>
+        <button class="tab" data-page="search">Browser</button>
         <button class="tab" data-page="youtube">YouTube</button>
         <button class="tab" data-page="games">Games</button>
       </nav>
@@ -950,8 +1092,10 @@ body.is-home main {
       <button class="toolbtn" id="reloadButton" aria-label="Reload page" title="Reload">⟳</button>
       <button class="toolbtn" data-page="home" aria-label="Home" title="Desktop">⌂</button>
       <form class="address" id="addressForm" role="search">
-        <span aria-hidden="true">⌕</span>
-        <input id="addressInput" type="text" placeholder="Search Google or enter a website address" autocomplete="off" aria-label="Search Google or enter a website address">
+        <span class="address-lock" aria-hidden="true">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+        </span>
+        <input id="addressInput" type="text" placeholder="Search the web or enter a website URL..." autocomplete="off" aria-label="Search Google or enter a website address">
         <button class="go" type="submit">Go</button>
       </form>
       <div class="browser-actions">
@@ -987,22 +1131,77 @@ body.is-home main {
       </div>
     </section>
 
-    <!-- Web Search & Embedded Viewer -->
+    <!-- =========================================================
+         UPGRADED WEB BROWSER & EMBEDDED VIEWER PAGE
+         ========================================================= -->
     <section class="view" id="searchView">
       <div class="subview-card">
-        <div class="section-title">
-          <div>
-            <h2>Search the web</h2>
-            <p>Search results open inside the NEXUS page.</p>
+        <div class="browser-hero">
+          <div class="browser-badge">✦ NEXUS WEB ENGINE</div>
+          <h2>Explore the Web Privately</h2>
+          <p>Search through your chosen provider or jump straight to any URL inside NEXUS.</p>
+          <form class="searchform" id="webSearchForm" role="search">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--mint)" stroke-width="2.4" style="flex-shrink:0"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+            <input id="webQuery" type="search" placeholder="Search the web or type a URL (e.g. wikipedia.org)..." aria-label="Search the web" required>
+            <button type="submit">Search</button>
+          </form>
+        </div>
+
+        <!-- Speed Dial Quick Bookmarks -->
+        <div class="speed-dial-wrap">
+          <div class="speed-dial-label">
+            <span>Quick Speed Dial</span>
+            <span>1-Click Launch</span>
+          </div>
+          <div class="speed-dial">
+            <a class="dial-card" href="https://www.google.com">
+              <div class="dial-icon" style="background:linear-gradient(135deg,#4285F4,#34A853)">G</div>
+              <span>Google</span>
+            </a>
+            <a class="dial-card" href="https://en.wikipedia.org">
+              <div class="dial-icon" style="background:linear-gradient(135deg,#64748b,#334155)">W</div>
+              <span>Wikipedia</span>
+            </a>
+            <a class="dial-card" href="https://github.com">
+              <div class="dial-icon" style="background:linear-gradient(135deg,#334155,#0f172a)">⌘</div>
+              <span>GitHub</span>
+            </a>
+            <a class="dial-card" href="https://www.reddit.com">
+              <div class="dial-icon" style="background:linear-gradient(135deg,#ff4500,#c2410c)">R</div>
+              <span>Reddit</span>
+            </a>
+            <a class="dial-card" href="https://discord.com">
+              <div class="dial-icon" style="background:linear-gradient(135deg,#5865F2,#4338ca)">D</div>
+              <span>Discord</span>
+            </a>
+            <a class="dial-card" href="https://gemini.google.com/app">
+              <div class="dial-icon" style="background:linear-gradient(135deg,#6366f1,#ec4899)">✦</div>
+              <span>Gemini AI</span>
+            </a>
           </div>
         </div>
-        <form class="searchform" id="webSearchForm" role="search">
-          <input id="webQuery" type="search" placeholder="What are you looking for?" aria-label="Search the web" required>
-          <button type="submit">Search</button>
-        </form>
+
+        <!-- Floating Browser Window Viewer -->
         <section class="viewer" id="viewer" aria-label="NEXUS website viewer">
-          <div class="viewer-head"><strong id="viewerTitle">Web page</strong><span id="viewerStatus" role="status">Ready</span></div>
-          <div class="viewer-help"><span id="viewerHelp">If this page is blank, Chrome may block embedding. Open it in this tab instead.</span><a id="openCurrent" href="#" data-current-link>Open in this tab</a></div>
+          <div class="viewer-head">
+            <div class="window-controls">
+              <button class="win-dot win-close" id="closeViewerBtn" title="Close page" aria-label="Close page"></button>
+              <span class="win-dot win-min"></span>
+              <span class="win-dot win-max"></span>
+            </div>
+            <div class="viewer-tab-pill">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--mint)" stroke-width="2.4" style="flex-shrink:0"><circle cx="12" cy="12" r="9"/><path d="M3.6 9h16.8M3.6 15h16.8"/></svg>
+              <strong id="viewerTitle">Web page</strong>
+            </div>
+            <span id="viewerStatus" role="status">Ready</span>
+          </div>
+          <div class="viewer-help">
+            <span id="viewerHelp">If this page is blank, Chrome may block embedding. Open it in this tab instead.</span>
+            <div class="viewer-help-actions">
+              <a id="openCurrent" href="#" data-current-link>Open in this tab ↗</a>
+              <button class="viewer-close-btn" id="resetViewerBtn" type="button">Close</button>
+            </div>
+          </div>
           <iframe class="webframe" id="webFrame" title="NEXUS web page" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
         </section>
       </div>
@@ -1031,33 +1230,203 @@ body.is-home main {
       </div>
     </section>
 
-    <!-- Games View -->
+    <!-- =========================================================
+         UPGRADED GAMES VIEW WITH MATCHING ARTWORK COVERS
+         ========================================================= -->
     <section class="view" id="gamesView">
       <div class="subview-card">
         <div class="section-title">
           <div>
-            <h2>Games</h2>
-            <p>Open a game inside NEXUS when its website allows it.</p>
+            <h2>Arcade & Cloud Games</h2>
+            <p>Instant browser & cloud games with matching cover art — click any card to launch.</p>
           </div>
         </div>
         <div class="games">
-          <a class="game" href="https://now.gg/apps/roblox-corporation/5349/roblox.html"><b>Roblox on now.gg</b><small>Cloud game</small><span>Open in NEXUS ↗</span></a>
-          <a class="game" href="https://play2048.co/"><b>2048</b><small>Puzzle</small><span>Play here ↗</span></a>
-          <a class="game" href="https://adarkroom.doublespeakgames.com/"><b>A Dark Room</b><small>Adventure</small><span>Play here ↗</span></a>
-          <a class="game" href="https://orteil.dashnet.org/cookieclicker/"><b>Cookie Clicker</b><small>Idle</small><span>Play here ↗</span></a>
-          <a class="game" href="https://lichess.org/"><b>Lichess</b><small>Board</small><span>Play here ↗</span></a>
-          <a class="game" href="https://hex.frvr.com/"><b>Hex FRVR</b><small>Puzzle</small><span>Play here ↗</span></a>
-          <a class="game" href="https://slither.io/"><b>Slither.io</b><small>Arcade</small><span>Play here ↗</span></a>
-          <a class="game" href="https://agar.io/"><b>Agar.io</b><small>Arcade</small><span>Play here ↗</span></a>
-          <a class="game" href="https://www.coolmathgames.com/0-run-3"><b>Run 3</b><small>Platformer</small><span>Play here ↗</span></a>
+          <!-- 1. Roblox on now.gg -->
+          <a class="game" href="https://now.gg/apps/roblox-corporation/5349/roblox.html">
+            <div class="game-cover" style="--cover-bg: linear-gradient(135deg, #1e293b 0%, #3b82f6 55%, #0f172a 100%)">
+              <span class="game-tag">Cloud Game</span>
+              <svg viewBox="0 0 64 64" fill="none">
+                <rect x="16" y="8" width="38" height="38" rx="4" transform="rotate(14 16 8)" fill="#ffffff"/>
+                <rect x="27" y="22" width="11" height="11" rx="1.5" transform="rotate(14 27 22)" fill="#0f172a"/>
+              </svg>
+            </div>
+            <div class="game-body">
+              <div>
+                <b>Roblox on now.gg</b>
+                <small>Play millions of 3D user-created worlds directly in the cloud.</small>
+              </div>
+              <div class="game-play-row"><span>Open in NEXUS ↗</span></div>
+            </div>
+          </a>
+
+          <!-- 2. 2048 -->
+          <a class="game" href="https://play2048.co/">
+            <div class="game-cover" style="--cover-bg: linear-gradient(135deg, #f59e0b 0%, #d97706 60%, #78350f 100%)">
+              <span class="game-tag">Puzzle</span>
+              <svg viewBox="0 0 64 64" fill="none">
+                <rect x="8" y="8" width="22" height="22" rx="4" fill="#fef3c7"/>
+                <rect x="34" y="8" width="22" height="22" rx="4" fill="#fde68a"/>
+                <rect x="8" y="34" width="22" height="22" rx="4" fill="#fcd34d"/>
+                <rect x="34" y="34" width="22" height="22" rx="4" fill="#ffffff"/>
+                <text x="45" y="49" text-anchor="middle" fill="#b45309" font-family="Inter,sans-serif" font-weight="900" font-size="11">2048</text>
+              </svg>
+            </div>
+            <div class="game-body">
+              <div>
+                <b>2048</b>
+                <small>Slide and merge matching numbered tiles to reach 2048.</small>
+              </div>
+              <div class="game-play-row"><span>Play here ↗</span></div>
+            </div>
+          </a>
+
+          <!-- 3. A Dark Room -->
+          <a class="game" href="https://adarkroom.doublespeakgames.com/">
+            <div class="game-cover" style="--cover-bg: linear-gradient(135deg, #18181b 0%, #3f3f46 55%, #09090b 100%)">
+              <span class="game-tag">Adventure</span>
+              <svg viewBox="0 0 64 64" fill="none">
+                <path d="M32 12C32 12 44 24 44 35C44 42.2 38.6 48 32 48C25.4 48 20 42.2 20 35C20 29 24 23 26 21C26 25 28 27 30 27C28 21 32 12 32 12Z" fill="#fb923c"/>
+                <path d="M32 28C32 28 37 33 37 38C37 41.3 34.8 44 32 44C29.2 44 27 41.3 27 38C27 35 32 28 32 28Z" fill="#fef08a"/>
+                <path d="M18 52L46 48M18 48L46 52" stroke="#a1a1aa" stroke-width="3.5" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div class="game-body">
+              <div>
+                <b>A Dark Room</b>
+                <small>Stoke the fire, gather resources, and explore a minimalist wasteland.</small>
+              </div>
+              <div class="game-play-row"><span>Play here ↗</span></div>
+            </div>
+          </a>
+
+          <!-- 4. Cookie Clicker -->
+          <a class="game" href="https://orteil.dashnet.org/cookieclicker/">
+            <div class="game-cover" style="--cover-bg: linear-gradient(135deg, #0284c7 0%, #0369a1 60%, #1e3a8a 100%)">
+              <span class="game-tag">Idle</span>
+              <svg viewBox="0 0 64 64" fill="none">
+                <circle cx="32" cy="32" r="22" fill="#d97706"/>
+                <circle cx="32" cy="32" r="19" fill="#f59e0b"/>
+                <circle cx="24" cy="24" r="3" fill="#451a03"/>
+                <circle cx="38" cy="22" r="2.5" fill="#451a03"/>
+                <circle cx="26" cy="38" r="3.2" fill="#451a03"/>
+                <circle cx="39" cy="36" r="2.8" fill="#451a03"/>
+                <circle cx="32" cy="30" r="2.2" fill="#451a03"/>
+              </svg>
+            </div>
+            <div class="game-body">
+              <div>
+                <b>Cookie Clicker</b>
+                <small>Bake trillions of cookies and automate a cosmic bakery empire.</small>
+              </div>
+              <div class="game-play-row"><span>Play here ↗</span></div>
+            </div>
+          </a>
+
+          <!-- 5. Lichess -->
+          <a class="game" href="https://lichess.org/">
+            <div class="game-cover" style="--cover-bg: linear-gradient(135deg, #334155 0%, #1e293b 60%, #0f172a 100%)">
+              <span class="game-tag">Board</span>
+              <svg viewBox="0 0 64 64" fill="none">
+                <path d="M22 48H42L40 42H24L22 48Z" fill="#f8fafc"/>
+                <path d="M25 42C25 34 22 30 22 24C22 18 27 14 33 14L36 10L38 15C41 17 42 21 40 25L35 28C37 32 39 37 39 42H25Z" fill="#f8fafc"/>
+                <circle cx="33" cy="19" r="1.5" fill="#0f172a"/>
+              </svg>
+            </div>
+            <div class="game-body">
+              <div>
+                <b>Lichess</b>
+                <small>Free, fast online chess matches, puzzles, and live tournaments.</small>
+              </div>
+              <div class="game-play-row"><span>Play here ↗</span></div>
+            </div>
+          </a>
+
+          <!-- 6. Hex FRVR -->
+          <a class="game" href="https://hex.frvr.com/">
+            <div class="game-cover" style="--cover-bg: linear-gradient(135deg, #7c3aed 0%, #4f46e5 60%, #1e1b4b 100%)">
+              <span class="game-tag">Puzzle</span>
+              <svg viewBox="0 0 64 64" fill="none">
+                <polygon points="32,10 44,17 44,31 32,38 20,31 20,17" fill="#38bdf8"/>
+                <polygon points="20,31 32,38 32,52 20,59 8,52 8,38" fill="#f472b6"/>
+                <polygon points="44,31 56,38 56,52 44,59 32,52 32,38" fill="#facc15"/>
+              </svg>
+            </div>
+            <div class="game-body">
+              <div>
+                <b>Hex FRVR</b>
+                <small>Place colorful hexagon blocks onto the grid to clear full lines.</small>
+              </div>
+              <div class="game-play-row"><span>Play here ↗</span></div>
+            </div>
+          </a>
+
+          <!-- 7. Slither.io -->
+          <a class="game" href="https://slither.io/">
+            <div class="game-cover" style="--cover-bg: linear-gradient(135deg, #059669 0%, #065f46 60%, #022c22 100%)">
+              <span class="game-tag">Arcade</span>
+              <svg viewBox="0 0 64 64" fill="none">
+                <path d="M14 42C14 32 24 32 28 24C32 16 42 16 46 24" stroke="#34d399" stroke-width="10" stroke-linecap="round"/>
+                <circle cx="46" cy="24" r="6" fill="#6ee7b7"/>
+                <circle cx="48" cy="22" r="2" fill="#064e3b"/>
+                <circle cx="44" cy="26" r="2" fill="#064e3b"/>
+                <circle cx="20" cy="18" r="3" fill="#fde047"/>
+                <circle cx="48" cy="44" r="3.5" fill="#f43f5e"/>
+              </svg>
+            </div>
+            <div class="game-body">
+              <div>
+                <b>Slither.io</b>
+                <small>Collect glowing orbs and outmaneuver rival snakes to grow huge.</small>
+              </div>
+              <div class="game-play-row"><span>Play here ↗</span></div>
+            </div>
+          </a>
+
+          <!-- 8. Agar.io -->
+          <a class="game" href="https://agar.io/">
+            <div class="game-cover" style="--cover-bg: linear-gradient(135deg, #ec4899 0%, #be185d 60%, #500724 100%)">
+              <span class="game-tag">Arcade</span>
+              <svg viewBox="0 0 64 64" fill="none">
+                <circle cx="34" cy="34" r="18" fill="#38bdf8" stroke="#bae6fd" stroke-width="2.5"/>
+                <circle cx="16" cy="20" r="7" fill="#a3e635"/>
+                <circle cx="49" cy="16" r="5" fill="#facc15"/>
+                <circle cx="14" cy="46" r="4" fill="#fb923c"/>
+              </svg>
+            </div>
+            <div class="game-body">
+              <div>
+                <b>Agar.io</b>
+                <small>Absorb smaller cells, split strategically, and dominate the arena.</small>
+              </div>
+              <div class="game-play-row"><span>Play here ↗</span></div>
+            </div>
+          </a>
+
+          <!-- 9. Run 3 -->
+          <a class="game" href="https://www.coolmathgames.com/0-run-3">
+            <div class="game-cover" style="--cover-bg: linear-gradient(135deg, #312e81 0%, #1e1b4b 60%, #090d16 100%)">
+              <span class="game-tag">Platformer</span>
+              <svg viewBox="0 0 64 64" fill="none">
+                <polygon points="10,48 24,18 40,18 54,48" stroke="#818cf8" stroke-width="2.5" fill="rgba(99,102,241,0.2)"/>
+                <circle cx="32" cy="30" r="5" fill="#a5b4fc"/>
+                <path d="M27 36H37L35 44H29L27 36Z" fill="#e0e7ff"/>
+              </svg>
+            </div>
+            <div class="game-body">
+              <div>
+                <b>Run 3</b>
+                <small>Sprint and rotate gravity across floating space tunnels.</small>
+              </div>
+              <div class="game-play-row"><span>Play here ↗</span></div>
+            </div>
+          </a>
         </div>
       </div>
     </section>
   </main>
 
-  <!-- =========================================================
-       UPGRADED BOTTOM SHELF / TASKBAR WITH CUSTOM SVG ICONS
-       ========================================================= -->
+  <!-- Persistent Bottom Shelf / Taskbar with Custom SVG Icons -->
   <footer class="shelf" aria-label="NEXUS taskbar">
     <div class="shelf-left">
       <button class="launcher-circle-btn" id="shelfLauncherBtn" title="App Launcher (Ctrl + K)" aria-label="Open Launcher">
@@ -1067,52 +1436,42 @@ body.is-home main {
       <div class="shelf-divider" aria-hidden="true"></div>
 
       <div class="shelf-apps">
-        <!-- Desktop Home -->
         <button class="shelf-icon ic-home active" data-page="home" data-tooltip="Desktop" aria-label="Desktop">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V19a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9.5"/></svg>
         </button>
 
-        <!-- Web Search -->
         <button class="shelf-icon ic-search" data-page="search" data-tooltip="Web Browser" aria-label="Web Browser">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3.6 9h16.8M3.6 15h16.8"/><path d="M12 3a14.5 14.5 0 0 1 0 18 14.5 14.5 0 0 1 0-18"/></svg>
         </button>
 
-        <!-- YouTube -->
         <button class="shelf-icon ic-youtube" data-page="youtube" data-tooltip="YouTube" aria-label="YouTube">
           <svg viewBox="0 0 24 24" fill="currentColor"><path d="M21.8 8s-.2-1.4-.8-2c-.8-.8-1.6-.8-2-.9C16.2 5 12 5 12 5s-4.2 0-7 .1c-.4.1-1.2.1-2 .9-.6.6-.8 2-.8 2S2 9.6 2 11.2v1.5c0 1.6.2 3.2.2 3.2s.2 1.4.8 2c.8.8 1.8.8 2.2.9 1.6.1 6.8.2 6.8.2s4.2 0 7-.1c.4-.1 1.2-.1 2-.9.6-.6.8-2 .8-2s.2-1.6.2-3.2v-1.5C22 9.6 21.8 8 21.8 8ZM10 14.8V8.8l5.4 3-5.4 3Z"/></svg>
         </button>
 
-        <!-- Games Arcade -->
         <button class="shelf-icon ic-games" data-page="games" data-tooltip="Arcade Games" aria-label="Arcade Games">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="4"/><path d="M6 12h4M8 10v4"/><circle cx="15.5" cy="11" r="1" fill="currentColor"/><circle cx="17.5" cy="13" r="1" fill="currentColor"/></svg>
         </button>
 
-        <!-- Roblox -->
         <button class="shelf-icon ic-roblox" data-action="roblox" data-tooltip="Roblox Cloud" aria-label="Roblox">
           <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6.8 3.2 20.8 6.8l-3.6 14L3.2 17.2l3.6-14Zm4.7 7.1-.9 3.4 3.4.9.9-3.4-3.4-.9Z"/></svg>
         </button>
 
-        <!-- GitHub -->
         <button class="shelf-icon ic-github" data-action="github" data-tooltip="GitHub" aria-label="GitHub">
           <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.58 2 12.23c0 4.52 2.87 8.35 6.84 9.7.5.1.68-.22.68-.48 0-.24-.01-1.03-.01-1.87-2.78.62-3.37-1.21-3.37-1.21-.45-1.18-1.11-1.49-1.11-1.49-.91-.64.07-.62.07-.62 1 .07 1.53 1.05 1.53 1.05.9 1.56 2.35 1.11 2.92.85.09-.66.35-1.11.63-1.37-2.22-.26-4.56-1.14-4.56-5.06 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.3.1-2.71 0 0 .84-.27 2.75 1.05A9.38 9.38 0 0 1 12 6.84c.85 0 1.7.12 2.5.34 1.91-1.32 2.75-1.05 2.75-1.05.55 1.41.2 2.45.1 2.71.64.72 1.03 1.63 1.03 2.75 0 3.93-2.34 4.8-4.57 5.05.36.32.68.94.68 1.9 0 1.37-.01 2.47-.01 2.81 0 .27.18.59.69.48A10.25 10.25 0 0 0 22 12.23C22 6.58 17.52 2 12 2Z"/></svg>
         </button>
 
-        <!-- Gemini AI -->
         <button class="shelf-icon ic-ai" data-action="assistant" data-tooltip="Gemini AI" aria-label="Gemini AI">
           <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c.4 5.1 4.9 9.6 10 10-5.1.4-9.6 4.9-10 10-.4-5.1-4.9-9.6-10-10 5.1-.4 9.6-4.9 10-10Z"/></svg>
         </button>
 
-        <!-- Local Files -->
         <button class="shelf-icon ic-files" data-action="files" data-tooltip="My Files" aria-label="My Files">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z"/></svg>
         </button>
       </div>
     </div>
 
-    <!-- Center Gesture Pill -->
     <div class="shelf-center-pill" id="shelfCenterPill" title="Toggle Launcher"></div>
 
-    <!-- Right System Tray & Quick Search -->
     <div class="shelf-right">
       <button class="quick-search-pill" id="traySearchBtn" title="Quick Search (Ctrl + K)">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
@@ -1121,10 +1480,8 @@ body.is-home main {
 
       <button class="system-tray" id="systemTrayBtn" aria-expanded="false" aria-controls="quickPanel" title="Quick Settings & Status">
         <div class="tray-icons">
-          <!-- Wi-Fi SVG -->
           <svg id="wifiIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><circle cx="12" cy="20" r="1" fill="currentColor"/></svg>
 
-          <!-- Battery SVG + Percentage -->
           <span class="tray-battery" id="batteryGroup">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="17" height="10" rx="2"/><path d="M22 11v2"/><rect x="4.5" y="9.5" width="12" height="5" rx="1" fill="currentColor" stroke="none"/></svg>
             <span id="batteryPct">100%</span>
@@ -1192,7 +1549,7 @@ body.is-home main {
     <div class="launcher-grid">
       <button class="launcher-tile" data-page="search">
         <div class="tile-badge ic-search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="9"/><path d="M3.6 9h16.8M3.6 15h16.8"/></svg></div>
-        <span>Web Search</span>
+        <span>Web Browser</span>
       </button>
       <button class="launcher-tile" data-page="youtube">
         <div class="tile-badge ic-youtube"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 15V9l5 3-5 3Z"/></svg></div>
@@ -1311,6 +1668,15 @@ try {
 } catch {}
 
 let lastUrl = "", historyStack = [];
+
+/* Close / Reset Browser Viewer Window */
+function closeViewer() {
+  viewer.classList.remove("active");
+  frame.removeAttribute("src");
+  viewerStatus.textContent = "Ready";
+}
+document.getElementById("closeViewerBtn").addEventListener("click", closeViewer);
+document.getElementById("resetViewerBtn").addEventListener("click", closeViewer);
 
 /* Quick Settings Control Center Popover */
 const quickPanel = document.getElementById("quickPanel");
@@ -1564,7 +1930,8 @@ document.addEventListener("click", event => {
   if (!["http:", "https:"].includes(url.protocol)) return;
   event.preventDefault();
   toggleLauncher(false);
-  openPage(url.href, link.textContent.trim() || url.hostname);
+  const titleEl = link.querySelector("b") || link;
+  openPage(url.href, titleEl.textContent.trim() || url.hostname);
 });
 
 document.getElementById("reloadButton").addEventListener("click", () => {
@@ -1724,7 +2091,4 @@ document.getElementById("fileInput").addEventListener("change", event => {
   event.target.value = "";
 });
 window.addEventListener("beforeunload", () => objectUrls.forEach(url => URL.revokeObjectURL(url)));
-document.getElementById("openAssistant").addEventListener("click", () => { closeSettings(); openPage("https://gemini.google.com/app", "Gemini AI Assistant"); });
-</script>
-</body>
-</html>
+document.getElementById("openAssistant").addEventListener("click", () => { closeSettings(); openPage("https://gemini.google.com/app", "Gemini AI
