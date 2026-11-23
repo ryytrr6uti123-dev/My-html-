@@ -115,6 +115,8 @@ body.dock-visible .dock{transform:translate(-50%,0);opacity:1;pointer-events:aut
 .appearance-switch{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
 .appearance-choice{border:1px solid var(--line);border-radius:10px;background:var(--panel2);color:var(--text);padding:10px;font-weight:700}
 .appearance-choice[aria-pressed="true"]{border-color:var(--mint);color:var(--mint)}
+.proxy-endpoint-input{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:11px;background:var(--panel2);color:var(--text)}
+.proxy-actions{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:8px}
 :root[data-mode="light"]{color-scheme:light;--bg:#eef3f0;--panel:#fff;--panel2:#e9efec;--line:#cbd6d0;--text:#17231c;--muted:#5e6b64;--wall-a:#d7efe3;--wall-b:#e7edf5;--mint:#08754c;--green:#108451}
 :root[data-mode="light"] .topbar{background:rgba(248,251,249,.96)}
 :root[data-mode="light"] .browserbar{border-color:var(--line)}
@@ -251,6 +253,15 @@ body.dock-visible .dock{transform:translate(-50%,0);opacity:1;pointer-events:aut
   <option value="duckduckgo">DuckDuckGo</option><option value="brave">Brave</option><option value="bing">Bing</option><option value="firefox">Firefox</option><option value="operagx">Opera GX</option><option value="google">Google</option>
  </select>
  <p class="file-note">Firefox and Opera GX are browsers; these choices use Google Search.</p>
+ <h3>Proxy endpoint</h3>
+ <label class="upload-label" for="proxyEndpointInput">Trusted proxy URL</label>
+ <input class="proxy-endpoint-input" id="proxyEndpointInput" type="url" placeholder="https://proxy.example/proxy" autocomplete="url">
+ <div class="proxy-actions">
+  <button class="secondary" id="applyProxyEndpoint" type="button">Use endpoint</button>
+  <button class="secondary" id="useBuiltInProxy" type="button">Built-in</button>
+ </div>
+ <p class="file-note">Remote endpoints must use HTTPS and accept the destination as a `url` query parameter. The endpoint receives the addresses you open.</p>
+ <p class="file-note" id="proxyEndpointStatus" role="status">Using built-in proxy.</p>
  <h3>Appearance</h3>
  <div class="appearance-switch" role="group" aria-label="Choose light or dark mode">
   <button class="appearance-choice" id="darkModeButton" aria-pressed="true">Dark</button>
@@ -278,6 +289,12 @@ const pages={home:document.getElementById("homeView"),search:document.getElement
 const viewer=document.getElementById("viewer"),frame=document.getElementById("webFrame"),addressInput=document.getElementById("addressInput"),viewerTitle=document.getElementById("viewerTitle"),viewerStatus=document.getElementById("viewerStatus"),openCurrent=document.getElementById("openCurrent");
 const searchEngines={duckduckgo:{label:"DuckDuckGo",url:"https://html.duckduckgo.com/html/"},brave:{label:"Brave Search",url:"https://search.brave.com/search"},bing:{label:"Bing",url:"https://www.bing.com/search"},google:{label:"Google",url:"https://www.google.com/search"},firefox:{label:"Firefox (Google)",url:"https://www.google.com/search"},operagx:{label:"Opera GX (Google)",url:"https://www.google.com/search"}};
 const searchProxyReady=fetch("/healthz",{cache:"no-store"}).then(response=>response.ok).catch(()=>false);
+let trustedProxyEndpoint="";
+try{
+  trustedProxyEndpoint=localStorage.getItem("nexus-proxy-endpoint")||"";
+  document.getElementById("proxyEndpointInput").value=trustedProxyEndpoint;
+  if(trustedProxyEndpoint)document.getElementById("proxyEndpointStatus").textContent=`Using ${new URL(trustedProxyEndpoint).host}.`;
+}catch{}
 let lastUrl="",historyStack=[];
 function showPage(name){
   if(!pages[name])return;
@@ -304,6 +321,11 @@ function normalizeAddress(value){
   }
   return null;
 }
+function proxyUrlFor(destination){
+  const endpoint=trustedProxyEndpoint?new URL(trustedProxyEndpoint):new URL("/proxy",location.href);
+  endpoint.searchParams.set("url",destination.href);
+  return endpoint.href;
+}
 function openPage(destination,title,record=true){
   let url;
   try{url=new URL(destination)}catch{viewerStatus.textContent="That address is not valid.";return}
@@ -318,7 +340,7 @@ function openPage(destination,title,record=true){
   }
   if(videoId)url=new URL(`https://www.youtube-nocookie.com/embed/${encodeURIComponent(videoId)}`);
   const topLevelDomains=["now.gg","github.com","gemini.google.com"];
-  if(topLevelDomains.some(domain=>url.hostname===domain||url.hostname.endsWith(`.${domain}`))){
+  if(!trustedProxyEndpoint&&topLevelDomains.some(domain=>url.hostname===domain||url.hostname.endsWith(`.${domain}`))){
     window.location.assign(url.href);
     return;
   }
@@ -330,15 +352,14 @@ function openPage(destination,title,record=true){
   viewerTitle.textContent=title||url.hostname;
   viewerStatus.textContent=videoId?"Loading YouTube video…":"Loading page…";
   document.getElementById("viewerHelp").textContent=url.hostname==="www.google.com"?"Google search can be embedded here. If your browser still shows a blank page, open the search in this tab.":"If this page is blank, the website may block embedding. Use the same-tab link to continue.";
-  if(url.hostname==="www.google.com")frame.removeAttribute("sandbox");
+  if(trustedProxyEndpoint)frame.setAttribute("sandbox","allow-forms allow-scripts allow-presentation");
+  else if(url.hostname==="www.google.com")frame.removeAttribute("sandbox");
   else frame.setAttribute("sandbox","allow-forms allow-scripts allow-same-origin allow-presentation");
   viewer.classList.add("active");
-  frame.src=url.href;
+  frame.src=trustedProxyEndpoint?proxyUrlFor(url):url.href;
   showPage("search");
 }
 function openSearchResults(url,title){
-  const proxied=new URL("/proxy",location.href);
-  proxied.searchParams.set("url",url.href);
   viewerTitle.textContent=title;
   viewerStatus.textContent="Loading search results…";
   document.getElementById("viewerHelp").textContent="Search results stay inside NEXUS. Choose another provider in Settings if this engine is unavailable.";
@@ -346,7 +367,7 @@ function openSearchResults(url,title){
   addressInput.value=url.href;
   frame.setAttribute("sandbox","allow-forms allow-scripts allow-presentation");
   viewer.classList.add("active");
-  frame.src=proxied.href;
+  frame.src=proxyUrlFor(url);
   showPage("search");
 }
 async function searchWeb(query,site){
@@ -356,7 +377,7 @@ async function searchWeb(query,site){
   const engine=searchEngines[selected]||searchEngines.duckduckgo;
   const url=new URL(engine.url);
   url.searchParams.set("q",site?`site:youtube.com/watch ${text}`:text);
-  const hasProxy=await searchProxyReady;
+  const hasProxy=Boolean(trustedProxyEndpoint)||await searchProxyReady;
   if(!hasProxy){
     viewerTitle.textContent=`${engine.label} search`;
     viewerStatus.textContent="Search proxy unavailable";
@@ -387,6 +408,26 @@ document.getElementById("youtubeSearchForm").addEventListener("submit",event=>{
 });
 document.getElementById("homeEngineSelect").addEventListener("change",event=>setSearchEngine(event.target.value));
 document.getElementById("settingsEngineSelect").addEventListener("change",event=>setSearchEngine(event.target.value));
+function applyProxyEndpoint(){
+  const input=document.getElementById("proxyEndpointInput"),status=document.getElementById("proxyEndpointStatus"),value=input.value.trim();
+  if(!value){status.textContent="Enter an HTTPS endpoint or choose Built-in.";return}
+  let endpoint;
+  try{endpoint=new URL(value)}catch{status.textContent="Enter a valid endpoint URL.";return}
+  const localHost=["localhost","127.0.0.1","[::1]"].includes(endpoint.hostname);
+  if(endpoint.protocol!=="https:"&&!(endpoint.protocol==="http:"&&localHost)){status.textContent="Remote proxy endpoints must use HTTPS.";return}
+  if(endpoint.username||endpoint.password||endpoint.search||endpoint.hash){status.textContent="Remove credentials, query parameters, and fragments from the endpoint URL.";return}
+  trustedProxyEndpoint=endpoint.href;
+  try{localStorage.setItem("nexus-proxy-endpoint",trustedProxyEndpoint)}catch{}
+  status.textContent=`Using ${endpoint.host}. Addresses opened in NEXUS are sent to this endpoint.`;
+}
+function useBuiltInProxy(){
+  trustedProxyEndpoint="";
+  document.getElementById("proxyEndpointInput").value="";
+  try{localStorage.removeItem("nexus-proxy-endpoint")}catch{}
+  document.getElementById("proxyEndpointStatus").textContent="Using built-in proxy.";
+}
+document.getElementById("applyProxyEndpoint").addEventListener("click",applyProxyEndpoint);
+document.getElementById("useBuiltInProxy").addEventListener("click",useBuiltInProxy);
 document.getElementById("watchForm").addEventListener("submit",event=>{
   event.preventDefault();
   const id=parsedVideoId(document.getElementById("videoInput").value);
