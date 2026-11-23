@@ -24,6 +24,45 @@ const mimeTypes = {
   ".ico": "image/x-icon"
 };
 
+function validDestination(url) {
+  return (
+    url.protocol === "https:" &&
+    !url.username &&
+    !url.password &&
+    !url.port &&
+    allowedHosts.has(url.hostname)
+  );
+}
+
+async function fetchApproved(destination, signal) {
+  let current = destination;
+
+  for (let i = 0; i <= 5; i++) {
+    const response = await fetch(current, {
+      redirect: "manual",
+      signal,
+      headers: { "User-Agent": "NEXUS/1.0" }
+    });
+
+    if (![301, 302, 303, 307, 308].includes(response.status)) {
+      return response;
+    }
+
+    const location = response.headers.get("location");
+    if (!location) return response;
+
+    const next = new URL(location, current);
+
+    if (!validDestination(next)) {
+      throw new Error("Redirect destination not allowed");
+    }
+
+    current = next;
+  }
+
+  throw new Error("Too many redirects");
+}
+
 async function handleProxy(req, res, requestUrl) {
   if (req.method !== "GET") {
     res.writeHead(405);
@@ -46,13 +85,7 @@ async function handleProxy(req, res, requestUrl) {
     return res.end("Invalid URL");
   }
 
-  if (
-    destination.protocol !== "https:" ||
-    destination.username ||
-    destination.password ||
-    destination.port ||
-    !allowedHosts.has(destination.hostname)
-  ) {
+  if (!validDestination(destination)) {
     res.writeHead(403);
     return res.end("Destination not allowed");
   }
@@ -61,22 +94,7 @@ async function handleProxy(req, res, requestUrl) {
   const timeout = setTimeout(() => controller.abort(), 10000);
 
   try {
-    const upstream = await fetch(destination, {
-      method: "GET",
-      redirect: "manual",
-      signal: controller.signal,
-      headers: {
-        "User-Agent": "NEXUS/1.0"
-      }
-    });
-
-    // Redirects are disabled until their destinations
-    // can be checked against the allowlist.
-    if (upstream.status >= 300 && upstream.status < 400) {
-      res.writeHead(502);
-      return res.end("Redirect not supported");
-    }
-
+    const upstream = await fetchApproved(destination, controller.signal);
     const data = Buffer.from(await upstream.arrayBuffer());
 
     if (data.length > 5 * 1024 * 1024) {
@@ -93,10 +111,10 @@ async function handleProxy(req, res, requestUrl) {
     });
 
     res.end(data);
-  } catch {
+  } catch (error) {
     if (!res.headersSent) {
       res.writeHead(502);
-      res.end("Proxy request failed");
+      res.end("Proxy request failed: " + error.message);
     }
   } finally {
     clearTimeout(timeout);
