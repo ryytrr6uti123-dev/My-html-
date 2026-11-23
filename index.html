@@ -1,642 +1,455 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>fern</title>
-  <style>
-    :root {
-      --bg: #0b0f0d;
-      --panel: #111512;
-      --panel-2: #171c18;
-      --panel-3: #202622;
-      --panel-4: #29312b;
-      --border: #252b27;
-      --text: #9da59f;
-      --bright: #edf4ef;
-      --accent: #78e7a8;
-      --accent-2: #4fbd7a;
-    }
-    * { box-sizing: border-box; }
-    html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; }
-    body {
-      background: #080b09;
-      color: var(--text);
-      font: 13px/1.45 "Google Sans Flex", Inter, ui-sans-serif, system-ui, sans-serif;
-    }
-    button, input { font: inherit; }
-    button { color: inherit; cursor: pointer; }
-    .shell {
-      height: 100%;
-      display: grid;
-      grid-template-columns: 248px minmax(0, 1fr);
-      background:
-        radial-gradient(circle at 68% 70%, rgba(55, 122, 82, .09), transparent 32%),
-        linear-gradient(145deg, #0a0e0b, #0c100d);
-    }
-    .sidebar {
-      min-height: 0;
-      display: flex;
-      flex-direction: column;
-      background: var(--bg);
-      border-right: 1px solid rgba(255,255,255,.015);
-    }
-    .new-tab {
-      height: 38px;
-      margin: 8px 8px 6px;
-      display: flex;
-      align-items: center;
-      gap: 9px;
-      border: 0;
-      border-radius: 8px;
-      background: transparent;
-      padding: 0 11px;
-      text-align: left;
-    }
-    .new-tab:hover { background: rgba(120,231,168,.08); color: var(--bright); }
-    .icon { width: 17px; height: 17px; display: inline-grid; place-items: center; flex: none; }
-    .tabs { flex: 1; min-height: 0; overflow-y: auto; padding: 0 8px 8px; }
-    .tab {
-      width: 100%;
-      height: 36px;
-      display: flex;
-      align-items: center;
-      gap: 9px;
-      border: 0;
-      border-radius: 8px;
-      background: transparent;
-      margin-top: 6px;
-      padding: 0 10px;
-      text-align: left;
-    }
-    .tab:hover { background: rgba(255,255,255,.035); color: var(--bright); }
-    .tab.active {
-      background: var(--accent);
-      color: #07130d;
-      font-weight: 700;
-      box-shadow: 0 1px 3px rgba(0,0,0,.6);
-    }
-    .tab .close { margin-left: auto; opacity: 0; width: 22px; height: 22px; border: 0; border-radius: 6px; background: transparent; }
-    .tab.active:hover .close { opacity: .8; }
-    .tab.active .close:hover { background: rgba(0,0,0,.12); }
-    .side-nav { padding: 8px; border-top: 1px solid transparent; }
-    .side-nav button {
-      width: 100%;
-      height: 36px;
-      display: flex;
-      align-items: center;
-      gap: 9px;
-      border: 0;
-      border-radius: 8px;
-      background: transparent;
-      padding: 0 10px;
-      text-align: left;
-    }
-    .side-nav button:hover { background: rgba(120,231,168,.08); color: var(--bright); }
-    .main { min-width: 0; display: flex; flex-direction: column; }
-    .toolbar {
-      height: 44px;
-      flex: none;
-      display: grid;
-      grid-template-columns: 1fr minmax(260px, 42%) 1fr;
-      align-items: center;
-      padding: 0 8px;
-      background: var(--bg);
-    }
-    .toolbar-left, .toolbar-right { display: flex; align-items: center; gap: 2px; }
-    .toolbar-right { justify-content: flex-end; }
-    .tool {
-      width: 32px;
-      height: 32px;
-      border: 0;
-      border-radius: 8px;
-      display: grid;
-      place-items: center;
-      background: transparent;
-      color: var(--text);
-    }
-    .tool:hover { background: var(--panel-2); color: var(--bright); }
-    .tool:disabled { opacity: .35; cursor: default; }
-    .address {
-      height: 32px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      border-radius: 999px;
-      background: var(--panel-2);
-      padding: 0 10px;
-    }
-    .address:focus-within { background: #252c27; }
-    .address input {
-      width: 100%;
-      min-width: 0;
-      border: 0;
-      outline: 0;
-      background: transparent;
-      color: var(--bright);
-      text-align: center;
-    }
-    .profile {
-      height: 28px;
-      display: flex;
-      align-items: center;
-      gap: 7px;
-      border: 0;
-      border-radius: 8px;
-      background: var(--accent);
-      color: #07130d;
-      padding: 0 9px 0 5px;
-      font-weight: 700;
-    }
-    .leaf {
-      width: 19px;
-      height: 19px;
-      border-radius: 50%;
-      display: grid;
-      place-items: center;
-      background: #0d1711;
-      color: var(--accent);
-      font-size: 10px;
-    }
-    .content-wrap { flex: 1; min-height: 0; padding: 0 8px 8px 0; }
-    .content {
-      position: relative;
-      height: 100%;
-      min-height: 0;
-      overflow: hidden;
-      border-radius: 10px;
-      background: #111512;
-    }
-    .view { display: none; height: 100%; }
-    .view.active { display: block; }
-    .home {
-      height: 100%;
-      display: grid;
-      place-items: center;
-      overflow: hidden;
-      background:
-        radial-gradient(circle at 50% 68%, rgba(91, 186, 128, .035), transparent 25%),
-        var(--panel);
-    }
-    .home-inner {
-      width: min(575px, calc(100% - 40px));
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 30px;
-      transform: translateY(-2px);
-    }
-    .brand-art {
-      height: 58px;
-      display: grid;
-      place-items: center;
-      color: var(--bright);
-      opacity: 0;
-    }
-    .brand-art::before { content: ""; }
-    .search {
-      width: 100%;
-      height: 56px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      border-radius: 999px;
-      background: rgba(31,37,33,.88);
-      box-shadow: 0 1px 3px rgba(0,0,0,.55);
-      padding: 8px 8px 8px 20px;
-    }
-    .search:focus-within { background: #252b27; }
-    .search input {
-      flex: 1;
-      min-width: 0;
-      height: 38px;
-      border: 0;
-      outline: 0;
-      background: transparent;
-      color: var(--bright);
-      font-size: 15px;
-    }
-    .search input::placeholder { color: #858e88; }
-    .search-submit {
-      width: 40px;
-      height: 40px;
-      border: 0;
-      border-radius: 50%;
-      display: grid;
-      place-items: center;
-      background: var(--accent);
-      color: #07130d;
-    }
-    .shortcuts {
-      height: 58px;
-      max-width: 100%;
-      display: flex;
-      align-items: center;
-      gap: 0;
-      border-radius: 999px;
-      background: rgba(31,37,33,.88);
-      box-shadow: 0 1px 3px rgba(0,0,0,.55);
-      padding: 7px 8px;
-      overflow-x: auto;
-      scrollbar-width: none;
-    }
-    .shortcuts::-webkit-scrollbar { display: none; }
-    .shortcut {
-      width: 52px;
-      height: 44px;
-      flex: none;
-      border: 0;
-      border-radius: 50%;
-      display: grid;
-      place-items: center;
-      background: transparent;
-      color: var(--bright);
-      transition: transform .12s, background .12s;
-    }
-    .shortcut span {
-      width: 44px;
-      height: 44px;
-      border-radius: 50%;
-      display: grid;
-      place-items: center;
-      background: var(--panel-3);
-      font-size: 16px;
-      font-weight: 700;
-    }
-    .shortcut:hover { transform: translateY(-2px); }
-    .shortcut:hover span { background: var(--panel-4); }
-    .divider { width: 1px; height: 28px; background: #303731; margin: 0 4px; }
-    .page-panel { height: 100%; overflow: auto; padding: 24px; background: var(--panel); }
-    .page-title { margin: 0 0 16px; color: var(--bright); font-size: 22px; }
-    .wide-search { width: min(680px, 100%); }
-    .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
-    .card {
-      min-height: 100px;
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      background: var(--panel-2);
-      padding: 14px;
-      color: var(--bright);
-      text-align: left;
-    }
-    .card:hover { border-color: var(--accent-2); background: #1a211d; }
-    .card small { display: block; margin-top: 5px; color: var(--text); }
-    .frame-page { height: 100%; display: flex; flex-direction: column; background: #fff; }
-    .frame-page iframe { flex: 1; width: 100%; border: 0; background: white; }
-    .frame-bar { height: 42px; display: flex; align-items: center; justify-content: space-between; padding: 0 12px; background: var(--bg); color: var(--bright); }
-    .frame-bar a { color: var(--accent); }
-    .settings {
-      position: absolute;
-      z-index: 20;
-      right: 12px;
-      top: 12px;
-      width: 280px;
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      background: #151a16;
-      box-shadow: 0 18px 50px rgba(0,0,0,.55);
-      padding: 14px;
-      display: none;
-    }
-    .settings.open { display: block; }
-    .settings h3 { margin: 0 0 12px; color: var(--bright); }
-    .themes { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-    .theme { height: 36px; border: 1px solid var(--border); border-radius: 8px; background: var(--panel-2); }
-    .theme.active { border-color: var(--accent); color: var(--bright); }
-    .github-dashboard { max-width: 920px; margin: 0 auto; }
-    .github-header { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 18px; }
-    .github-header h2 { margin: 0; color: var(--bright); }
-    .github-actions { display: flex; gap: 8px; }
-    .github-actions a {
-      height: 34px;
-      display: inline-flex;
-      align-items: center;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      background: var(--panel-2);
-      color: var(--bright);
-      padding: 0 12px;
-      text-decoration: none;
-    }
-    .github-actions a.primary { border-color: var(--accent); background: var(--accent); color: #07130d; font-weight: 700; }
-    .github-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 14px; }
-    .github-stat { min-height: 82px; border: 1px solid var(--border); border-radius: 11px; background: var(--panel-2); padding: 13px; }
-    .github-stat strong { display: block; color: var(--bright); font-size: 20px; }
-    .github-stat span { color: var(--text); }
-    .github-grid { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(260px, .7fr); gap: 12px; }
-    .github-section { border: 1px solid var(--border); border-radius: 11px; background: var(--panel-2); overflow: hidden; }
-    .github-section h3 { margin: 0; border-bottom: 1px solid var(--border); padding: 12px 14px; color: var(--bright); font-size: 14px; }
-    .commit-list { min-height: 124px; }
-    .commit-item { display: block; border-bottom: 1px solid rgba(255,255,255,.035); padding: 11px 14px; color: var(--bright); text-decoration: none; }
-    .commit-item:last-child { border-bottom: 0; }
-    .commit-item:hover { background: rgba(120,231,168,.055); }
-    .commit-item strong { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .commit-item small { color: var(--text); }
-    .repo-links { display: grid; }
-    .repo-links a { display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,.035); padding: 12px 14px; color: var(--bright); text-decoration: none; }
-    .repo-links a:last-child { border-bottom: 0; }
-    .repo-links a:hover { background: rgba(120,231,168,.055); }
-    .repo-links span { color: var(--accent); }
-    @media (max-width: 700px) {
-      .shell { grid-template-columns: 58px minmax(0,1fr); }
-      .new-tab { justify-content: center; padding: 0; }
-      .new-tab span:last-child, .tab span:not(.icon), .side-nav button span:last-child { display: none; }
-      .tab { justify-content: center; padding: 0; }
-      .side-nav button { justify-content: center; padding: 0; }
-      .toolbar { grid-template-columns: 92px minmax(100px,1fr) 92px; }
-      .toolbar-left .tool:nth-child(n+4), .toolbar-right .tool, .profile span:last-child { display: none; }
-      .content-wrap { padding: 0; }
-      .content { border-radius: 0; }
-      .shortcuts { height: 58px; }
-      .github-stats { grid-template-columns: repeat(2, 1fr); }
-      .github-grid { grid-template-columns: 1fr; }
-      .github-header { align-items: flex-start; flex-direction: column; }
-    }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#08090b">
+<title>NEXUS — Search & Watch</title>
+<style>
+:root{color-scheme:dark;--bg:#08090b;--panel:#111316;--panel2:#191b1f;--line:#292c31;--text:#f4f5f6;--muted:#92979f;--mint:#83efc1;--green:#30c98b;--wall-a:#0a1e18;--wall-b:#11152a}
+:root[data-theme="violet"]{--mint:#c5a5ff;--green:#9a6cff;--wall-a:#211039;--wall-b:#101a37}
+:root[data-theme="ocean"]{--mint:#79dfff;--green:#398ee8;--wall-a:#09243b;--wall-b:#10182c}
+:root[data-theme="sunset"]{--mint:#ffc18a;--green:#fa786b;--wall-a:#391b27;--wall-b:#2b1c42}
+:root[data-theme="rose"]{--mint:#ff9bd0;--green:#e45ba8;--wall-a:#35152f;--wall-b:#17162f}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font:15px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Arial}
+body{min-height:100vh}
+button,input{font:inherit}
+button,a{color:inherit}
+button{cursor:pointer}
+a{text-decoration:none}
+.app{min-height:100vh;padding-bottom:76px;background:radial-gradient(ellipse at 50% 45%,color-mix(in srgb,var(--wall-a),transparent 16%),transparent 60%),linear-gradient(145deg,var(--bg),var(--wall-b))}
+.topbar{position:sticky;top:0;z-index:5;background:rgba(8,9,11,.96);border-bottom:1px solid var(--line);backdrop-filter:blur(16px)}
+.topline{height:58px;display:flex;align-items:center;gap:18px;padding:0 22px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:900;letter-spacing:.13em;white-space:nowrap}
+.brandmark{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(145deg,#a4ffdc,#27b980);color:#06140d;letter-spacing:0}
+.tabs{display:flex;align-self:stretch;align-items:stretch;gap:4px;overflow-x:auto;flex:1}
+.tab{border:0;border-bottom:2px solid transparent;padding:0 15px;background:transparent;color:var(--muted);white-space:nowrap}
+.tab:hover,.tab.active{color:var(--text);background:rgba(255,255,255,.045)}
+.tab.active{border-bottom-color:var(--mint)}
+.presence{font-size:12px;color:#c5d0ca;white-space:nowrap}
+.presence:before{content:"";display:inline-block;width:8px;height:8px;margin-right:8px;border-radius:50%;background:#65e8ac}
+.browserbar{height:56px;display:flex;align-items:center;gap:8px;padding:7px 18px;border-top:1px solid #17191c}
+.toolbtn{width:36px;height:36px;border:0;border-radius:10px;background:transparent;color:#aab0b8;font-size:20px}
+.toolbtn:hover{background:var(--panel2);color:white}
+.address{display:flex;align-items:center;gap:8px;flex:1;min-width:0;height:40px;padding:0 12px;border:1px solid var(--line);border-radius:12px;background:#050607}
+.address:focus-within{border-color:#5a9c7d;box-shadow:0 0 0 3px #83efc11a}
+.address input{flex:1;min-width:0;border:0;outline:0;background:transparent;color:white}
+.address input::placeholder{color:#777e87}
+.go{border:0;border-radius:10px;background:var(--mint);color:#06140d;font-weight:800;padding:8px 14px}
+.browser-actions{display:flex;gap:4px}
+.browser-actions .toolbtn{border:1px solid var(--line);font-size:16px}
+main{width:min(1200px,100%);margin:0 auto;padding:24px 24px 40px}
+.view{display:none}.view.active{display:block}
+.home{min-height:calc(100vh - 150px);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:35px 0 70px}
+.clock{font-size:clamp(34px,7vw,72px);line-height:1;font-weight:300;letter-spacing:-.06em;font-variant-numeric:tabular-nums;color:#f6faf8}
+.desktop-center{width:min(900px,100%);margin-top:22px;padding:35px 20px 30px;border:1px solid color-mix(in srgb,var(--mint),transparent 85%);border-radius:26px;background:linear-gradient(145deg,#090d0bcc,#12151bcc);box-shadow:0 20px 80px #0005;backdrop-filter:blur(14px)}
+.eyebrow{font-size:11px;letter-spacing:.24em;color:var(--mint);font-weight:800}
+h1{font-size:clamp(58px,11vw,100px);line-height:1;margin:8px 0 18px;letter-spacing:-.08em}
+.gradient{background:linear-gradient(180deg,#fff 25%,#8fe7bf 95%);color:transparent;background-clip:text;-webkit-background-clip:text}
+.subtitle{margin:0 0 26px;color:var(--muted)}
+.searchform{width:min(760px,100%);display:flex;gap:10px;padding:8px;border:1px solid #30343a;border-radius:19px;background:#111316;box-shadow:0 18px 65px #0008}
+.searchform input{flex:1;min-width:0;padding:12px;border:0;outline:0;background:transparent;color:white;font-size:17px}
+.searchform button{border:0;border-radius:13px;background:linear-gradient(135deg,#a4f6d1,#3dc88f);color:#06140d;font-weight:850;padding:0 22px}
+.shortcuts{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:22px}
+.shortcut{min-width:105px;border:1px solid var(--line);border-radius:14px;background:#111316;padding:12px 16px;color:#d4d8dc}
+.shortcut:hover,.game:hover{border-color:#57bd8c;background:#171c1a}
+.shortcut span{display:block;font-size:19px;color:var(--mint)}
+.helper{max-width:740px;margin:20px auto 0;color:#848b91;font-size:12px}
+.section-title{display:flex;justify-content:space-between;align-items:end;gap:12px;margin:14px 0 20px}
+.section-title h2{margin:0;font-size:26px}
+.section-title p{margin:4px 0 0;color:var(--muted)}
+.youtube-tools{max-width:760px;margin:20px auto}
+.youtube-tools h2{font-size:23px;margin:0 0 6px}
+.youtube-tools p{margin:0 0 14px;color:var(--muted);font-size:13px}
+.smallform{display:flex;gap:8px;margin:14px 0}
+.smallform input{flex:1;min-width:0;border:1px solid var(--line);border-radius:12px;background:#111316;color:white;padding:11px 13px}
+.smallform button,.secondary{border:1px solid #3b4e43;border-radius:12px;background:#17241d;color:#c8f4dc;padding:10px 15px;font-weight:700}
+.viewer{display:none;margin:18px auto 0;max-width:1120px;border:1px solid var(--line);border-radius:16px;background:#101214;overflow:hidden}
+.viewer.active{display:block}
+.viewer-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 15px;border-bottom:1px solid var(--line)}
+.viewer-head strong{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.viewer-head span{font-size:12px;color:var(--muted)}
+.webframe{display:block;width:100%;height:min(73vh,850px);min-height:420px;border:0;background:white}
+.viewer-help{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:11px 14px;border-bottom:1px solid var(--line);background:#16191d;color:var(--muted);font-size:12px}
+.viewer-help a{flex:none;border:1px solid color-mix(in srgb,var(--mint),transparent 45%);border-radius:10px;background:#17241d;color:var(--mint);padding:8px 11px;font-weight:750}
+.games{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px}
+.game{min-height:110px;display:flex;flex-direction:column;justify-content:space-between;border:1px solid var(--line);border-radius:15px;background:#111316;padding:15px}
+.game small{color:var(--muted)}
+.game b{font-size:16px}
+.game span{color:var(--mint);font-size:12px}
+.desktop-icons{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin:27px auto 0}
+.desktop-icon{width:88px;min-height:90px;border:1px solid transparent;border-radius:16px;background:transparent;color:#e3e7e5;padding:10px 6px;font-size:12px}
+.desktop-icon:hover{background:#ffffff12;border-color:#ffffff20}
+.desktop-icon span{display:grid;place-items:center;width:42px;height:42px;margin:0 auto 6px;border-radius:14px;background:linear-gradient(145deg,color-mix(in srgb,var(--mint),#101214 65%),#15191b);color:var(--mint);font-size:22px}
+.dock{position:fixed;z-index:7;left:50%;bottom:14px;transform:translate(-50%,calc(100% + 22px));opacity:0;pointer-events:none;display:flex;gap:4px;width:min(680px,calc(100% - 24px));justify-content:space-around;padding:8px;border:1px solid #454950;border-radius:23px;background:rgba(10,11,13,.96);box-shadow:0 14px 48px #000b;backdrop-filter:blur(18px);transition:transform .22s ease,opacity .22s ease}
+body.dock-visible .dock{transform:translate(-50%,0);opacity:1;pointer-events:auto}
+.dock-zone{position:fixed;z-index:6;bottom:0;left:0;right:0;height:18px}
+.dock button{flex:1;border:0;border-radius:15px;background:transparent;color:var(--muted);padding:5px 8px;font-size:11px;font-weight:700}
+.dock button span{display:block;font-size:19px}
+.dock button.active,.dock button:hover{background:#15251d;color:#b5f5d2}
+.settings-backdrop{position:fixed;z-index:10;inset:0;background:#0008;opacity:0;pointer-events:none;transition:opacity .2s}
+.settings-backdrop.open{opacity:1;pointer-events:auto}
+.settings-panel{position:fixed;z-index:11;right:0;top:0;bottom:0;width:min(390px,92vw);padding:22px;background:#111316;border-left:1px solid var(--line);box-shadow:-20px 0 70px #0009;transform:translateX(105%);transition:transform .24s;overflow:auto}
+.settings-panel.open{transform:translateX(0)}
+.settings-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+.settings-head h2{margin:0}
+.settings-panel h3{margin:22px 0 10px;font-size:15px}
+.theme-options{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.theme-choice{border:1px solid var(--line);border-radius:12px;background:#1a1d21;color:var(--text);padding:10px;text-align:left}
+.theme-choice:before{content:"";display:inline-block;width:12px;height:12px;margin-right:8px;border-radius:50%;background:var(--theme-swatch)}
+.theme-choice[aria-pressed="true"]{border-color:var(--mint)}
+.theme-choice[data-theme-choice="mint"]{--theme-swatch:#83efc1}.theme-choice[data-theme-choice="violet"]{--theme-swatch:#c5a5ff}.theme-choice[data-theme-choice="ocean"]{--theme-swatch:#79dfff}.theme-choice[data-theme-choice="sunset"]{--theme-swatch:#ffc18a}.theme-choice[data-theme-choice="rose"]{--theme-swatch:#ff9bd0}
+.upload-label{display:block;margin:10px 0 6px;color:var(--muted);font-size:13px}
+.file-input{width:100%;border:1px dashed #555d65;border-radius:12px;background:#0b0d0f;padding:12px;color:var(--muted)}
+.file-note{font-size:12px;color:var(--muted)}
+.upload-list{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:12px}
+.upload-item{min-width:0;padding:7px;border:1px solid var(--line);border-radius:10px;background:#0b0d0f;font-size:11px;overflow-wrap:anywhere}
+.upload-item img{display:block;width:100%;height:100px;object-fit:cover;border-radius:7px;margin-bottom:6px}
+.upload-item a{color:var(--mint)}
+.fullscreen .topbar{position:relative}
+.fullscreen .webframe{height:calc(100vh - 190px);max-height:none}
+.assistant-note{border:1px solid var(--line);border-radius:12px;background:#0b0d0f;padding:12px;color:var(--muted);font-size:12px}
+.notice{max-width:760px;margin:22px auto 0;border:1px solid #373329;background:#181611;color:#d2c8a9;border-radius:12px;padding:12px 14px;font-size:12px;text-align:left}
+:focus-visible{outline:2px solid var(--mint);outline-offset:3px}
+@media(max-width:650px){.topline{gap:8px;padding:0 10px}.brand{font-size:12px;gap:6px}.brandmark{width:27px;height:27px}.tab{padding:0 10px;font-size:12px}.presence{display:none}.browserbar{padding:7px 9px;gap:4px}.toolbtn{width:31px}.browserbar .go{padding:8px 10px}.browserbar .address{padding:0 8px}main{padding:18px 14px 28px}.home{min-height:calc(100vh - 150px)}.desktop-center{padding:27px 12px}.desktop-icons{gap:2px}.desktop-icon{width:76px}.browser-actions .toolbtn{width:31px}.searchform{gap:3px}.searchform input{font-size:15px;padding:10px}.searchform button{padding:0 13px}.webframe{height:68vh;min-height:340px}.viewer-help{align-items:flex-start;flex-direction:column}.dock button{padding:5px 3px}.dock button span{font-size:17px}}
+</style>
 </head>
 <body>
-  <div class="shell">
-    <aside class="sidebar">
-      <button class="new-tab" id="newTab"><span class="icon">＋</span><span>New Tab</span></button>
-      <div class="tabs" id="tabs">
-        <button class="tab active" data-view="home"><span class="icon">⌂</span><span>Home</span><span class="close" aria-label="Close tab">×</span></button>
-      </div>
-      <nav class="side-nav" aria-label="Fern sections">
-        <button data-view="ai"><span class="icon">◉</span><span>Fern AI</span></button>
-        <button data-view="chat"><span class="icon">□</span><span>Chat</span></button>
-        <button data-view="music"><span class="icon">♪</span><span>Music</span></button>
-        <button data-view="github"><span class="icon">⌘</span><span>GitHub</span></button>
-        <button data-view="games"><span class="icon">◎</span><span>Games</span></button>
-        <button data-view="playables"><span class="icon">◆</span><span>Playables</span></button>
-        <button data-view="marketplace"><span class="icon">◫</span><span>Marketplace</span></button>
-        <button id="settingsButton"><span class="icon">⚙</span><span>Settings</span></button>
-      </nav>
-    </aside>
-
-    <main class="main">
-      <header class="toolbar">
-        <div class="toolbar-left">
-          <button class="tool" id="back" aria-label="Back" title="Back">←</button>
-          <button class="tool" id="forward" aria-label="Forward" disabled title="Forward">→</button>
-          <button class="tool" id="reload" aria-label="Reload" title="Reload">↻</button>
-        </div>
-        <form class="address" id="addressForm">
-          <span class="icon" aria-hidden="true">⌂</span>
-          <input id="address" value="fern://home" aria-label="Address" autocomplete="off">
-        </form>
-        <div class="toolbar-right">
-          <button class="tool" id="star" aria-label="Bookmark" title="Bookmark">☆</button>
-          <button class="tool" aria-label="Extensions" title="Extensions">▦</button>
-          <button class="tool" aria-label="Menu" title="Menu">☰</button>
-          <button class="profile"><span class="leaf">F</span><span>nunezo</span></button>
-        </div>
-      </header>
-
-      <div class="content-wrap">
-        <section class="content">
-          <div class="view active" id="home">
-            <div class="home">
-              <div class="home-inner">
-                <div class="brand-art" aria-hidden="true"></div>
-                <form class="search" id="searchForm">
-                  <span class="icon" aria-hidden="true">⌕</span>
-                  <input id="searchInput" placeholder="Search" aria-label="Search" autocomplete="off">
-                  <button class="search-submit" type="submit" aria-label="Search">→</button>
-                </form>
-                <div class="shortcuts" aria-label="Shortcuts">
-                  <button class="shortcut" data-url="https://youtube.com" title="YouTube"><span>▶</span></button>
-                  <button class="shortcut" data-url="https://www.tiktok.com" title="TikTok"><span>♪</span></button>
-                  <button class="shortcut" data-url="https://discord.com" title="Discord"><span>◉</span></button>
-                  <button class="shortcut" data-url="https://x.com" title="Twitter / X"><span>𝕏</span></button>
-                  <button class="shortcut" data-url="https://google.com" title="Google"><span>G</span></button>
-                  <button class="shortcut" data-view="github" title="GitHub"><span>⌘</span></button>
-                  <button class="shortcut" data-url="https://play.geforcenow.com" title="GeForce NOW"><span>G</span></button>
-                  <button class="shortcut" data-view="games" title="Games"><span>◎</span></button>
-                  <button class="shortcut" data-view="ai" title="AI"><span>◈</span></button>
-                  <button class="shortcut" data-view="music" title="Music"><span>♫</span></button>
-                  <button class="shortcut" data-view="chat" title="Chat"><span>□</span></button>
-                  <span class="divider"></span>
-                  <button class="shortcut" id="editShortcuts" title="Edit shortcuts"><span>＋</span></button>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="view" id="games">
-            <div class="page-panel">
-              <h2 class="page-title">Games</h2>
-              <div class="card-grid">
-                <button class="card" data-url="https://play2048.co">2048<small>Puzzle</small></button>
-                <button class="card" data-url="https://lichess.org">Lichess<small>Chess</small></button>
-                <button class="card" data-url="https://slither.io">Slither.io<small>Arcade</small></button>
-                <button class="card" data-url="https://agar.io">Agar.io<small>Arcade</small></button>
-                <button class="card" data-url="https://orteil.dashnet.org/cookieclicker/">Cookie Clicker<small>Idle</small></button>
-                <button class="card" data-url="https://hex.frvr.com">Hex FRVR<small>Puzzle</small></button>
-              </div>
-            </div>
-          </div>
-          <div class="view" id="music"><div class="page-panel"><h2 class="page-title">Music</h2><button class="card" data-url="https://music.youtube.com">YouTube Music<small>Open music</small></button></div></div>
-          <div class="view" id="chat"><div class="page-panel"><h2 class="page-title">Chat</h2><button class="card" data-url="https://discord.com/app">Discord<small>Open chat</small></button></div></div>
-          <div class="view" id="ai"><div class="page-panel"><h2 class="page-title">Fern AI</h2><button class="card" data-url="https://gemini.google.com/app">Gemini<small>Open AI assistant</small></button></div></div>
-          <div class="view" id="github">
-            <div class="page-panel">
-              <div class="github-dashboard">
-                <header class="github-header">
-                  <div>
-                    <h2>GitHub</h2>
-                    <small id="githubRepoName">ryytrr6uti123-dev / My-html-</small>
-                  </div>
-                  <div class="github-actions">
-                    <a class="primary" id="githubTryLink" href="https://ryytrr6uti123-dev.github.io/My-html-/" target="_blank" rel="noopener">Try website ↗</a>
-                    <a id="githubDownloadLink" href="https://github.com/ryytrr6uti123-dev/My-html-/archive/refs/heads/main.zip" download>Download ZIP</a>
-                    <a href="https://github.com/ryytrr6uti123-dev/My-html-" target="_blank" rel="noopener">Repository ↗</a>
-                    <a class="primary" href="https://github.com/ryytrr6uti123-dev/My-html-/issues/new" target="_blank" rel="noopener">New issue</a>
-                  </div>
-                </header>
-                <div class="github-stats">
-                  <div class="github-stat"><strong id="githubStars">—</strong><span>Stars</span></div>
-                  <div class="github-stat"><strong id="githubForks">—</strong><span>Forks</span></div>
-                  <div class="github-stat"><strong id="githubIssues">—</strong><span>Open issues</span></div>
-                  <div class="github-stat"><strong id="githubBranch">—</strong><span>Default branch</span></div>
-                </div>
-                <div class="github-grid">
-                  <section class="github-section">
-                    <h3>Recent commits</h3>
-                    <div class="commit-list" id="githubCommits">Loading commits…</div>
-                  </section>
-                  <section class="github-section">
-                    <h3>Repository</h3>
-                    <div class="repo-links">
-                      <a href="https://github.com/ryytrr6uti123-dev/My-html-/code" target="_blank" rel="noopener">Code <span>→</span></a>
-                      <a href="https://github.com/ryytrr6uti123-dev/My-html-/pulls" target="_blank" rel="noopener">Pull requests <span>→</span></a>
-                      <a href="https://github.com/ryytrr6uti123-dev/My-html-/issues" target="_blank" rel="noopener">Issues <span>→</span></a>
-                      <a href="https://github.com/ryytrr6uti123-dev/My-html-/actions" target="_blank" rel="noopener">Actions <span>→</span></a>
-                    </div>
-                  </section>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="view" id="playables"><div class="page-panel"><h2 class="page-title">Playables</h2><button class="card" data-url="https://now.gg">now.gg<small>Cloud games</small></button></div></div>
-          <div class="view" id="marketplace"><div class="page-panel"><h2 class="page-title">Marketplace</h2><button class="card" data-url="https://www.etsy.com">Etsy<small>Marketplace</small></button></div></div>
-          <div class="view" id="web">
-            <div class="frame-page">
-              <div class="frame-bar"><strong id="frameTitle">Web page</strong><a id="openExternal" href="#" target="_blank" rel="noopener">Open in new tab ↗</a></div>
-              <iframe id="frame" title="Web page" allow="fullscreen; autoplay; clipboard-read; clipboard-write; encrypted-media; picture-in-picture"></iframe>
-            </div>
-          </div>
-
-          <aside class="settings" id="settings" aria-label="Settings">
-            <h3>Appearance</h3>
-            <div class="themes">
-              <button class="theme active" data-theme="fern">Fern</button>
-              <button class="theme" data-theme="night">Night</button>
-            </div>
-          </aside>
-        </section>
-      </div>
-    </main>
+<div class="app">
+ <header class="topbar">
+  <div class="topline">
+   <a class="brand" href="#" data-page="home"><span class="brandmark">N</span>NEXUS</a>
+   <nav class="tabs" aria-label="NEXUS sections">
+    <button class="tab active" data-page="home">Home</button>
+    <button class="tab" data-page="search">Search</button>
+    <button class="tab" data-page="youtube">YouTube</button>
+    <button class="tab" data-page="games">Games</button>
+   </nav>
+   <span class="presence">NEXUS</span>
   </div>
-
-  <script>
-    const views = [...document.querySelectorAll(".view")];
-    const address = document.getElementById("address");
-    const frame = document.getElementById("frame");
-    const frameTitle = document.getElementById("frameTitle");
-    const openExternal = document.getElementById("openExternal");
-    let history = [];
-    let future = [];
-
-    function showView(id) {
-      const target = document.getElementById(id);
-      if (!target) return;
-      views.forEach(view => view.classList.toggle("active", view === target));
-      document.querySelectorAll("[data-view]").forEach(button => {
-        button.classList.toggle("active", button.dataset.view === id);
-      });
-      document.getElementById("settings").classList.remove("open");
-      if (id === "home") address.value = "fern://home";
-      if (id === "github") address.value = "fern://github";
+  <div class="browserbar">
+   <button class="toolbtn" id="backButton" aria-label="Go back" title="Go back">‹</button>
+   <button class="toolbtn" id="reloadButton" aria-label="Reload page" title="Reload">⟳</button>
+   <button class="toolbtn" data-page="home" aria-label="Home" title="Home">⌂</button>
+   <form class="address" id="addressForm" role="search">
+    <span aria-hidden="true">⌕</span>
+    <input id="addressInput" type="text" placeholder="Search Google or enter a website address" autocomplete="off" aria-label="Search Google or enter a website address">
+    <button class="go" type="submit">Go</button>
+   </form>
+   <div class="browser-actions">
+    <button class="toolbtn" id="settingsButton" aria-label="Open settings" title="Settings">⚙</button>
+    <button class="toolbtn" id="fullscreenButton" aria-label="Enter fullscreen" title="Fullscreen">⛶</button>
+   </div>
+  </div>
+ </header>
+ <main>
+  <section class="view active" id="homeView">
+   <div class="home">
+    <div class="clock" id="clock" aria-label="Current time">--:--</div>
+    <div class="desktop-center">
+     <div class="eyebrow">YOUR WEB, IN ONE PLACE</div>
+     <h1><span class="gradient">NEXUS</span></h1>
+     <p class="subtitle" id="dateText">Loading date…</p>
+     <form class="searchform" id="homeForm" role="search">
+      <input id="homeQuery" type="search" placeholder="Search anything or enter a website..." aria-label="Search anything or enter a website" required>
+      <button type="submit">Search</button>
+     </form>
+     <div class="desktop-icons">
+      <button class="desktop-icon" data-page="search"><span>⌕</span>Web Search</button>
+      <button class="desktop-icon" data-page="youtube"><span>▶</span>YouTube</button>
+      <button class="desktop-icon" data-action="roblox"><span>▧</span>Roblox</button>
+      <button class="desktop-icon" data-page="games"><span>▦</span>Games</button>
+      <button class="desktop-icon" data-action="github"><span>⌘</span>GitHub</button>
+      <a class="desktop-icon" href="https://github.com/ryytrr6uti123-dev/My-html-/archive/refs/heads/main.zip" aria-label="Download the NEXUS project as a ZIP" title="Download the latest GitHub version as a ZIP"><span>↓</span>Download ZIP</a>
+      <button class="desktop-icon" data-action="assistant"><span>✦</span>AI Assistant</button>
+      <button class="desktop-icon" data-action="files"><span>▤</span>My Files</button>
+      <button class="desktop-icon" data-action="settings"><span>⚙</span>Settings</button>
+     </div>
+    </div>
+    <p class="helper">Search Google, watch YouTube videos, open games and customize your NEXUS desktop.</p>
+   </div>
+  </section>
+  <section class="view" id="searchView">
+   <div class="section-title"><div><h2>Search the web</h2><p>Search results open inside the NEXUS page.</p></div></div>
+   <form class="searchform" id="webSearchForm" role="search">
+    <input id="webQuery" type="search" placeholder="What are you looking for?" aria-label="Search the web" required>
+    <button type="submit">Search</button>
+   </form>
+   <section class="viewer" id="viewer" aria-label="NEXUS website viewer">
+    <div class="viewer-head"><strong id="viewerTitle">Web page</strong><span id="viewerStatus" role="status">Ready</span></div>
+    <div class="viewer-help"><span id="viewerHelp">If this page is blank, Chrome may block embedding. Open it in this tab instead.</span><a id="openCurrent" href="#" data-current-link>Open in this tab</a></div>
+    <iframe class="webframe" id="webFrame" title="NEXUS web page" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
+   </section>
+  </section>
+  <section class="view" id="youtubeView">
+   <div class="section-title"><div><h2>YouTube in NEXUS</h2><p>Find videos or play a YouTube video without leaving this page.</p></div></div>
+   <div class="youtube-tools">
+    <form class="smallform" id="youtubeSearchForm" role="search">
+     <input id="youtubeQuery" type="search" placeholder="Search YouTube videos..." aria-label="Search YouTube videos" required>
+     <button type="submit">Find videos</button>
+    </form>
+    <form class="smallform" id="watchForm">
+     <input id="videoInput" type="text" placeholder="Paste a YouTube link or video ID to watch" aria-label="YouTube video link or ID">
+     <button type="submit">Watch here</button>
+    </form>
+    <div class="notice">Search results show YouTube videos through Google. Paste a video link or ID to play it here. YouTube blocks its full search page from being embedded in other sites.</div>
+   </div>
+  </section>
+  <section class="view" id="gamesView">
+   <div class="section-title"><div><h2>Games</h2><p>Open a game inside NEXUS when its website allows it.</p></div></div>
+   <div class="games">
+    <a class="game" href="https://now.gg/apps/roblox-corporation/5349/roblox.html"><b>Roblox on now.gg</b><small>Cloud game</small><span>Open in NEXUS ↗</span></a>
+    <a class="game" href="https://play2048.co/"><b>2048</b><small>Puzzle</small><span>Play here ↗</span></a>
+    <a class="game" href="https://adarkroom.doublespeakgames.com/"><b>A Dark Room</b><small>Adventure</small><span>Play here ↗</span></a>
+    <a class="game" href="https://orteil.dashnet.org/cookieclicker/"><b>Cookie Clicker</b><small>Idle</small><span>Play here ↗</span></a>
+    <a class="game" href="https://lichess.org/"><b>Lichess</b><small>Board</small><span>Play here ↗</span></a>
+    <a class="game" href="https://hex.frvr.com/"><b>Hex FRVR</b><small>Puzzle</small><span>Play here ↗</span></a>
+    <a class="game" href="https://slither.io/"><b>Slither.io</b><small>Arcade</small><span>Play here ↗</span></a>
+    <a class="game" href="https://agar.io/"><b>Agar.io</b><small>Arcade</small><span>Play here ↗</span></a>
+    <a class="game" href="https://www.coolmathgames.com/0-run-3"><b>Run 3</b><small>Platformer</small><span>Play here ↗</span></a>
+   </div>
+  </section>
+ </main>
+ <div class="dock-zone" id="dockZone" aria-hidden="true"></div>
+ <nav class="dock" aria-label="NEXUS navigation">
+  <button class="active" data-page="home"><span>⌂</span>Home</button>
+  <button data-page="search"><span>⌕</span>Search</button>
+  <button data-page="youtube"><span>▶</span>YouTube</button>
+  <button data-page="games"><span>▦</span>Games</button>
+  <button data-action="settings"><span>⚙</span>Settings</button>
+ </nav>
+</div>
+<div class="settings-backdrop" id="settingsBackdrop"></div>
+<aside class="settings-panel" id="settingsPanel" role="dialog" aria-modal="true" aria-label="NEXUS settings" aria-hidden="true">
+ <div class="settings-head"><h2>Settings</h2><button class="toolbtn" id="closeSettings" aria-label="Close settings">×</button></div>
+ <h3>Desktop theme</h3>
+ <div class="theme-options" role="group" aria-label="Choose a color theme">
+  <button class="theme-choice" data-theme-choice="mint" aria-pressed="true">Mint</button>
+  <button class="theme-choice" data-theme-choice="violet" aria-pressed="false">Violet</button>
+  <button class="theme-choice" data-theme-choice="ocean" aria-pressed="false">Ocean</button>
+  <button class="theme-choice" data-theme-choice="sunset" aria-pressed="false">Sunset</button>
+  <button class="theme-choice" data-theme-choice="rose" aria-pressed="false">Rose</button>
+ </div>
+ <h3>My files</h3>
+ <label class="upload-label" for="fileInput">Choose photos or files to preview on this device</label>
+ <input class="file-input" id="fileInput" type="file" multiple accept="image/*,video/*,audio/*,.pdf,.txt">
+ <p class="file-note">Files stay in this browser session; this single HTML page has no cloud storage or unlimited upload quota. Large files use your device's browser memory/storage.</p>
+ <div class="upload-list" id="uploadList" aria-live="polite"></div>
+ <h3>AI assistant</h3>
+ <div class="assistant-note">Open Gemini in the NEXUS viewer. A live AI assistant or private file analysis needs an AI service and account/API setup.</div>
+ <button class="secondary" id="openAssistant" style="margin-top:10px">Open Gemini</button>
+</aside>
+<script>
+const pages={home:document.getElementById("homeView"),search:document.getElementById("searchView"),youtube:document.getElementById("youtubeView"),games:document.getElementById("gamesView")};
+const viewer=document.getElementById("viewer"),frame=document.getElementById("webFrame"),addressInput=document.getElementById("addressInput"),viewerTitle=document.getElementById("viewerTitle"),viewerStatus=document.getElementById("viewerStatus"),openCurrent=document.getElementById("openCurrent");
+let lastUrl="",historyStack=[];
+function showPage(name){
+  if(!pages[name])return;
+  for(const [key,page] of Object.entries(pages))page.classList.toggle("active",key===name);
+  document.querySelectorAll("[data-page]").forEach(button=>button.classList.toggle("active",button.dataset.page===name));
+  if(name==="search")document.getElementById("webQuery").focus();
+  if(name==="youtube")document.getElementById("youtubeQuery").focus();
+}
+function parsedVideoId(value){
+  const text=value.trim();
+  if(/^[\w-]{11}$/.test(text))return text;
+  let url;
+  try{url=new URL(/^https?:\/\//i.test(text)?text:`https://${text}`)}catch{return null}
+  const host=url.hostname.replace(/^www\./,"");
+  if(host==="youtu.be")return url.pathname.split("/").filter(Boolean)[0]||null;
+  if(host==="youtube.com"||host.endsWith(".youtube.com"))return url.searchParams.get("v")||url.pathname.match(/^\/(?:embed|shorts|live)\/([^/?]+)/)?.[1]||null;
+  return null;
+}
+function normalizeAddress(value){
+  const text=value.trim();
+  if(!text)return null;
+  if(/^(https?:\/\/|www\.)/i.test(text)||/^[\w-]+(?:\.[\w-]+)+(?:[/:?#].*)?$/i.test(text)){
+    try{return new URL(/^https?:\/\//i.test(text)?text:`https://${text}`)}catch{return null}
+  }
+  return null;
+}
+function openPage(destination,title,record=true){
+  let url;
+  try{url=new URL(destination)}catch{viewerStatus.textContent="That address is not valid.";return}
+  if(!["http:","https:"].includes(url.protocol)){viewerStatus.textContent="Only website addresses can be opened.";return}
+  const videoId=parsedVideoId(url.href);
+  const youtubeHost=url.hostname==="youtu.be"||url.hostname==="youtube.com"||url.hostname.endsWith(".youtube.com");
+  if(youtubeHost&&!videoId){
+    const query=url.searchParams.get("search_query");
+    if(query)document.getElementById("youtubeQuery").value=query;
+    showPage("youtube");
+    return;
+  }
+  if(videoId)url=new URL(`https://www.youtube-nocookie.com/embed/${encodeURIComponent(videoId)}`);
+  const topLevelDomains=["now.gg","github.com","gemini.google.com"];
+  if(topLevelDomains.some(domain=>url.hostname===domain||url.hostname.endsWith(`.${domain}`))){
+    window.location.assign(url.href);
+    return;
+  }
+  if(record&&lastUrl&&lastUrl!==url.href)historyStack.push(lastUrl);
+  lastUrl=url.href;
+  addressInput.value=videoId?`https://www.youtube.com/watch?v=${videoId}`:url.href;
+  openCurrent.href=addressInput.value;
+  viewerTitle.textContent=title||url.hostname;
+  viewerStatus.textContent=videoId?"Loading YouTube video…":"Loading page…";
+  document.getElementById("viewerHelp").textContent=url.hostname==="www.google.com"?"Google search can be embedded here. If your browser still shows a blank page, open the search in this tab.":"If this page is blank, the website may block embedding. Use the same-tab link to continue.";
+  if(url.hostname==="www.google.com")frame.removeAttribute("sandbox");
+  else frame.setAttribute("sandbox","allow-forms allow-scripts allow-same-origin allow-presentation");
+  viewer.classList.add("active");
+  frame.src=url.href;
+  showPage("search");
+}
+function searchWeb(query,site){
+  const q=site?`site:youtube.com/watch ${query}`:query;
+  const url=new URL("https://www.google.com/search");
+  url.search=new URLSearchParams({igu:"1",q});
+  openPage(url.href,site?`YouTube results for “${query}”`:`Google results for “${query}”`);
+}
+function go(value){
+  const address=normalizeAddress(value);
+  if(address){openPage(address.href,address.hostname);return}
+  searchWeb(value);
+}
+document.querySelectorAll("[data-page]").forEach(button=>button.addEventListener("click",event=>{
+  event.preventDefault();
+  showPage(button.dataset.page);
+}));
+document.getElementById("addressForm").addEventListener("submit",event=>{event.preventDefault();go(addressInput.value)});
+document.getElementById("homeForm").addEventListener("submit",event=>{event.preventDefault();go(document.getElementById("homeQuery").value)});
+document.getElementById("webSearchForm").addEventListener("submit",event=>{event.preventDefault();go(document.getElementById("webQuery").value)});
+document.getElementById("youtubeSearchForm").addEventListener("submit",event=>{
+  event.preventDefault();
+  searchWeb(document.getElementById("youtubeQuery").value,true);
+});
+document.getElementById("watchForm").addEventListener("submit",event=>{
+  event.preventDefault();
+  const id=parsedVideoId(document.getElementById("videoInput").value);
+  if(!id){viewerStatus.textContent="Enter a valid YouTube video link or 11-character video ID.";return}
+  openPage(`https://www.youtube.com/watch?v=${encodeURIComponent(id)}`,`YouTube video ${id}`);
+});
+document.addEventListener("click",event=>{
+  if(!(event.target instanceof Element))return;
+  const link=event.target.closest("a[href]");
+  if(!link||link.hasAttribute("data-current-link")||link.dataset.page)return;
+  let url;
+  try{url=new URL(link.href)}catch{return}
+  if(!["http:","https:"].includes(url.protocol))return;
+  event.preventDefault();
+  openPage(url.href,link.textContent.trim()||url.hostname);
+});
+document.getElementById("reloadButton").addEventListener("click",()=>{
+  if(frame.src&&frame.src!=="about:blank"){viewerStatus.textContent="Reloading…";frame.src=frame.src}
+});
+document.getElementById("backButton").addEventListener("click",()=>{
+  const previous=historyStack.pop();
+  if(previous)openPage(previous,"Previous page",false);
+  else showPage("home");
+});
+frame.addEventListener("load",()=>{viewerStatus.textContent="Loaded. If the viewer is blank, use the same-tab link below."});
+document.querySelectorAll("[data-action]").forEach(button=>button.addEventListener("click",()=>{
+  const action=button.dataset.action;
+  if(action==="settings")openSettings();
+  if(action==="files")openSettings("fileInput");
+  if(action==="roblox")openPage("https://now.gg/apps/roblox-corporation/5349/roblox.html","Roblox on now.gg");
+  if(action==="github")openPage("https://github.com","GitHub");
+  if(action==="assistant")openPage("https://gemini.google.com/app","Gemini AI Assistant");
+}));
+function updateClock(){
+  const now=new Date();
+  document.getElementById("clock").textContent=now.toLocaleTimeString([], {hour:"numeric",minute:"2-digit"});
+  document.getElementById("dateText").textContent=now.toLocaleDateString([], {weekday:"long",month:"long",day:"numeric",year:"numeric"});
+}
+updateClock();
+setInterval(updateClock,1000);
+const settingsPanel=document.getElementById("settingsPanel"),settingsBackdrop=document.getElementById("settingsBackdrop");
+function openSettings(focusId){
+  settingsPanel.classList.add("open");
+  settingsBackdrop.classList.add("open");
+  settingsPanel.setAttribute("aria-hidden","false");
+  if(focusId)document.getElementById(focusId).focus();
+}
+function closeSettings(){
+  settingsPanel.classList.remove("open");
+  settingsBackdrop.classList.remove("open");
+  settingsPanel.setAttribute("aria-hidden","true");
+}
+document.getElementById("settingsButton").addEventListener("click",()=>openSettings());
+document.getElementById("closeSettings").addEventListener("click",closeSettings);
+settingsBackdrop.addEventListener("click",closeSettings);
+document.addEventListener("keydown",event=>{if(event.key==="Escape")closeSettings()});
+function setTheme(theme){
+  const allowed=["mint","violet","ocean","sunset","rose"];
+  if(!allowed.includes(theme))return;
+  document.documentElement.dataset.theme=theme==="mint"?"":theme;
+  document.querySelectorAll("[data-theme-choice]").forEach(button=>button.setAttribute("aria-pressed",String(button.dataset.themeChoice===theme)));
+  try{localStorage.setItem("nexus-theme",theme)}catch{viewerStatus.textContent="Theme changed for this session; browser storage is unavailable."}
+}
+try{setTheme(localStorage.getItem("nexus-theme")||"mint")}catch{setTheme("mint")}
+document.querySelectorAll("[data-theme-choice]").forEach(button=>button.addEventListener("click",()=>setTheme(button.dataset.themeChoice)));
+document.getElementById("fullscreenButton").addEventListener("click",async()=>{
+  try{
+    if(document.fullscreenElement)await document.exitFullscreen();
+    else await document.querySelector(".app").requestFullscreen();
+  }catch(error){viewerStatus.textContent=`Fullscreen is unavailable: ${error.message}`}
+});
+document.addEventListener("fullscreenchange",()=>{
+  const active=Boolean(document.fullscreenElement);
+  document.body.classList.toggle("fullscreen",active);
+  const button=document.getElementById("fullscreenButton");
+  button.setAttribute("aria-label",active?"Exit fullscreen":"Enter fullscreen");
+  button.title=active?"Exit fullscreen":"Fullscreen";
+});
+let dockTimer;
+function showDock(){
+  clearTimeout(dockTimer);
+  document.body.classList.add("dock-visible");
+}
+function hideDockSoon(){
+  clearTimeout(dockTimer);
+  dockTimer=setTimeout(()=>document.body.classList.remove("dock-visible"),1800);
+}
+const dock=document.querySelector(".dock");
+document.getElementById("dockZone").addEventListener("pointerenter",showDock);
+dock.addEventListener("pointerenter",showDock);
+dock.addEventListener("pointerleave",hideDockSoon);
+dock.addEventListener("focusin",showDock);
+dock.addEventListener("focusout",hideDockSoon);
+document.addEventListener("pointermove",event=>{
+  if(event.clientY>=window.innerHeight-90)showDock();
+  else if(document.body.classList.contains("dock-visible")&&!dock.matches(":hover"))hideDockSoon();
+});
+document.addEventListener("touchstart",event=>{
+  if(event.touches[0]?.clientY>=window.innerHeight-100){showDock();hideDockSoon()}
+  else hideDockSoon();
+},{passive:true});
+const uploadList=document.getElementById("uploadList"),objectUrls=[];
+document.getElementById("fileInput").addEventListener("change",event=>{
+  for(const file of event.target.files){
+    const url=URL.createObjectURL(file);
+    objectUrls.push(url);
+    const item=document.createElement("div");
+    item.className="upload-item";
+    if(file.type.startsWith("image/")){
+      const image=document.createElement("img");
+      image.src=url;
+      image.alt=file.name;
+      item.append(image);
     }
-
-    function openUrl(url, title) {
-      try {
-        const parsed = new URL(url);
-        if (!["http:", "https:"].includes(parsed.protocol)) return;
-        if (address.value !== "fern://home" && address.value !== parsed.href) history.push(address.value);
-        future = [];
-        address.value = parsed.href;
-        frame.src = parsed.href;
-        frameTitle.textContent = title || parsed.hostname;
-        openExternal.href = parsed.href;
-        showView("web");
-      } catch {
-        search(url);
-      }
-    }
-
-    function search(query) {
-      const q = query.trim();
-      if (!q) return;
-      const url = new URL("https://www.google.com/search");
-      url.searchParams.set("igu", "1");
-      url.searchParams.set("q", q);
-      openUrl(url.href, `Search: ${q}`);
-    }
-
-    document.getElementById("searchForm").addEventListener("submit", event => {
-      event.preventDefault();
-      search(document.getElementById("searchInput").value);
-    });
-
-    document.getElementById("addressForm").addEventListener("submit", event => {
-      event.preventDefault();
-      const value = address.value.trim();
-      if (/^https?:\/\//i.test(value)) openUrl(value);
-      else if (/^(www\.)|^[\w-]+\.[\w.-]+/.test(value)) openUrl(/^https?:\/\//i.test(value) ? value : `https://${value}`);
-      else if (value.startsWith("fern://")) showView(value.slice(7));
-      else search(value);
-    });
-
-    document.querySelectorAll("[data-view]").forEach(button => {
-      button.addEventListener("click", () => showView(button.dataset.view));
-    });
-    document.querySelectorAll("[data-url]").forEach(button => {
-      button.addEventListener("click", () => openUrl(button.dataset.url, button.textContent.trim()));
-    });
-    document.getElementById("newTab").addEventListener("click", () => showView("home"));
-    document.getElementById("reload").addEventListener("click", () => {
-      if (frame.src) frame.src = frame.src;
-    });
-    document.getElementById("back").addEventListener("click", () => {
-      if (!history.length) return showView("home");
-      const previous = history.pop();
-      future.push(address.value);
-      openUrl(previous, "Previous page");
-    });
-    document.getElementById("star").addEventListener("click", event => {
-      event.currentTarget.textContent = event.currentTarget.textContent === "☆" ? "★" : "☆";
-    });
-    document.getElementById("settingsButton").addEventListener("click", () => {
-      document.getElementById("settings").classList.toggle("open");
-    });
-    document.querySelectorAll(".theme").forEach(button => button.addEventListener("click", () => {
-      document.querySelectorAll(".theme").forEach(theme => theme.classList.remove("active"));
-      button.classList.add("active");
-      if (button.dataset.theme === "night") {
-        document.documentElement.style.setProperty("--bg", "#090909");
-        document.documentElement.style.setProperty("--panel", "#111111");
-        document.documentElement.style.setProperty("--panel-2", "#1a1a1a");
-        document.documentElement.style.setProperty("--accent", "#91a6ff");
-      } else {
-        document.documentElement.style.setProperty("--bg", "#0b0f0d");
-        document.documentElement.style.setProperty("--panel", "#111512");
-        document.documentElement.style.setProperty("--panel-2", "#171c18");
-        document.documentElement.style.setProperty("--accent", "#78e7a8");
-      }
-    }));
-
-    async function loadGitHubDashboard() {
-      const repositoryUrl = "https://api.github.com/repos/ryytrr6uti123-dev/My-html-";
-      try {
-        const [repositoryResponse, commitsResponse] = await Promise.all([
-          fetch(repositoryUrl),
-          fetch(`${repositoryUrl}/commits?per_page=5`)
-        ]);
-        if (!repositoryResponse.ok || !commitsResponse.ok) throw new Error("GitHub request failed");
-
-        const repository = await repositoryResponse.json();
-        const commits = await commitsResponse.json();
-        document.getElementById("githubRepoName").textContent = `${repository.owner.login} / ${repository.name}`;
-        document.getElementById("githubStars").textContent = repository.stargazers_count;
-        document.getElementById("githubForks").textContent = repository.forks_count;
-        document.getElementById("githubIssues").textContent = repository.open_issues_count;
-        document.getElementById("githubBranch").textContent = repository.default_branch;
-        document.getElementById("githubDownloadLink").href =
-          `https://github.com/${repository.owner.login}/${repository.name}/archive/refs/heads/${encodeURIComponent(repository.default_branch)}.zip`;
-
-        const commitList = document.getElementById("githubCommits");
-        commitList.replaceChildren();
-        commits.forEach(commit => {
-          const link = document.createElement("a");
-          link.className = "commit-item";
-          link.href = commit.html_url;
-          link.target = "_blank";
-          link.rel = "noopener";
-          const title = document.createElement("strong");
-          title.textContent = commit.commit.message.split("\n")[0];
-          const details = document.createElement("small");
-          const date = new Date(commit.commit.author?.date || "");
-          details.textContent = `${commit.sha.slice(0, 7)} · ${Number.isNaN(date.getTime()) ? "Recent commit" : date.toLocaleDateString()}`;
-          link.append(title, details);
-          commitList.append(link);
-        });
-      } catch {
-        document.getElementById("githubCommits").textContent = "GitHub data could not be loaded. Open the repository directly.";
-      }
-    }
-
-    loadGitHubDashboard();
-  </script>
+    const name=document.createElement("div");
+    name.textContent=`${file.name} · ${(file.size/1048576).toFixed(1)} MB`;
+    item.append(name);
+    const download=document.createElement("a");
+    download.href=url;
+    download.download=file.name;
+    download.textContent="Open / download";
+    item.append(download);
+    uploadList.append(item);
+  }
+  event.target.value="";
+});
+window.addEventListener("beforeunload",()=>objectUrls.forEach(url=>URL.revokeObjectURL(url)));
+document.getElementById("openAssistant").addEventListener("click",()=>openPage("https://gemini.google.com/app","Gemini AI Assistant"));
+</script>
 </body>
 </html>
